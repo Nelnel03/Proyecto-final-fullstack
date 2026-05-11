@@ -1,0 +1,198 @@
+:root {
+  /* --- PALETA DE COLORES "BOSQUE CÁLIDO" (Nueva Versión) --- */
+  --color-bosque-musgo: #344e41;    /* Verde Bosque Profundo y Cálido */
+  --color-bosque-helecho: #3a5a40;  /* Verde Helecho Oliva */
+  --color-crema-organico: #fefae0;  /* Crema Cálido (Sol sobre hojas) */
+  --color-tierra-sombra: #283618;   /* Sombra Tierra Verdosa */
+  --color-ocre-silvestre: #a3b18a;  /* Verde Ocre Suave y Cálido */
+
+
+  /* Colores de Fauna y Flora (Acentos Vibrantes) */
+  --color-fauna-lapa: #FF9E00;      /* Naranja Lapa Roja */
+  --color-fauna-flor: #E71D36;      /* Rojo Heliconia */
+  --color-fauna-marino: #118AB2;    /* Azul Morpho / Mar Vivo */
+  --color-fauna-rana: #70E000;      /* Verde Rana Brillante */
+
+  /* Mapeo de variables antiguas (Compatibilidad) */
+  --color-mar-profundo: var(--color-bosque-musgo);
+  --color-mar-turquesa: var(--color-bosque-helecho);
+  --color-arena: var(--color-crema-organico);
+  --color-palmera: var(--color-fauna-rana);
+  --color-sol: var(--color-fauna-lapa);
+  --color-caracola: #ffffff;
+  --color-coral: var(--color-fauna-flor);
+  --color-texto: var(--color-tierra-sombra);
+
+  --fuente-principal: 'Outfit', 'Inter', sans-serif;
+  --fuente-acento: 'Outfit', sans-serif;
+  --sombra-suave: 0 8px 30px rgba(45, 106, 79, 0.15);
+  --sombra-profunda: 0 10px 40px rgba(8, 28, 21, 0.25);
+}
+
+[data-theme='dark'] {
+  --color-arena: #0d1117;
+  --color-caracola: #161b22;
+  --color-texto: #f0f6fc;
+  --color-tierra-sombra: #8b949e;
+  --color-crema-organico: #0d1117;
+  --color-ocre-silvestre: #21262d;
+  --color-palmera: #10b981;
+  --sombra-suave: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --sombra-profunda: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Estilos Globales */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-arena);
+  color: var(--color-texto);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+/* Títulos con Tipografía de Acento */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fuente-acento);
+  text-transform: uppercase;
+  margin-top: 0;
+}
+
+/* Enlaces con Efecto de Coral */
+a {
+  color: var(--color-coral);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-mar-profundo);
+  text-decoration: underline;
+}
+
+/* Botones con Efecto de Mar */
+button, .btn {
+  background-color: var(--color-palmera);
+  color: var(--color-caracola);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--fuente-principal);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--color-mar-turquesa);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 180, 216, 0.3);
+}
+
+button:active, .btn:active {
+  transform: translateY(0);
+}
+
+/* Tarjetas con Diseño de Caracola */
+.tarjeta, .card {
+  background-color: var(--color-caracola);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: var(--sombra-suave);
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarjeta:hover, .card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-profunda);
+}
+
+/* Input Styles */
+input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-family: var(--fuente-principal);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--color-caracola);
+  color: var(--color-texto);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-mar-turquesa);
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.1);
+}
+
+/* Encabezado con Fondo de Bosque */
+header.main-header {
+  background-color: var(--color-bosque-musgo);
+  background-image: linear-gradient(135deg, var(--color-bosque-musgo), var(--color-tierra-sombra));
+  color: #fff;
+  padding: 6rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+header.main-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(163, 177, 138, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(88, 129, 87, 0.15) 0%, transparent 40%);
+  animation: brisa 10s ease-in-out infinite alternate;
+}
+
+@keyframes brisa {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(1deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-caracola);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-mar-turquesa);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mar-profundo);
+}
+
+.app-main-layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

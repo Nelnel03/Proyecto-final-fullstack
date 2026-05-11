@@ -1,0 +1,179 @@
+.user-reports-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.user-reports-container h2 {
+  color: #1a4d2e;
+  margin-bottom: 0.5rem;
+}
+
+.user-reports-container p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.report-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.report-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.report-form input,
+.report-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.report-form input:focus,
+.report-form textarea:focus {
+  outline: none;
+  border-color: #1a4d2e;
+  box-shadow: 0 0 0 2px rgba(26, 77, 46, 0.2);
+}
+
+.btn-send {
+  background-color: #1a4d2e;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.btn-send:hover {
+  background-color: #2e6b46;
+}
+
+.btn-send:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.mensaje {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.mensaje.success {
+  background-color: #def7ec;
+  color: #03543f;
+  border: 1px solid #31c48d;
+}
+
+.mensaje.error {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+  border: 1px solid #f8b4b4;
+}
+
+/* ── Validation ── */
+.input-error {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.18) !important;
+}
+
+.field-error-msg {
+  color: #e53e3e;
+  font-size: 0.78rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 3px;
+  display: block;
+}
+
+.required-star {
+  color: #e53e3e;
+}
+
+.container-danger {
+  border-left: 4px solid #ef4444;
+}
+
+.title-danger {
+  color: #ef4444;
+}
+
+.btn-danger-report {
+  background-color: #ef4444 !important;
+}
+
+.mensaje.success-alt {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.mensaje.error-alt {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+@media screen and (max-width: 768px) {
+  .user-reports-container {
+    padding: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .report-form input,
+  .report-form textarea {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* --- DARK MODE --- */
+[data-theme='dark'] .user-reports-container {
+  background-color: #161b22;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .user-reports-container h2 {
+  color: #4bfc5a;
+}
+
+[data-theme='dark'] .user-reports-container p {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .report-form label {
+  color: #e5e5e5;
+}
+
+[data-theme='dark'] .report-form input,
+[data-theme='dark'] .report-form textarea,
+[data-theme='dark'] .report-form select {
+  background-color: #0d1117;
+  color: #fff;
+  border-color: #30363d;
+}
+
+[data-theme='dark'] .report-form input:focus,
+[data-theme='dark'] .report-form textarea:focus,
+[data-theme='dark'] .report-form select:focus {
+  border-color: #4bfc5a;
+  box-shadow: 0 0 0 2px rgba(75, 252, 90, 0.2);
+}

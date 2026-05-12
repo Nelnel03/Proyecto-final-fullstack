@@ -14,6 +14,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // --- Rutas Base ---
+app.use('/api/usuarios', require('./routes/usuarioRoutes'));
+app.use('/api/arboles', require('./routes/arbolRoutes'));
+app.use('/api/tareas', require('./routes/tareaRoutes'));
+app.use('/api/reportes', require('./routes/reporteRoutes'));
+app.use('/api/abonos', require('./routes/abonoRoutes'));
+app.use('/api/reportes-voluntariado', require('./routes/reporteVoluntariadoRoutes'));
+app.use('/api/solicitudes', require('./routes/solicitudRoutes'));
+app.use('/api/roles', require('./routes/rolRoutes'));
+app.use('/api/stats', require('./routes/statsRoutes'));
+
 app.get('/', (req, res) => {
     res.json({ message: 'Bienvenido a la API de Reforestación' });
 });

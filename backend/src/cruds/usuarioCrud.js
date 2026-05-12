@@ -58,28 +58,25 @@ const usuarioCrud = {
         }
     },
 
-    // 3. Crear nuevo usuario (Registro)
+    // 3. Crear un nuevo usuario
     create: async (req, res) => {
         try {
-            const { nombre, email, password, rol_id, area, telefono } = req.body;
+            const { nombre, email, password, rol_id, area, telefono, status } = req.body;
 
-            // Verificar si el email ya existe
-            const existingUser = await Usuario.findOne({ where: { email } });
-            if (existingUser) {
-                return res.status(400).json({ message: 'El correo electrónico ya está registrado' });
+            // Verificamos si el email ya existe
+            const emailExiste = await Usuario.findOne({ where: { email } });
+            if (emailExiste) {
+                return res.status(400).json({ message: 'El correo electrónico ya está en uso' });
             }
-
-            // Encriptar contraseña
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
 
             const nuevoUsuario = await Usuario.create({
                 nombre,
                 email,
-                password: hashedPassword,
+                password, // Se encripta automáticamente via Hooks
                 rol_id,
                 area,
                 telefono,
+                status,
                 fechaIngreso: new Date()
             });
 

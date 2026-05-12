@@ -14,16 +14,22 @@ const validate = (req, res, next) => {
     next();
 };
 
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
 // --- Rutas ---
 
-// GET: Todos los reportes
-router.get('/', reporteCrud.getAll);
+// Todas las rutas de reportes requieren estar logueado
+router.use(verifyToken);
 
-// GET: Un reporte por ID
-router.get('/:id', reporteCrud.getById);
+// GET: Todos los reportes (Solo Admin)
+router.get('/', checkRole(['admin']), reporteCrud.getAll);
 
-// POST: Crear nuevo reporte
+// GET: Un reporte por ID (Solo Admin)
+router.get('/:id', checkRole(['admin']), reporteCrud.getById);
+
+// POST: Crear nuevo reporte (Admin, Voluntario, Usuario)
 router.post('/', [
+    checkRole(['admin', 'voluntario', 'usuario']),
     body('usuario_id').isInt().withMessage('ID de usuario no válido'),
     body('rol_id').isInt().withMessage('ID de rol no válido'),
     body('asunto').notEmpty().withMessage('El asunto es obligatorio'),
@@ -31,13 +37,12 @@ router.post('/', [
     validate
 ], reporteCrud.create);
 
-// PUT: Actualizar reporte (ej: marcar como visto)
-router.put('/:id', [
+// PUT/DELETE: Solo Admin
+router.put('/:id', checkRole(['admin']), [
     body('visto').optional().isInt({ min: 0, max: 1 }).withMessage('El estado visto debe ser 0 o 1'),
     validate
 ], reporteCrud.update);
 
-// DELETE: Eliminar reporte
-router.delete('/:id', reporteController.delete);
+router.delete('/:id', checkRole(['admin']), reporteCrud.delete);
 
 module.exports = router;

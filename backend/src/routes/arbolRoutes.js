@@ -14,16 +14,22 @@ const validate = (req, res, next) => {
     next();
 };
 
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
 // --- Definición de Rutas ---
 
-// GET: Todos los árboles
+// GET: Todos los árboles (Público)
 router.get('/', arbolCrud.getAll);
 
-// GET: Detalle de un árbol
+// GET: Detalle de un árbol (Público)
 router.get('/:id', arbolCrud.getById);
 
-// POST: Registrar un nuevo árbol
+// Rutas protegidas (Requieren Login y Rol específico)
+router.use(verifyToken);
+
+// POST: Registrar un nuevo árbol (Admin y Voluntario)
 router.post('/', [
+    checkRole(['admin', 'voluntario']),
     body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
     body('progreso').optional().isInt({ min: 0, max: 100 }).withMessage('El progreso debe estar entre 0 y 100'),
     body('altura_min_m').optional().isFloat().withMessage('La altura mínima debe ser un número'),
@@ -31,13 +37,14 @@ router.post('/', [
     validate
 ], arbolCrud.create);
 
-// PUT: Actualizar un árbol
+// PUT: Actualizar un árbol (Admin y Voluntario)
 router.put('/:id', [
+    checkRole(['admin', 'voluntario']),
     body('progreso').optional().isInt({ min: 0, max: 100 }).withMessage('El progreso debe estar entre 0 y 100'),
     validate
 ], arbolCrud.update);
 
-// DELETE: Eliminar un árbol
-router.delete('/:id', arbolController.delete);
+// DELETE: Eliminar un árbol (Solo Admin)
+router.delete('/:id', checkRole(['admin']), arbolCrud.delete);
 
 module.exports = router;

@@ -29,13 +29,10 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bienvenido a la API de Reforestación' });
 });
 
-// --- Manejo de Errores Global ---
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ 
-        message: 'Error interno del servidor',
-        error: process.env.NODE_ENV === 'development' ? err.message : {}
-    });
-});
+const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
+
+// --- Manejo de Errores ---
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

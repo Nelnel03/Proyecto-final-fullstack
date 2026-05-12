@@ -1,17 +1,34 @@
 const { Arbol, Abono } = require('../models');
+const { Op } = require('sequelize');
+const { getPagination, getPagingData } = require('../utils/pagination');
 
 /**
  * Controller para la gestión de Árboles (Inventario Forestal)
  * Enfoque: Trazabilidad y gestión de estados.
  */
 const arbolController = {
-    // 1. Listar todos los árboles
+    // 1. Listar todos los árboles con Paginación y Filtros
     getAll: async (req, res) => {
         try {
-            const arboles = await Arbol.findAll({
-                include: [{ model: Abono, limit: 5, order: [['fecha', 'DESC']] }] // Ver últimos abonos
+            const { page, size, nombre, tipo, estado } = req.query;
+            const { limit, offset } = getPagination(page, size);
+
+            // Construcción dinámica de filtros
+            const condition = {};
+            if (nombre) condition.nombre = { [Op.like]: `%${nombre}%` };
+            if (tipo) condition.tipo = tipo;
+            if (estado) condition.estado = estado;
+
+            const data = await Arbol.findAndCountAll({
+                where: condition,
+                limit,
+                offset,
+                include: [{ model: Abono, limit: 1, order: [['fecha', 'DESC']] }],
+                order: [['fechaRegistro', 'DESC']]
             });
-            return res.status(200).json(arboles);
+
+            const response = getPagingData(data, page, limit);
+            return res.status(200).json(response);
         } catch (error) {
             console.error('Error en getAllTrees:', error);
             return res.status(500).json({ message: 'Error al recuperar el inventario de árboles' });

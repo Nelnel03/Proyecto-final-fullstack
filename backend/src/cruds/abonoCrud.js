@@ -1,4 +1,4 @@
-const { Abono, Arbol, Usuario } = require('../models');
+const { Abono, Arbol, Usuario, sequelize } = require('../models');
 
 /**
  * Controller para la gestión de Abonos (Mantenimiento de Árboles)
@@ -43,11 +43,13 @@ const abonoController = {
         }
     },
 
-    // 3. Registrar una nueva fertilización
+    // 3. Registrar una nueva fertilización (Con Transacción)
     create: async (req, res) => {
+        const t = await sequelize.transaction(); // Iniciamos la transacción
         try {
-            const { arbol_id, voluntario_id, tipo_abono, cantidad_kg, fecha, notas } = req.body;
+            const { arbol_id, voluntario_id, tipo_abono, cantidad_kg, fecha, notas, nuevo_progreso } = req.body;
 
+            // 1. Crear el registro de abono
             const nuevoAbono = await Abono.create({
                 arbol_id,
                 voluntario_id,
@@ -55,15 +57,28 @@ const abonoController = {
                 cantidad_kg,
                 fecha: fecha || new Date(),
                 notas
-            });
+            }, { transaction: t });
+
+            // 2. Si se envió un nuevo progreso, actualizamos el árbol
+            if (nuevo_progreso !== undefined) {
+                const arbol = await Arbol.findByPk(arbol_id);
+                if (arbol) {
+                    await arbol.update({ progreso: nuevo_progreso }, { transaction: t });
+                }
+            }
+
+            // Si todo salió bien, confirmamos los cambios
+            await t.commit();
 
             return res.status(201).json({
-                message: 'Registro de abono creado exitosamente',
+                message: 'Registro de abono y actualización de árbol completados',
                 abono: nuevoAbono
             });
         } catch (error) {
-            console.error('Error en createAbono:', error);
-            return res.status(500).json({ message: 'Error al registrar el abono' });
+            // Si algo falló, revertimos TODO (rollback)
+            await t.rollback();
+            console.error('Error en createAbono con Transacción:', error);
+            return res.status(500).json({ message: 'Error al registrar el abono. No se realizaron cambios.' });
         }
     },
 

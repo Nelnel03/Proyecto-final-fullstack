@@ -18,8 +18,7 @@ const arbolValidator = [
 
     body('tipo')
         .trim()
-        .notEmpty().withMessage('El tipo de árbol es obligatorio')
-        .isIn(['frutal', 'ornamental', 'maderable', 'otro']).withMessage('Tipo de árbol no válido'),
+        .notEmpty().withMessage('El tipo de árbol es obligatorio'),
 
     body('progreso')
         .optional()

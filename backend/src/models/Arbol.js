@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Arbol = sequelize.define('arboles', {
     id: {
-      type: DataTypes.INT,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },

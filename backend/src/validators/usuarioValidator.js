@@ -31,7 +31,7 @@ const usuarioValidator = [
 
     body('status')
         .optional()
-        .isIn(['activo', 'baneado', 'pendiente']).withMessage('Status no válido')
+        .isIn(['activo', 'baneado', 'inactivo']).withMessage('Status no válido')
 ];
 
 module.exports = usuarioValidator;

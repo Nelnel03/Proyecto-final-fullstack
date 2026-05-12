@@ -161,4 +161,4 @@ const usuarioCrud = {
     }
 };
 
-module.exports = usuarioController;
+module.exports = usuarioCrud;

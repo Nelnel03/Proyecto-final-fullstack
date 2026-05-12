@@ -137,4 +137,4 @@ const reporteVoluntariadoCrud = {
     }
 };
 
-module.exports = reporteVoluntariadoController;
+module.exports = reporteVoluntariadoCrud;

@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // --- Rutas Base ---
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/usuarios', require('./routes/usuarioRoutes'));
 app.use('/api/arboles', require('./routes/arbolRoutes'));
 app.use('/api/tareas', require('./routes/tareaRoutes'));

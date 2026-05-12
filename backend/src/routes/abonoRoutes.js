@@ -14,29 +14,36 @@ const validate = (req, res, next) => {
     next();
 };
 
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
 // --- Rutas ---
 
-// GET: Todos los abonos
+// GET: Todos los abonos (Público)
 router.get('/', abonoCrud.getAll);
 
-// GET: Un registro específico
+// GET: Un registro específico (Público)
 router.get('/:id', abonoCrud.getById);
 
-// POST: Registrar nuevo abono
+// Rutas protegidas
+router.use(verifyToken);
+
+// POST: Registrar nuevo abono (Admin y Voluntario)
 router.post('/', [
+    checkRole(['admin', 'voluntario']),
     body('arbol_id').isInt().withMessage('ID de árbol no válido'),
     body('voluntario_id').isInt().withMessage('ID de voluntario no válido'),
     body('cantidad_kg').isFloat({ min: 0.1 }).withMessage('La cantidad debe ser un número mayor a 0.1 kg'),
     validate
 ], abonoCrud.create);
 
-// PUT: Actualizar registro
+// PUT: Actualizar registro (Admin y Voluntario)
 router.put('/:id', [
+    checkRole(['admin', 'voluntario']),
     body('cantidad_kg').optional().isFloat({ min: 0.1 }).withMessage('La cantidad debe ser un número mayor a 0.1 kg'),
     validate
 ], abonoCrud.update);
 
-// DELETE: Eliminar registro
-router.delete('/:id', abonoCrud.delete);
+// DELETE: Eliminar registro (Solo Admin)
+router.delete('/:id', checkRole(['admin']), abonoCrud.delete);
 
 module.exports = router;

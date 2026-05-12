@@ -14,7 +14,12 @@ const validate = (req, res, next) => {
     next();
 };
 
-// --- Definición de Rutas ---
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
+// --- Definición de Rutas (Protegidas) ---
+
+// Solo el ADMIN puede gestionar usuarios
+router.use(verifyToken, checkRole(['admin']));
 
 // GET: Obtener todos los usuarios
 router.get('/', usuarioCrud.getAll);

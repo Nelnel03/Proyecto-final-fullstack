@@ -14,28 +14,35 @@ const validate = (req, res, next) => {
     next();
 };
 
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
 // --- Rutas ---
 
-// GET: Todas las solicitudes
-router.get('/', solicitudCrud.getAll);
+// Todas las rutas requieren login
+router.use(verifyToken);
 
-// GET: Una solicitud por ID
-router.get('/:id', solicitudCrud.getById);
+// GET: Todas las solicitudes (Solo Admin)
+router.get('/', checkRole(['admin']), solicitudCrud.getAll);
 
-// POST: Crear nueva solicitud
+// GET: Una solicitud por ID (Solo Admin)
+router.get('/:id', checkRole(['admin']), solicitudCrud.getById);
+
+// POST: Crear nueva solicitud (Admin, Voluntario, Usuario)
 router.post('/', [
+    checkRole(['admin', 'voluntario', 'usuario']),
     body('usuario_id').isInt().withMessage('ID de usuario no válido'),
     body('mensaje').notEmpty().withMessage('El mensaje es obligatorio'),
     validate
 ], solicitudCrud.create);
 
-// PUT: Actualizar estado de la solicitud
+// PUT: Actualizar estado (Solo Admin)
 router.put('/:id', [
+    checkRole(['admin']),
     body('estado').isIn(['pendiente', 'aprobada', 'rechazada']).withMessage('Estado no válido'),
     validate
 ], solicitudCrud.update);
 
-// DELETE: Eliminar solicitud
-router.delete('/:id', solicitudCrud.delete);
+// DELETE: Eliminar solicitud (Solo Admin)
+router.delete('/:id', checkRole(['admin']), solicitudCrud.delete);
 
 module.exports = router;

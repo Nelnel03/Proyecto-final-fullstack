@@ -14,7 +14,10 @@ const validate = (req, res, next) => {
     next();
 };
 
-// --- Rutas ---
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
+// --- Rutas (Protegidas por Admin) ---
+router.use(verifyToken, checkRole(['admin']));
 
 // GET: Todas las estadísticas
 router.get('/', statsCrud.getAll);

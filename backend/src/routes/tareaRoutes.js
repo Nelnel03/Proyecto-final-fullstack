@@ -14,13 +14,18 @@ const validate = (req, res, next) => {
     next();
 };
 
+const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+
 // --- Rutas ---
 
-// GET: Listar tareas (soporta query param ?soloActivas=true)
+// GET: Listar tareas (Público)
 router.get('/', tareaCrud.getAll);
 
-// GET: Una tarea
+// GET: Una tarea (Público)
 router.get('/:id', tareaCrud.getById);
+
+// Solo el ADMIN puede modificar el catálogo de tareas
+router.use(verifyToken, checkRole(['admin']));
 
 // POST: Crear tarea
 router.post('/', [

@@ -20,6 +20,12 @@ module.exports = {
         descripcion: 'Usuario visitante con acceso de solo lectura',
         created_at: new Date(),
         updated_at: new Date()
+      },
+      {
+        nombre: 'usuario',
+        descripcion: 'Usuario registrado estándar con acceso a funciones básicas',
+        created_at: new Date(),
+        updated_at: new Date()
       }
     ], {});
   },

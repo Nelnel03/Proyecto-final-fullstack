@@ -16,14 +16,12 @@ const authCrud = {
                 return res.status(400).json({ message: 'El correo ya está registrado' });
             }
 
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-
+            // El hash ocurre automáticamente en el modelo (Hooks)
             const user = await Usuario.create({
                 nombre,
                 email,
-                password: hashedPassword,
-                rol_id: rol_id || 4, // Por defecto 'visitante' o 'usuario' según tu DB (aquí asumimos 4 como el nuevo 'usuario')
+                password, // Se envía en texto plano, el hook lo encripta
+                rol_id: rol_id || 4, 
                 area,
                 telefono,
                 fechaIngreso: new Date()
@@ -60,7 +58,8 @@ const authCrud = {
                 return res.status(401).json({ message: 'Credenciales inválidas' });
             }
 
-            const isMatch = await bcrypt.compare(password, user.password);
+            // Usamos el método prototipo del modelo
+            const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.status(401).json({ message: 'Credenciales inválidas' });
             }

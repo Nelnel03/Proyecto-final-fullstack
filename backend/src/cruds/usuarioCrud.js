@@ -1,4 +1,4 @@
-const { Usuario, Rol } = require('../models');
+const { Usuario, Rol, Sesion, ResetToken, sequelize } = require('../models');
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const { getPagination, getPagingData } = require('../utils/pagination');
@@ -132,21 +132,34 @@ const usuarioCrud = {
         }
     },
 
-    // 5. Eliminar usuario (Baja lógica o física - aquí física por el SQL original)
+    // 5. Eliminar usuario (Con Transacción para limpieza de seguridad)
     delete: async (req, res) => {
+        const t = await sequelize.transaction();
         try {
             const { id } = req.params;
             const usuario = await Usuario.findByPk(id);
 
             if (!usuario) {
+                await t.rollback();
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            await usuario.destroy();
-            return res.status(200).json({ message: 'Usuario eliminado correctamente' });
+            // 1. Limpiar sesiones activas
+            await Sesion.destroy({ where: { usuario_id: id }, transaction: t });
+
+            // 2. Limpiar tokens de reset
+            await ResetToken.destroy({ where: { usuario_id: id }, transaction: t });
+
+            // 3. Eliminar el usuario
+            await usuario.destroy({ transaction: t });
+
+            // Confirmar cambios
+            await t.commit();
+            return res.status(200).json({ message: 'Usuario y sus datos de sesión eliminados correctamente' });
         } catch (error) {
-            console.error('Error en deleteUser:', error);
-            return res.status(500).json({ message: 'Error al eliminar el usuario' });
+            await t.rollback();
+            console.error('Error en deleteUser con Transacción:', error);
+            return res.status(500).json({ message: 'Error al eliminar el usuario y sus dependencias.' });
         }
     }
 };

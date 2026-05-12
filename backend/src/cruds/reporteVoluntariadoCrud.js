@@ -1,20 +1,35 @@
 const { ReporteVoluntariado, Usuario, TareaDisponible } = require('../models');
+const { Op } = require('sequelize');
+const { getPagination, getPagingData } = require('../utils/pagination');
 
 /**
  * Controller para la gestión de Reportes de Voluntariado
  */
-const reporteVoluntariadoController = {
-    // 1. Listar todos los reportes (con información del voluntario y la tarea)
+const reporteVoluntariadoCrud = {
+    // 1. Listar todos los reportes con Paginación y Filtros
     getAll: async (req, res) => {
         try {
-            const reportes = await ReporteVoluntariado.findAll({
+            const { page, size, estado, voluntario_id, tarea_id } = req.query;
+            const { limit, offset } = getPagination(page, size);
+
+            const condition = {};
+            if (estado) condition.estado = estado;
+            if (voluntario_id) condition.voluntario_id = voluntario_id;
+            if (tarea_id) condition.tarea_id = tarea_id;
+
+            const data = await ReporteVoluntariado.findAndCountAll({
+                where: condition,
+                limit,
+                offset,
                 include: [
                     { model: Usuario, attributes: ['nombre', 'email', 'area'] },
                     { model: TareaDisponible, attributes: ['titulo'] }
                 ],
                 order: [['fecha', 'DESC'], ['created_at', 'DESC']]
             });
-            return res.status(200).json(reportes);
+
+            const response = getPagingData(data, page, limit);
+            return res.status(200).json(response);
         } catch (error) {
             console.error('Error en getAllReportesVoluntariado:', error);
             return res.status(500).json({ message: 'Error al recuperar los reportes de voluntariado' });

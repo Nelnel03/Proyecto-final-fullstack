@@ -1,19 +1,37 @@
 const { Usuario, Rol } = require('../models');
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
+const { getPagination, getPagingData } = require('../utils/pagination');
 
 /**
  * Controller para la gestión de Usuarios
  * Enfoque: Alta disponibilidad y manejo de errores estandarizado.
  */
-const usuarioController = {
-    // 1. Obtener todos los usuarios
+const usuarioCrud = {
+    // 1. Obtener todos los usuarios con Paginación y Filtros
     getAll: async (req, res) => {
         try {
-            const usuarios = await Usuario.findAll({
+            const { page, size, nombre, email, rol_id, status } = req.query;
+            const { limit, offset } = getPagination(page, size);
+
+            // Filtros dinámicos
+            const condition = {};
+            if (nombre) condition.nombre = { [Op.like]: `%${nombre}%` };
+            if (email) condition.email = { [Op.like]: `%${email}%` };
+            if (rol_id) condition.rol_id = rol_id;
+            if (status) condition.status = status;
+
+            const data = await Usuario.findAndCountAll({
+                where: condition,
+                limit,
+                offset,
                 include: [{ model: Rol, attributes: ['nombre'] }],
-                attributes: { exclude: ['password'] } // Seguridad: No exponer el hash
+                attributes: { exclude: ['password'] },
+                order: [['fechaIngreso', 'DESC']]
             });
-            return res.status(200).json(usuarios);
+
+            const response = getPagingData(data, page, limit);
+            return res.status(200).json(response);
         } catch (error) {
             console.error('Error en getAllUsers:', error);
             return res.status(500).json({ message: 'Error al recuperar usuarios' });

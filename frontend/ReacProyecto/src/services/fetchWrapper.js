@@ -5,6 +5,7 @@
  * También estandariza las respuestas y maneja errores HTTP.
  */
 import { BASE_URL } from './config.jsx';
+import { parseApiError, NetworkError } from '../utils/errors';
 
 /* ─── Helpers internos ───────────────────────────────────────── */
 
@@ -16,8 +17,9 @@ function buildResponse(data, message = 'OK') {
   return { status: 'success', data, message, error: null };
 }
 
-function buildError(error, message = 'Error en la petición') {
-  return { status: 'error', data: null, message, error };
+function buildError(error, message) {
+  // Ahora manejamos instancias de ApiError y derivadas
+  return { status: 'error', data: null, message: message || error.message, error };
 }
 
 /* ─── Wrapper principal ──────────────────────────────────────── */
@@ -61,19 +63,25 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
     }
 
     if (!response.ok) {
-      const errorMsg =
-        data?.message || data?.error || `Error HTTP ${response.status}`;
-      throw new Error(errorMsg);
+      const errorMsg = data?.message || data?.error;
+      throw parseApiError(response.status, data, errorMsg);
     }
 
     return buildResponse(data);
   } catch (err) {
     clearTimeout(timeoutId);
 
-    if (err.name === 'AbortError') {
-      return buildError(err, 'La solicitud tardó demasiado. Por favor reintenta.');
+    // Si ya es un error nuestro, lo relanzamos para que useRequestState/useErrorHandler lo atrape
+    if (err.name && err.name.endsWith('Error') && err.name !== 'TypeError') {
+      throw err;
     }
-    return buildError(err, err.message || 'Error de red o servidor.');
+
+    if (err.name === 'AbortError') {
+      throw new NetworkError('La solicitud tardó demasiado. Por favor reintenta.');
+    }
+    
+    // Si falla el fetch por CORS o red
+    throw new NetworkError();
   }
 }
 

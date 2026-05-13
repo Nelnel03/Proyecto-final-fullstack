@@ -1,0 +1,132 @@
+/* ─── Toast Container ───────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none; /* Allows clicking through the container */
+  max-width: 400px;
+  width: calc(100vw - 2rem);
+}
+
+/* ─── Individual Toast ──────────────────────────────────────── */
+.toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-caracola, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  pointer-events: auto; /* Re-enable clicks on the toast itself */
+  overflow: hidden;
+  border-left: 5px solid;
+  font-family: var(--fuente-principal, 'Outfit', sans-serif);
+}
+
+/* Modo oscuro */
+[data-theme='dark'] .toast {
+  background-color: #1c2128;
+  color: #f0f6fc;
+}
+
+/* ─── Variantes de Color ────────────────────────────────────── */
+.toast--success { border-left-color: #10b981; }
+.toast--error   { border-left-color: #ef4444; }
+.toast--warning { border-left-color: #f59e0b; }
+.toast--info    { border-left-color: #3b82f6; }
+
+.toast-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.toast-icon--success { color: #10b981; }
+.toast-icon--error   { color: #ef4444; }
+.toast-icon--warning { color: #f59e0b; }
+.toast-icon--info    { color: #3b82f6; }
+
+.toast-content {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.toast-message {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-texto, #283618);
+}
+
+/* ─── Close Button ──────────────────────────────────────────── */
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 12px;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toast-close:hover { opacity: 1; }
+
+/* ─── Barra de Progreso ─────────────────────────────────────── */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  animation-name: toast-progress-shrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.toast-progress--success { background-color: #10b981; }
+.toast-progress--error   { background-color: #ef4444; }
+.toast-progress--warning { background-color: #f59e0b; }
+.toast-progress--info    { background-color: #3b82f6; }
+
+@keyframes toast-progress-shrink {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* ─── Animaciones de Entrada/Salida ─────────────────────────── */
+.toast--enter {
+  animation: toast-slide-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.toast--exit {
+  animation: toast-slide-out 0.25s ease-in forwards;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}

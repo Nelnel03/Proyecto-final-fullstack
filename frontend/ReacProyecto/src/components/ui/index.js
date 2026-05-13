@@ -8,6 +8,8 @@ export { default as SpinnerCenter } from './SpinnerCenter';
 export { default as LoadingButton } from './LoadingButton';
 export { default as GlobalOverlay } from './GlobalOverlay';
 export { default as TopProgressBar} from './TopProgressBar';
+export { default as ErrorMessage  } from './ErrorMessage';
+export { default as ErrorBoundary } from './ErrorBoundary';
 
 export {
   SkeletonBlock,

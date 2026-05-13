@@ -5,8 +5,8 @@
  * y muestra toasts de error vía SweetAlert2 (ya presente en el proyecto).
  */
 import { useCallback } from 'react';
-import Swal from 'sweetalert2';
 import { useLoadingContext } from '../context/LoadingContext';
+import { useErrorHandler } from './useErrorHandler';
 
 /**
  * @param {string} key     Clave única para identificar este loader (ej: 'arboles').
@@ -19,8 +19,8 @@ export function useRequestState(
   key,
   { blocking = false, showErrorToast = true, minDelay = 300 } = {}
 ) {
-  const { startLoading, stopLoading, isLoading, setBlockingOverlay } =
-    useLoadingContext();
+  const { startLoading, stopLoading, isLoading, setBlockingOverlay } = useLoadingContext();
+  const handleError = useErrorHandler();
 
   /**
    * Ejecuta una función async registrando el estado de carga en el contexto global.
@@ -51,12 +51,7 @@ export function useRequestState(
         }
 
         if (showErrorToast) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: err?.message || 'Ocurrió un error inesperado. Por favor intenta de nuevo.',
-            confirmButtonColor: '#344e41',
-          });
+          handleError(err);
         }
         throw err;
       } finally {

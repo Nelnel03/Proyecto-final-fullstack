@@ -41,6 +41,6 @@ router.put('/:id', [
 ], tareaCrud.update);
 
 // DELETE: Borrar tarea
-router.delete('/:id', tareaController.delete);
+router.delete('/:id', tareaCrud.delete);
 
 module.exports = router;

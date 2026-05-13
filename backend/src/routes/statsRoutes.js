@@ -41,6 +41,6 @@ router.put('/:id', [
 ], statsCrud.update);
 
 // DELETE: Eliminar estadística
-router.delete('/:id', statsController.delete);
+router.delete('/:id', statsCrud.delete);
 
 module.exports = router;

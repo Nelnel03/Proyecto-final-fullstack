@@ -8,7 +8,27 @@ const app = express();
 
 // --- Middlewares Globales ---
 app.use(helmet()); 
-app.use(cors()); 
+
+// Configuración de CORS restringida
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'http://localhost:5173', // Vite default
+    'http://localhost:3000'  // Local tests
+].filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Permitir peticiones sin origin (como Postman o curl) o si está en la lista
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Acceso denegado por política CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+})); 
 app.use(morgan('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));

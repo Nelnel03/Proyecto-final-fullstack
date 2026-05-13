@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import emailjs from '@emailjs/browser';
 import services from '../services/services';
 import DarkModeToggle from './DarkModeToggle';
+import LoadingButton from './ui/LoadingButton';
 import '../styles/MainPagesInicoVisitante.css';
 import '../styles/Login.css';
 
@@ -423,9 +424,18 @@ function MainPagesLogin() {
             </div>
           )}
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? 'Cargando...' : isRecovering ? 'Enviar Instrucciones' : isRegistering ? 'Registrarse' : 'Entrar'}
-          </button>
+          <LoadingButton
+            type="submit"
+            className="login-btn"
+            loading={loading}
+            loadingText={
+              isRecovering ? 'Enviando…' :
+              isRegistering ? 'Registrando…' :
+              'Entrando…'
+            }
+          >
+            {isRecovering ? 'Enviar Instrucciones' : isRegistering ? 'Registrarse' : 'Entrar'}
+          </LoadingButton>
         </form>
 
         <div className="login-footer-container">

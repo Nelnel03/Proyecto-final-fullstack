@@ -1,0 +1,103 @@
+/* ─── Botón base ─────────────────────────────────────────────── */
+.loading-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--fuente-principal, 'Outfit', sans-serif);
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease,
+              box-shadow 0.25s ease, opacity 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Tamaños ────────────────────────────────────────────────── */
+.loading-btn--sm  { padding: 7px  16px; font-size: 0.8rem;  }
+.loading-btn--md  { padding: 11px 24px; font-size: 0.95rem; }
+.loading-btn--lg  { padding: 14px 32px; font-size: 1.05rem; }
+
+/* ─── Variantes ──────────────────────────────────────────────── */
+.loading-btn--primary {
+  background-color: var(--color-bosque-musgo, #344e41);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(52, 78, 65, 0.3);
+}
+.loading-btn--primary:hover:not(:disabled) {
+  background-color: var(--color-bosque-helecho, #3a5a40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(52, 78, 65, 0.4);
+}
+
+.loading-btn--secondary {
+  background-color: var(--color-ocre-silvestre, #a3b18a);
+  color: var(--color-tierra-sombra, #283618);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+.loading-btn--secondary:hover:not(:disabled) {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.loading-btn--danger {
+  background-color: var(--color-fauna-flor, #E71D36);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(231, 29, 54, 0.3);
+}
+.loading-btn--danger:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+.loading-btn--outline {
+  background-color: transparent;
+  color: var(--color-bosque-musgo, #344e41);
+  border: 2px solid var(--color-bosque-musgo, #344e41);
+  box-shadow: none;
+}
+.loading-btn--outline:hover:not(:disabled) {
+  background-color: var(--color-bosque-musgo, #344e41);
+  color: #fff;
+}
+
+/* ─── Estado loading ─────────────────────────────────────────── */
+.loading-btn--loading {
+  cursor: not-allowed;
+  opacity: 0.82;
+}
+
+.loading-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ─── Spinner dentro del botón ───────────────────────────────── */
+.loading-btn__spinner {
+  flex-shrink: 0;
+  --spinner-color: currentColor;
+  --spinner-track: rgba(255,255,255,0.25);
+}
+
+.loading-btn__text {
+  transition: opacity 0.2s ease;
+}
+
+/* Ripple al hacer click */
+.loading-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.loading-btn:active::after {
+  opacity: 1;
+}

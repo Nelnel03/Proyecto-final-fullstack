@@ -1,6 +1,8 @@
 /**
- * Middlewares de Manejo de Errores Centralizado
- * Enfoque Senior: Estabilidad y consistencia en las respuestas.
+ * @file errorMiddleware.js
+ * @description Middlewares de Manejo de Errores Centralizado.
+ * Todas las respuestas siguen la estructura estandarizada:
+ * { status, message, data, error }
  */
 const errorMiddleware = {
     // 1. Manejador para rutas no encontradas (404)
@@ -12,16 +14,18 @@ const errorMiddleware = {
 
     // 2. Manejador global de excepciones (500, etc)
     errorHandler: (err, req, res, next) => {
-        // Si el status code sigue siendo 200 pero hay un error, lo cambiamos a 500
         const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-        
+
         res.status(statusCode).json({
-            message: err.message,
-            // Solo mostramos el stack trace si no estamos en producción por seguridad
-            stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-            error_code: err.code || 'INTERNAL_SERVER_ERROR'
+            status: 'error',
+            message: err.message || 'Error interno del servidor',
+            data: null,
+            // Solo mostramos detalles técnicos fuera de producción
+            error: process.env.NODE_ENV === 'production'
+                ? null
+                : { stack: err.stack, code: err.code || 'INTERNAL_SERVER_ERROR' },
         });
-    }
+    },
 };
 
 module.exports = errorMiddleware;

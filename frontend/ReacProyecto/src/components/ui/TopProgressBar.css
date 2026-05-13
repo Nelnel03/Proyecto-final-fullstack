@@ -1,0 +1,50 @@
+/* ─── Barra Superior de Progreso ─────────────────────────────── */
+.top-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 10000;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.top-progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-bosque-helecho, #3a5a40),
+    var(--color-fauna-rana, #70E000),
+    var(--color-fauna-lapa, #FF9E00)
+  );
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 2px 2px 0;
+}
+
+/* Destello al final de la barra */
+.top-progress-bar__glow {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 12px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(112, 224, 0, 0.6) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado "done" → fade out */
+.top-progress-bar--done {
+  animation: progress-bar-fade 0.45s ease forwards;
+  animation-delay: 0.05s;
+}
+
+@keyframes progress-bar-fade {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}

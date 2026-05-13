@@ -1,5 +1,6 @@
 import { Info, Leaf, Camera, Calendar, AlignLeft, Thermometer, ArrowUp, Zap } from 'lucide-react';
 import ImageUploadField from '../ImageUploadField';
+import LoadingButton from '../ui/LoadingButton';
 import '../../styles/MainPagesInicoAdmin.css';
 
 function ArbolFormTab({ 
@@ -12,7 +13,8 @@ function ArbolFormTab({
   setModoNuevoTipo, 
   setForm, 
   resetForm, 
-  setTab 
+  setTab,
+  isSubmitting = false
 }) {
   // Si no hay tipos registrados en el sistema, forzamos el modo "Nuevo Tipo"
   React.useEffect(() => {
@@ -228,9 +230,14 @@ function ArbolFormTab({
               >
                 Descartar Cambios
               </button>
-              <button type="submit" className="admin-btn-guardar">
+              <LoadingButton
+                type="submit"
+                className="admin-btn-guardar"
+                loading={isSubmitting}
+                loadingText={modoEdicion ? 'Actualizando…' : 'Registrando…'}
+              >
                 {modoEdicion ? 'Actualizar Registro' : 'Completar Registro'}
-              </button>
+              </LoadingButton>
             </div>
           </form>
         </div>

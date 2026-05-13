@@ -1,0 +1,64 @@
+/* ─── Spinner ─────────────────────────────────────────────────── */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  --spinner-color: var(--color-bosque-musgo, #344e41);
+  --spinner-track: rgba(52, 78, 65, 0.15);
+}
+
+.spinner svg {
+  animation: spinner-rotate 1.4s linear infinite;
+}
+
+/* Tamaños */
+.spinner--sm  { width: 16px; height: 16px; }
+.spinner--md  { width: 28px; height: 28px; }
+.spinner--lg  { width: 44px; height: 44px; }
+.spinner--xl  { width: 64px; height: 64px; }
+
+.spinner__track {
+  stroke: var(--spinner-track);
+}
+
+.spinner__arc {
+  stroke: var(--spinner-color);
+  stroke-dasharray: 80;
+  stroke-dashoffset: 60;
+  animation: spinner-arc 1.4s ease-in-out infinite;
+}
+
+@keyframes spinner-rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinner-arc {
+  0%   { stroke-dasharray: 1, 200;  stroke-dashoffset: 0;    }
+  50%  { stroke-dasharray: 90, 200; stroke-dashoffset: -35;  }
+  100% { stroke-dasharray: 90, 200; stroke-dashoffset: -124; }
+}
+
+/* ─── Spinner Centrado (para páginas / secciones) ────────────── */
+.spinner-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 3rem 1rem;
+  width: 100%;
+}
+
+.spinner-center__label {
+  font-size: 0.9rem;
+  color: var(--color-tierra-sombra, #283618);
+  opacity: 0.7;
+  font-family: var(--fuente-principal, 'Outfit', sans-serif);
+  letter-spacing: 0.02em;
+  animation: spinner-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes spinner-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1;   }
+}

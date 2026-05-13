@@ -99,7 +99,8 @@ function MainPagesInicoAdmin() {
   const [totalNotificaciones, setTotalNotificaciones] = useState(0);
 
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
-  const [busqueda, setBusqueda] = useState(''); 
+  const [busqueda, setBusqueda] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const navigate = useNavigate();
 
   const [viewMode, setViewMode] = useState('Satellite'); // For the map toggle
@@ -503,8 +504,8 @@ function MainPagesInicoAdmin() {
       Swal.fire('Atención', 'Nombre y Tipo son obligatorios', 'warning');
       return;
     }
+    setIsSubmitting(true);
     try {
-      // Normalizamos el tipo a minúsculas para consistencia en la base de datos
       const formNormalizado = { 
         ...form, 
         tipo: form.tipo ? form.tipo.toLowerCase().trim() : '' 
@@ -518,6 +519,8 @@ function MainPagesInicoAdmin() {
       await cargarArboles();
     } catch (err) { 
       Swal.fire('Error', 'No se pudo guardar la especie. Revisa la conexión con el servidor.', 'error'); 
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -604,7 +607,7 @@ function MainPagesInicoAdmin() {
                 setUserSubTab={setUserSubTab} 
               />
             )}
-            {tab === 'lista' && <ListaTab busqueda={busqueda} setBusqueda={setBusqueda} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} tiposDisponibles={tiposDisponibles} setTab={setTab} handleEliminarTipo={handleEliminarTipo} statsTipos={statsTipos} handleUpdateStatTipo={handleUpdateStatTipo} arboles={arboles} cargando={cargando} handleEditar={handleEditar} handleAbonarArbol={handleAbonarArbol} handleEliminar={handleEliminar} handleLimpiarHistorialAbono={handleLimpiarHistorialAbono} modoEdicion={modoEdicion} handleSubmit={handleSubmit} form={form} handleChange={handleChange} modoNuevoTipo={modoNuevoTipo} setModoNuevoTipo={setModoNuevoTipo} setForm={setForm} resetForm={resetForm} />}
+            {tab === 'lista' && <ListaTab busqueda={busqueda} setBusqueda={setBusqueda} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} tiposDisponibles={tiposDisponibles} setTab={setTab} handleEliminarTipo={handleEliminarTipo} statsTipos={statsTipos} handleUpdateStatTipo={handleUpdateStatTipo} arboles={arboles} cargando={cargando} handleEditar={handleEditar} handleAbonarArbol={handleAbonarArbol} handleEliminar={handleEliminar} handleLimpiarHistorialAbono={handleLimpiarHistorialAbono} modoEdicion={modoEdicion} handleSubmit={handleSubmit} form={form} handleChange={handleChange} modoNuevoTipo={modoNuevoTipo} setModoNuevoTipo={setModoNuevoTipo} setForm={setForm} resetForm={resetForm} isSubmitting={isSubmitting} />}
             {tab === 'bajas' && <BajasTab arboles={arboles} handleEditar={handleEditar} />}
             {tab === 'usuarios' && <UsuariosTab refrescarUsuarios={cargarArboles} modoEdicionUsuario={modoEdicionUsuario} handleUserSubmit={handleUserSubmit} formUsuario={formUsuario} setFormUsuario={setFormUsuario} resetFormUsuario={resetFormUsuario} usuarios={usuarios} handleEditarUsuario={handleEditarUsuario} handleBanUsuario={handleBanUsuario} handleActivarUsuario={handleActivarUsuario} handleConvertirUsuarioAVoluntariado={handleConvertirUsuarioAVoluntariado} subTab={userSubTab} setSubTab={setUserSubTab} />}
             {tab === 'voluntariados' && <VoluntariadosTab refrescarVoluntarios={cargarArboles} refrescarNotificaciones={cargarArboles} modoEdicionVoluntariado={modoEdicionVoluntariado} handleVoluntariadoSubmit={handleVoluntariadoSubmit} formVoluntariado={formVoluntariado} setFormVoluntariado={setFormVoluntariado} resetFormVoluntariado={resetFormVoluntariado} voluntariados={voluntariados} handleEditarVoluntariado={handleEditarVoluntariado} handleEliminarVoluntariado={handleEliminarVoluntariado} handleConvertirVoluntariadoAUsuario={handleConvertirVoluntariadoAUsuario} />}

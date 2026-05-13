@@ -2,6 +2,7 @@ import React from 'react';
 import '../../styles/MainPagesInicoAdmin.css';
 import '../../styles/Arboles.css';
 import ArbolFormTab from './ArbolFormTab';
+import { SkeletonCardGrid } from '../ui/Skeleton';
 
 function ListaTab({ 
   busqueda, 
@@ -26,7 +27,8 @@ function ListaTab({
   modoNuevoTipo,
   setModoNuevoTipo,
   setForm,
-  resetForm
+  resetForm,
+  isSubmitting = false
 }) {
   const [showAddForm, setShowAddForm] = React.useState(false);
 
@@ -118,6 +120,7 @@ function ListaTab({
                  setShowAddForm(false);
                }}
                setTab={setTab}
+               isSubmitting={isSubmitting}
              />
            </div>
         )}
@@ -171,8 +174,8 @@ function ListaTab({
       {!showAddForm && (
         <>
           {cargando ? (
-            <div className="admin-loading-msg">
-              Cargando árboles...
+            <div style={{ padding: '1rem 0' }}>
+              <SkeletonCardGrid count={6} />
             </div>
           ) : arboles.filter(a => a.estado !== 'muerto').length === 0 ? (
             <div className="admin-empty-msg">

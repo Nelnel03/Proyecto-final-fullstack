@@ -1,0 +1,50 @@
+/* ─── Overlay Bloqueante Global ──────────────────────────────── */
+.global-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(8, 28, 21, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-fade-in 0.2s ease;
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.global-overlay__box {
+  background: var(--color-caracola, #fff);
+  border-radius: 18px;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  animation: overlay-box-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes overlay-box-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.global-overlay__text {
+  font-family: var(--fuente-principal, 'Outfit', sans-serif);
+  font-size: 0.95rem;
+  color: var(--color-tierra-sombra, #283618);
+  opacity: 0.75;
+  margin: 0;
+  text-align: center;
+  animation: overlay-text-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes overlay-text-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1;    }
+}

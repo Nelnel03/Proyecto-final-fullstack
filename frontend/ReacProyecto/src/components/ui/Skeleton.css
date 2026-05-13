@@ -1,0 +1,92 @@
+/* ─── Animación shimmer base ─────────────────────────────────── */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/* ─── Bloque base ────────────────────────────────────────────── */
+.skeleton-block {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-ocre-silvestre, #e0e0e0) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    var(--color-ocre-silvestre, #e0e0e0) 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* Adaptación modo oscuro */
+[data-theme='dark'] .skeleton-block {
+  background: linear-gradient(
+    90deg,
+    #21262d 25%,
+    #2d333b 50%,
+    #21262d 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─── Skeleton Text ──────────────────────────────────────────── */
+.skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* ─── Skeleton Card ──────────────────────────────────────────── */
+.skeleton-card {
+  background: var(--color-caracola, #fff);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--sombra-suave, 0 4px 12px rgba(0,0,0,.08));
+  border: 1px solid rgba(0,0,0,.05);
+}
+
+.skeleton-card__body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* ─── Skeleton Card Grid ─────────────────────────────────────── */
+.skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+  padding: 0;
+}
+
+/* ─── Skeleton Table ─────────────────────────────────────────── */
+.skeleton-table-row {
+  border-bottom: 1px solid rgba(0,0,0,.04);
+}
+
+.skeleton-table-cell {
+  padding: 14px 12px;
+}
+
+/* ─── Skeleton Profile ───────────────────────────────────────── */
+.skeleton-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.skeleton-profile__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

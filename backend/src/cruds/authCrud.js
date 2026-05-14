@@ -22,7 +22,7 @@ const authCrud = {
                 nombre,
                 email,
                 password, // Se envía en texto plano, el hook lo encripta
-                rol_id: rol_id || 4, 
+                rol_id: rol_id || 3, 
                 area,
                 telefono,
                 fechaIngreso: new Date()
@@ -52,7 +52,7 @@ const authCrud = {
 
             const user = await Usuario.findOne({ 
                 where: { email },
-                include: [{ model: Rol, attributes: ['nombre'] }]
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }]
             });
 
             if (!user) {
@@ -74,7 +74,7 @@ const authCrud = {
 
             // Generar Token con el rol incluido
             const token = jwt.sign(
-                { id: user.id, email: user.email, rol: user.Rol.nombre, rol_id: user.rol_id },
+                { id: user.id, email: user.email, rol: user.rol.nombre, rol_id: user.rol_id },
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
@@ -87,7 +87,7 @@ const authCrud = {
                     nombre: user.nombre,
                     email: user.email,
                     telefono: user.telefono,
-                    rol: user.Rol.nombre,
+                    rol: user.rol.nombre,
                     rol_id: user.rol_id,
                     status: user.status,
                     motivoBan: user.motivoBan,

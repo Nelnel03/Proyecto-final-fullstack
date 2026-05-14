@@ -67,6 +67,11 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
       throw new Error(errorMsg);
     }
 
+    // Si la respuesta ya tiene el formato estandarizado del backend, la devolvemos directamente
+    if (data && typeof data === 'object' && 'status' in data) {
+      return data;
+    }
+
     return buildResponse(data);
   } catch (err) {
     clearTimeout(timeoutId);

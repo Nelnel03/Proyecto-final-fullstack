@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false
     },
+    estado: {
+      type: DataTypes.ENUM('Pendiente', 'En Proceso', 'Leído', 'Solucionado', 'En Investigación', 'Resuelto'),
+      allowNull: true,
+      defaultValue: 'Pendiente'
+    },
     visto: {
       type: DataTypes.TINYINT,
       allowNull: false,

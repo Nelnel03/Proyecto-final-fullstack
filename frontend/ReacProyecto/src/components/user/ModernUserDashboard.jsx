@@ -81,8 +81,8 @@ function ModernUserDashboard() {
     const userData = sessionStorage.getItem('user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
-      if (parsedUser.rol !== 'user') {
-        navigate('/login'); 
+      if (parsedUser.rol !== 'user' && parsedUser.rol !== 'usuario') {
+        navigate('/login');
         return;
       }
       setUser(parsedUser);
@@ -131,8 +131,7 @@ function ModernUserDashboard() {
       color: isDark ? '#fff' : '#545454'
     }).then((result) => {
       if (result.isConfirmed) {
-        sessionStorage.removeItem('isAuthenticated');
-        sessionStorage.removeItem('user');
+        sessionStorage.clear();
         navigate('/');
       }
     });
@@ -150,7 +149,7 @@ function ModernUserDashboard() {
   );
 
   // Calculos para el Dashboard
-  const userReports = reportes.filter(r => r.userId === user.id);
+  const userReports = reportes.filter(r => r.usuario_id === user.id || r.userId === user.id);
   const stats = {
     observations: arboles.length,
     contributions: userReports.length,

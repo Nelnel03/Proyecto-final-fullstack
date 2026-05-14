@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('pendiente', 'aprobada', 'rechazada'),
       allowNull: false,
       defaultValue: 'pendiente'
+    },
+    visto: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     timestamps: true,

@@ -61,22 +61,37 @@ const usuarioCrud = {
     // 3. Crear un nuevo usuario
     create: async (req, res) => {
         try {
-            const { nombre, email, password, rol_id, area, telefono, status } = req.body;
+            const { nombre, email, password, rol_id, rol, area, telefono, status, debeCambiarPassword } = req.body;
 
-            // Verificamos si el email ya existe
             const emailExiste = await Usuario.findOne({ where: { email } });
             if (emailExiste) {
                 return res.status(400).json({ message: 'El correo electrónico ya está en uso' });
             }
 
+            // Normalizar nombre de rol ('user' y 'usuario' son equivalentes)
+            const rolNormMap = { user: 'usuario', usuario: 'usuario', voluntario: 'voluntario', admin: 'admin' };
+            const rolNormalizado = rol ? (rolNormMap[rol] || rol) : null;
+
+            // Permitir enviar nombre de rol en lugar de rol_id
+            let efectivoRolId = rol_id;
+            if (!efectivoRolId && rolNormalizado) {
+                const rolObj = await Rol.findOne({ where: { nombre: rolNormalizado } });
+                if (rolObj) efectivoRolId = rolObj.id;
+            }
+
+            // Normalizar status al formato del backend
+            const statusMap = { active: 'activo', banned: 'baneado', inactive: 'inactivo' };
+            const statusNormalizado = statusMap[status] || status || 'activo';
+
             const nuevoUsuario = await Usuario.create({
                 nombre,
                 email,
-                password, // Se encripta automáticamente via Hooks
-                rol_id,
+                password,
+                rol_id: efectivoRolId || 4,
                 area,
                 telefono,
-                status,
+                status: statusNormalizado,
+                debeCambiarPassword: debeCambiarPassword ? 1 : 0,
                 fechaIngreso: new Date()
             });
 
@@ -98,21 +113,47 @@ const usuarioCrud = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const { nombre, area, telefono, status, rol_id } = req.body;
+            const { nombre, area, telefono, status, rol_id, rol, motivoBan, fotoPerfil, password } = req.body;
 
             const usuario = await Usuario.findByPk(id);
             if (!usuario) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            // Actualizar campos
-            await usuario.update({
+            // Normalizar status al formato del backend
+            const statusMap = { active: 'activo', activo: 'activo', banned: 'baneado', baneado: 'baneado', inactive: 'inactivo', inactivo: 'inactivo' };
+
+            // Resolver rol_id si se pasa nombre de rol (normalizar 'user' → 'usuario')
+            const rolNormMap = { user: 'usuario', usuario: 'usuario', voluntario: 'voluntario', admin: 'admin' };
+            const rolNorm = rol ? (rolNormMap[rol] || rol) : null;
+            let efectivoRolId = rol_id;
+            if (!efectivoRolId && rolNorm) {
+                const rolObj = await Rol.findOne({ where: { nombre: rolNorm } });
+                if (rolObj) efectivoRolId = rolObj.id;
+            }
+
+            const updateData = {
                 nombre: nombre || usuario.nombre,
-                area: area || usuario.area,
-                telefono: telefono || usuario.telefono,
-                status: status || usuario.status,
-                rol_id: rol_id || usuario.rol_id
-            });
+                area: area !== undefined ? area : usuario.area,
+                telefono: telefono !== undefined ? telefono : usuario.telefono,
+                rol_id: efectivoRolId || usuario.rol_id
+            };
+
+            if (fotoPerfil !== undefined) updateData.fotoPerfil = fotoPerfil;
+            if (password && password.trim()) updateData.password = password;
+
+            if (status) {
+                updateData.status = statusMap[status] || status;
+                if (updateData.status !== 'baneado') {
+                    updateData.motivoBan = null;
+                }
+            }
+
+            if (motivoBan !== undefined) {
+                updateData.motivoBan = motivoBan;
+            }
+
+            await usuario.update(updateData);
 
             return res.status(200).json({
                 message: 'Usuario actualizado correctamente',
@@ -120,7 +161,11 @@ const usuarioCrud = {
                     id: usuario.id,
                     nombre: usuario.nombre,
                     email: usuario.email,
-                    status: usuario.status
+                    status: usuario.status,
+                    fotoPerfil: usuario.fotoPerfil,
+                    rol_id: usuario.rol_id,
+                    area: usuario.area,
+                    telefono: usuario.telefono
                 }
             });
         } catch (error) {

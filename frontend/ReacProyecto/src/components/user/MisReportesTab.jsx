@@ -15,7 +15,8 @@ const STATUS_STYLES = {
 };
 
 function StatusBadge({ estado }) {
-  const s = STATUS_STYLES[estado] || STATUS_STYLES['Pendiente'];
+  const display = estado ? estado.charAt(0).toUpperCase() + estado.slice(1) : 'Pendiente';
+  const s = STATUS_STYLES[display] || STATUS_STYLES['Pendiente'];
   return (
     <span
       className="status-badge-pill"
@@ -25,7 +26,7 @@ function StatusBadge({ estado }) {
         border: `1px solid ${s.border}`,
       }}
     >
-      {s.icon} {estado || 'Pendiente'}
+      {s.icon} {display}
     </span>
   );
 }
@@ -49,10 +50,10 @@ function MisReportesTab({ user }) {
         services.getReportesVoluntariado(),
         services.getSolicitudesVoluntariado()
       ]);
-      setReportesRobo((todosRobos || []).filter(r => r.userId === user.id).reverse());
-      setMensajesSoporte((todosSoporte || []).filter(m => m.userId === user.id).reverse());
-      setActividades((todasActividades || []).filter(a => a.voluntarioId === user.id).reverse());
-      setSolicitudesVol((todasSolicitudes || []).filter(s => s.userId === user.id).reverse());
+      setReportesRobo((todosRobos || []).filter(r => r.usuario_id === user.id || r.userId === user.id).reverse());
+      setMensajesSoporte((todosSoporte || []).filter(m => m.usuario_id === user.id || m.userId === user.id).reverse());
+      setActividades((todasActividades || []).filter(a => a.voluntario_id === user.id || a.voluntarioId === user.id).reverse());
+      setSolicitudesVol((todasSolicitudes || []).filter(s => s.usuario_id === user.id || s.userId === user.id).reverse());
       setUltimaActualizacion(new Date());
     } catch (err) {
       console.error('Error al cargar mis reportes:', err);
@@ -124,7 +125,7 @@ function MisReportesTab({ user }) {
                       <strong className="card-title-soporte">{m.asunto}</strong>
                       <StatusBadge estado={m.estado} />
                     </div>
-                    <p className="card-message">{m.mensaje}</p>
+                    <p className="card-message">{m.contenido || m.mensaje}</p>
                     <small className="card-date">Enviado: {new Date(m.fecha).toLocaleDateString()}</small>
                   </div>
                 ))}
@@ -150,11 +151,10 @@ function MisReportesTab({ user }) {
                     style={{ borderLeft: `5px solid ${STATUS_STYLES[r.estado]?.border || '#e5e7eb'}` }}
                   >
                     <div className="card-top-row">
-                      <strong className="card-title-robo">{r.tipo_arbol}</strong>
+                      <strong className="card-title-robo">{r.asunto || r.tipo_arbol}</strong>
                       <StatusBadge estado={r.estado} />
                     </div>
-                    <p className="card-detail card-detail-gray">{r.ubicacion}</p>
-                    <p className="card-detail card-detail-dark">{r.descripcion}</p>
+                    <p className="card-detail card-detail-dark">{r.contenido || r.descripcion}</p>
                     <small className="card-date">Enviado: {new Date(r.fecha).toLocaleDateString()}</small>
                   </div>
                 ))}
@@ -163,7 +163,7 @@ function MisReportesTab({ user }) {
             </section>
           )}
 
-          {user.rol === 'voluntario' && (filtroActivo === 'todos' || filtroActivo === 'actividades') && (
+          {user?.rol === 'voluntario' && (filtroActivo === 'todos' || filtroActivo === 'actividades') && (
             <section>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
                 <h3 className="section-title-actividad">Mis Reportes de Actividad</h3>

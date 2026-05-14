@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import DarkModeToggle from './DarkModeToggle';
-import '../styles/Nav.css';
+import { DarkModeToggle } from '../common';
+import '../../styles/layout/Nav.css';
 
 function Nav() {
   const location = useLocation();
@@ -10,8 +10,11 @@ function Nav() {
 
   // Sincronizar el estado de autenticación cuando cambie la ruta
   useEffect(() => {
-    setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
-  }, [location]);
+    const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
+    if (isAuth !== auth) {
+      setAuth(isAuth);
+    }
+  }, [location, auth]);
 
   // Ocultamos el Nav global SÓLO para el admin, ya que usuario y visitante sí lo usan.
   const isAdminRoute = location.pathname.startsWith('/admin');
@@ -71,7 +74,7 @@ function Nav() {
                   sessionStorage.removeItem('isAuthenticated');
                   sessionStorage.removeItem('user');
                   setAuth(false);
-                  window.location.href = '/';
+                  navigate('/');
                 }}
                 className="visitor-login-btn visitor-btn-logout"
               >

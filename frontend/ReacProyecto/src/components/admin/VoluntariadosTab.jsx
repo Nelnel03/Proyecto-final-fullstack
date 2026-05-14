@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
-import ImageUploadField from '../ImageUploadField';
-import '../../styles/MainPagesInicoAdmin.css';
-import '../../styles/VoluntariadoPremium.css';
+import { ImageUploadField } from '../common';
+import '../../styles/admin/MainPagesInicoAdmin.css';
+import '../../styles/admin/VoluntariadoPremium.css';
+import { usePagination } from '../../hooks/usePagination';
+import { Pagination } from '../ui';
 
 function VoluntariadosTab({
   refrescarNotificaciones,
@@ -374,9 +376,18 @@ function VoluntariadosTab({
                       : filtroEstado === 'aprobados' ? logs.filter(l => l.estado === 'aprobado')
                       : filtroEstado === 'rechazados' ? logs.filter(l => l.estado.startsWith('rechazado'))
                       : logs;
-  const totalHoras = logs.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
-  const totalAprobados = logs.filter(l => l.estado === 'aprobado').length;
   const totalPendientes = logs.filter(l => l.estado === 'enviado' || l.estado === 'solicitado').length;
+
+  // Paginación para la lista de voluntarios
+  const voluntariadosFiltrados = voluntariados.filter(vol => vol.rol === 'voluntario');
+  const {
+    currentPage: pageVol,
+    currentItems: currentVol,
+    totalPages: totalPagesVol,
+    paginate: paginateVol,
+    totalItems: totalVol,
+    itemsPerPage: itemsPerPageVol
+  } = usePagination(voluntariadosFiltrados, 6);
 
   return (
     <div className="premium-tab-container">
@@ -463,7 +474,7 @@ function VoluntariadosTab({
           </div>
 
           <div className="admin-arboles-lista admin-user-list">
-            {voluntariados.filter(vol => vol.rol === 'voluntario').map(vol => (
+            {currentVol.map(vol => (
               <div key={vol.id} className="admin-arbol-card admin-user-card">
                 <div className="admin-user-card-header">
                   <div 
@@ -506,6 +517,14 @@ function VoluntariadosTab({
               </div>
             ))}
           </div>
+
+          <Pagination
+            currentPage={pageVol}
+            totalPages={totalPagesVol}
+            onPageChange={paginateVol}
+            totalItems={totalVol}
+            itemsPerPage={itemsPerPageVol}
+          />
         </>
       ) : (
         <div className="premium-logs-view-wrapper" style={{ display: 'block' }}>

@@ -18,9 +18,11 @@ function TopProgressBar() {
 
   useEffect(() => {
     if (isActive) {
-      /* Mostrar barra e iniciar incremento progresivo */
-      setVisible(true);
-      setProgress(10);
+      // Usar setTimeout para evitar actualización de estado sincrónica en el efecto (cascading renders)
+      setTimeout(() => {
+        setVisible(true);
+        setProgress(10);
+      }, 0);
 
       timerRef.current = setInterval(() => {
         setProgress((prev) => {
@@ -33,12 +35,14 @@ function TopProgressBar() {
     } else {
       /* Completar y ocultar con fade */
       clearInterval(timerRef.current);
-      setProgress(100);
-
-      fadeRef.current = setTimeout(() => {
-        setVisible(false);
-        setProgress(0);
-      }, 500);
+      
+      setTimeout(() => {
+        setProgress(100);
+        fadeRef.current = setTimeout(() => {
+          setVisible(false);
+          setProgress(0);
+        }, 500);
+      }, 0);
     }
 
     return () => {

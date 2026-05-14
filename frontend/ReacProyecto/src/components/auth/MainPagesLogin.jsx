@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import emailjs from '@emailjs/browser';
-import { BASE_URL } from '../services/config.jsx';
-import DarkModeToggle from './DarkModeToggle';
-import LoadingButton from './ui/LoadingButton';
-import { useFormErrors } from '../hooks/useFormErrors';
-import ErrorMessage from './ui/ErrorMessage';
-import '../styles/MainPagesInicoVisitante.css';
-import '../styles/Login.css';
+import { BASE_URL } from '../../services/config.jsx';
+import { DarkModeToggle } from '../common';
+import { LoadingButton, ErrorMessage } from '../ui';
+import { useFormErrors } from '../../hooks/useFormErrors';
+import '../../styles/visitante/MainPagesInicoVisitante.css';
+import '../../styles/auth/Login.css';
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
@@ -62,7 +61,7 @@ function MainPagesLogin() {
 
   const validateEmail = (emailValue) => {
     return String(emailValue).toLowerCase().match(
-      /^(([^<>()[\]\\.,;:\s@"]+(.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
   };
 
@@ -200,7 +199,6 @@ function MainPagesLogin() {
 
     if (hasErrors) return;
 
-    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
@@ -312,9 +310,9 @@ function MainPagesLogin() {
           {isRecovering ? 'Recuperar Contraseña' : isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
         </h2>
 
-        {error && (
+        {errors.general && (
           <div className="login-error-msg">
-            {error}
+            {errors.general}
           </div>
         )}
 
@@ -398,12 +396,12 @@ function MainPagesLogin() {
 
           {!isRegistering && !isRecovering && (
             <div className="login-forgot-password" style={{ textAlign: 'right', marginBottom: '15px' }}>
-              <button
-                type="button"
-                className="login-footer-link"
+              <button 
+                type="button" 
+                className="login-footer-link" 
                 onClick={() => {
                   setIsRecovering(true);
-                  setError('');
+                  clearAllErrors();
                 }}
               >
                 ¿Olvidaste tu contraseña?
@@ -432,7 +430,7 @@ function MainPagesLogin() {
                 ¿Recordaste tu contraseña?{' '}
                 <button
                   type="button"
-                  onClick={() => { setIsRecovering(false); setError(''); }}
+                  onClick={() => { setIsRecovering(false); clearAllErrors(); }}
                   className="login-footer-link"
                 >
                   Inicia Sesión
@@ -443,7 +441,7 @@ function MainPagesLogin() {
                 ¿Ya tienes una cuenta?{' '}
                 <button
                   type="button"
-                  onClick={() => { setIsRegistering(false); setError(''); }}
+                  onClick={() => { setIsRegistering(false); clearAllErrors(); }}
                   className="login-footer-link"
                 >
                   Inicia Sesión
@@ -454,7 +452,7 @@ function MainPagesLogin() {
                 ¿No tienes una cuenta?{' '}
                 <button
                   type="button"
-                  onClick={() => { setIsRegistering(true); setError(''); }}
+                  onClick={() => { setIsRegistering(true); clearAllErrors(); }}
                   className="login-footer-link"
                 >
                   Regístrate aquí

@@ -1,6 +1,6 @@
 import React from 'react';
-import ImageUploadField from '../ImageUploadField';
-import '../../styles/MainPagesInicoAdmin.css';
+import { ImageUploadField } from '../common';
+import '../../styles/admin/MainPagesInicoAdmin.css';
 
 function AbonosTab({
   modoEdicionAbono,

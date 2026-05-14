@@ -1,8 +1,9 @@
 import React from 'react';
-import '../../styles/MainPagesInicoAdmin.css';
-import '../../styles/Arboles.css';
+import '../../styles/admin/MainPagesInicoAdmin.css';
+import '../../styles/visitante/Arboles.css';
 import ArbolFormTab from './ArbolFormTab';
-import { SkeletonCardGrid } from '../ui/Skeleton';
+import { SkeletonCardGrid, Pagination } from '../ui';
+import { usePagination } from '../../hooks/usePagination';
 
 function ListaTab({ 
   busqueda, 
@@ -38,6 +39,25 @@ function ListaTab({
       setShowAddForm(true);
     }
   }, [modoEdicion]);
+
+  // Filtrado de árboles para paginación
+  const arbolesFiltrados = arboles
+    .filter(a => a.estado !== 'muerto')
+    .filter(a => {
+      const matchesSearch = a.nombre.toLowerCase().includes(busqueda.toLowerCase()) || 
+                          (a.tipo || '').toLowerCase().includes(busqueda.toLowerCase());
+      const matchesType = !tipoFiltro || (a.tipo || '').toLowerCase() === tipoFiltro.toLowerCase();
+      return matchesSearch && matchesType;
+    });
+
+  const {
+    currentPage,
+    currentItems,
+    totalPages,
+    paginate,
+    totalItems,
+    itemsPerPage
+  } = usePagination(arbolesFiltrados, 6);
 
   return (
     <div className="admin-tab-content-wrapper">
@@ -177,35 +197,15 @@ function ListaTab({
             <div style={{ padding: '1rem 0' }}>
               <SkeletonCardGrid count={6} />
             </div>
-          ) : arboles.filter(a => a.estado !== 'muerto').length === 0 ? (
+          ) : arbolesFiltrados.length === 0 ? (
             <div className="admin-empty-msg">
               <div className="admin-empty-icon"></div>
               <p>No hay árboles activos registrados. ¡Agrega el primero!</p>
             </div>
           ) : (
             <>
-              {arboles
-                .filter(a => a.estado !== 'muerto')
-                .filter(a => {
-                  const matchesSearch = a.nombre.toLowerCase().includes(busqueda.toLowerCase()) || 
-                                      (a.tipo || '').toLowerCase().includes(busqueda.toLowerCase());
-                  const matchesType = !tipoFiltro || (a.tipo || '').toLowerCase() === tipoFiltro.toLowerCase();
-                  return matchesSearch && matchesType;
-                }).length === 0 ? (
-                <div className="admin-no-results">
-                  <p>No se encontraron árboles con los filtros aplicados.</p>
-                </div>
-              ) : (
-                <div className="admin-arboles-lista">
-                  {arboles
-                    .filter(a => a.estado !== 'muerto')
-                    .filter(a => {
-                      const matchesSearch = a.nombre.toLowerCase().includes(busqueda.toLowerCase()) || 
-                                          (a.tipo || '').toLowerCase().includes(busqueda.toLowerCase());
-                      const matchesType = !tipoFiltro || (a.tipo || '').toLowerCase() === tipoFiltro.toLowerCase();
-                      return matchesSearch && matchesType;
-                    })
-                    .map((arbol) => (
+              <div className="admin-arboles-lista">
+                {currentItems.map((arbol) => (
                     <div key={arbol.id} className="admin-arbol-card">
                       {arbol.imagenUrl && (
                         <img
@@ -281,10 +281,17 @@ function ListaTab({
                     </div>
                   ))}
                 </div>
-              )}
-            </>
-          )}
-        </>
+
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={paginate}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                />
+              </>
+            )}
+          </>
       )}
     </div>
   );

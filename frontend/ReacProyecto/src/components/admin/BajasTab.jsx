@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/MainPagesInicoAdmin.css';
+import '../../styles/admin/MainPagesInicoAdmin.css';
 
 function BajasTab({ arboles, handleEditar }) {
   const bajas = arboles.filter(a => a.estado === 'muerto');

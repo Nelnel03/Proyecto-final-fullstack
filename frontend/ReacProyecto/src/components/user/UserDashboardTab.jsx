@@ -10,7 +10,7 @@ import {
   Heart, 
   Moon 
 } from 'lucide-react';
-import CorridorMap from '../CorridorMap';
+import { CorridorMap } from '../common';
 
 const UserDashboardTab = ({ 
   user, 

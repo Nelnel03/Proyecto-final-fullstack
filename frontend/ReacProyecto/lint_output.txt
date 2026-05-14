@@ -1,0 +1,167 @@
+﻿
+> reacproyecto@0.0.0 lint
+> eslint .
+
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\ArbolesSection.jsx
+  30:11  error  Irregular whitespace not allowed  no-irregular-whitespace
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\History.jsx
+   9:20  error  'user' is defined but never used                                                                   no-unused-vars
+  15:26  error  'setActiveFilter' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u    no-unused-vars
+  47:11  error  'filteredResources' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\MainPagesInicoVisitante.jsx
+  16:19  error  'setMensaje' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\MainPagesLogin.jsx
+  74:11  error  'success' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\Nav.jsx
+   8:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+  13:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  11 |   // Sincronizar el estado de autenticaci├│n cuando cambie la ruta
+  12 |   useEffect(() => {
+> 13 |     setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, [location]);
+  15 |
+  16 |   // Ocultamos el Nav global S├ôLO para el admin, ya que usuario y visitante s├¡ lo usan  react-hooks/set-state-in-effect
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\Navbar.jsx
+  15:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  13 |
+  14 |     useEffect(() => {
+> 15 |         setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
+     |         ^^^^^^^ Avoid calling setState() directly within an effect
+  16 |     }, [location]);
+  17 |
+  18 |     const handleLogout = () => {  react-hooks/set-state-in-effect
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\AdminReportesRobo.jsx
+  43:9   error  'handleCambiarEstado' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  58:14  error  'error' is defined but never used                                                                    no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\ArbolFormTab.jsx
+  20:3  error  'React' is not defined  no-undef
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\BuzonTab.jsx
+   45:6   warning  React Hook useEffect has a missing dependency: 'cargarDatos'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  108:14  error    'err' is defined but never used                                                                                 no-unused-vars
+  173:9   error    'handleAprobarLabor' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u              no-unused-vars
+  188:14  error    'error' is defined but never used                                                                               no-unused-vars
+  193:9   error    'handleRechazarLabor' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u             no-unused-vars
+  219:16  error    'error' is defined but never used                                                                               no-unused-vars
+  246:16  error    'error' is defined but never used                                                                               no-unused-vars
+  269:16  error    'error' is defined but never used                                                                               no-unused-vars
+  276:9   error    'handleEstadoSoporte' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u             no-unused-vars
+  288:9   error    'handleEliminarSoporte' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\ListaTab.jsx
+  219:25  error  Irregular whitespace not allowed  no-irregular-whitespace
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\MainPagesInicoAdmin.jsx
+   66:10  error    'adminName' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                         no-unused-vars
+  101:10  error    'mensaje' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+  101:19  error    'setMensaje' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                        no-unused-vars
+  106:10  error    'viewMode' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                          no-unused-vars
+  106:20  error    'setViewMode' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                       no-unused-vars
+  137:6   warning  React Hook useEffect has a missing dependency: 'cargarArboles'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  164:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  229:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  264:16  error    'err' is defined but never used                                                                                   no-unused-vars
+  287:16  error    'err' is defined but never used                                                                                   no-unused-vars
+  322:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  351:16  error    'err' is defined but never used                                                                                   no-unused-vars
+  386:16  error    'error' is defined but never used                                                                                 no-unused-vars
+  408:16  error    'error' is defined but never used                                                                                 no-unused-vars
+  425:14  error    'e' is defined but never used                                                                                     no-unused-vars
+  441:16  error    'e' is defined but never used                                                                                     no-unused-vars
+  455:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  463:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  482:16  error    'e' is defined but never used                                                                                     no-unused-vars
+  520:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  539:14  error    'err' is defined but never used                                                                                   no-unused-vars
+  551:15  error    'e' is defined but never used                                                                                     no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\admin\VoluntariadosTab.jsx
+  126:14  error  'error' is defined but never used                                                                          no-unused-vars
+  146:16  error  'error' is defined but never used                                                                          no-unused-vars
+  206:20  error  'error' is defined but never used                                                                          no-unused-vars
+  253:16  error  'error' is defined but never used                                                                          no-unused-vars
+  291:9   error  'handleSolicitarCorreccion' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  291:44  error  'log' is defined but never used                                                                            no-unused-vars
+  331:16  error  'error' is defined but never used                                                                          no-unused-vars
+  356:16  error  'error' is defined but never used                                                                          no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\ui\Toast.jsx
+  17:18  error  'id' is defined but never used  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\ui\TopProgressBar.jsx
+  38:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  36 |       /* Completar y ocultar con fade */
+  37 |       clearInterval(timerRef.current);
+> 38 |       setProgress(100);
+     |       ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  39 |
+  40 |       fadeRef.current = setTimeout(() => {
+  41 |         setVisible(false);  react-hooks/set-state-in-effect
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\user\ModernUserDashboard.jsx
+   71:24  error  'setSearchParams' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  186:9   error  Unexpected lexical declaration in case block                                                     no-case-declarations
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\user\SolicitudVoluntariadoTab.jsx
+   9:10  error    'estaSolicitando' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+   9:27  error    'setEstaSolicitando' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                 no-unused-vars
+  16:6   warning  React Hook useEffect has a missing dependency: 'checkSolicitud'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  78:14  error    'err' is defined but never used                                                                                    no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\user\UserDashboardV2.jsx
+  17:24  error  'setSearchParams' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\user\UserReportesRobo.jsx
+  35:10  error    'misReportes' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+  39:10  error    'cargandoHistorial' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+  43:6   warning  React Hook useEffect has a missing dependency: 'cargarMisReportes'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\volunteer\ReporteForm.jsx
+   69:16  error  'error' is defined but never used  no-unused-vars
+  110:14  error  'error' is defined but never used  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\components\volunteer\VolunteerDashboard.jsx
+  113:9   error  'rechazados' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  474:30  error  'e' is defined but never used                                                               no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\hooks\useRequestState.js
+  62:5  warning  React Hook useCallback has a missing dependency: 'handleError'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\routes\Rooting.jsx
+  34:9  error  'isUserDashboard' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Estudiantes\Desktop\PROYECTO FINAL FS LA ANGOSTURA\Proyecto-final-fullstack\frontend\ReacProyecto\src\services\fetchWrapper.js
+  20:10  error  'buildError' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Ô£û 72 problems (67 errors, 5 warnings)
+

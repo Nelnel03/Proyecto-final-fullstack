@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import services from '../../services/services';
-import ArbolesSection from '../ArbolesSection';
-import '../../styles/PremiumDashboard.css';
+import { ArbolesSection } from '../visitante';
+import '../../styles/user/PremiumDashboard.css';
 
 function MainPagesInicoUser() {
   const [userName, setUserName] = useState('');

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
-import '../../styles/BuzonTab.css';
+import '../../styles/admin/BuzonTab.css';
 
 const ESTADOS_SOPORTE = ['Pendiente', 'En Proceso', 'Leído', 'Solucionado'];
 const ESTADOS_ROBO    = ['Pendiente', 'En Investigación', 'Resuelto'];
@@ -42,9 +42,9 @@ function BuzonTab({ refrescarNotificaciones }) {
     cargarDatos();
     const interval = setInterval(cargarDatos, 30000); 
     return () => clearInterval(interval);
-  }, []);
+  }, [cargarDatos]);
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     setCargando(true);
     try {
       const [volDatos, roboDatos, sopDatos, solDatos] = await Promise.all([
@@ -63,7 +63,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       if (refrescarNotificaciones) refrescarNotificaciones();
       setCargando(false);
     }
-  };
+  }, [refrescarNotificaciones]);
 
   // Helpers to normalize field names from backend (snake_case) or legacy (camelCase)
   const getSolUserId = (sol) => sol.usuario_id || sol.userId;
@@ -165,57 +165,7 @@ function BuzonTab({ refrescarNotificaciones }) {
     }
   };
 
-  const handleAprobarLabor = async (reporte) => {
-    try {
-      const reporteActualizado = { ...reporte, estado: 'aprobado', visto: true };
-      await services.putReporteVoluntariado(reporteActualizado, reporte.id);
-      
-      // Actualizar contador de horas del voluntario si es necesario (asumiendo que reporte ya tiene las horas)
-      setReportesVoluntario(prev => prev.map(r => r.id === reporte.id ? reporteActualizado : r));
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Labor Aprobada',
-        text: 'Se han validado las horas del voluntario.',
-        timer: 2000,
-        showConfirmButton: false
-      });
-    } catch (error) {
-      Swal.fire('Error', 'No se pudo aprobar la labor.', 'error');
-    }
-  };
 
-  const handleRechazarLabor = async (reporte) => {
-    const { value: motivo } = await Swal.fire({
-      title: 'Rechazar Labor',
-      input: 'textarea',
-      inputLabel: 'Indica el motivo del rechazo',
-      inputPlaceholder: 'La foto no es clara, faltan detalles...',
-      showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      confirmButtonText: 'Rechazar definitivamente',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => !value && 'Debes indicar un motivo para el rechazo'
-    });
-
-    if (motivo) {
-      try {
-        const reporteActualizado = { ...reporte, estado: 'rechazado', motivoRechazo: motivo, visto: true };
-        await services.putReporteVoluntariado(reporteActualizado, reporte.id);
-        setReportesVoluntario(prev => prev.map(r => r.id === reporte.id ? reporteActualizado : r));
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Labor Rechazada',
-          text: 'Se ha notificado al voluntario con el motivo.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo rechazar la labor.', 'error');
-      }
-    }
-  };
 
   /* ── Solicitudes de Tareas: Aprobar / Rechazar ── */
   const handleAprobarSolicitudTarea = async (log) => {
@@ -268,39 +218,7 @@ function BuzonTab({ refrescarNotificaciones }) {
   };
 
   /* ── Soporte: actualizar estado ── */
-  const handleEstadoSoporte = async (rep, nuevoEstado) => {
-    try {
-      const updated = { ...rep, estado: nuevoEstado };
-      await services.putReportes(updated, rep.id);
-      setReportesSoporte(prev => prev.map(r => r.id === rep.id ? updated : r));
-      if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch {
-      Swal.fire('Error', 'No se pudo actualizar el estado.', 'error');
-    }
-  };
 
-  /* ── Soporte: eliminar ── */
-  const handleEliminarSoporte = async (id) => {
-    const res = await Swal.fire({
-      title: '¿Eliminar mensaje?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#991b1b',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    });
-    if (!res.isConfirmed) return;
-    try {
-      await services.deleteReportes(id);
-      setReportesSoporte(prev => prev.filter(r => r.id !== id));
-      if (refrescarNotificaciones) refrescarNotificaciones();
-      Swal.fire({ title: 'Eliminado', icon: 'success', timer: 1200, showConfirmButton: false });
-    } catch {
-      Swal.fire('Error', 'No se pudo eliminar el mensaje.', 'error');
-    }
-  };
 
   /* ── Robos: actualizar estado ── */
   const handleEstadoRobo = async (rep, nuevoEstado) => {

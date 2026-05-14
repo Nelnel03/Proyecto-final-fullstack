@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Gamepad2, Trophy, Star, ChevronRight, CheckCircle, Brain } from 'lucide-react';
-import '../styles/History.css';
+import '../../styles/history/History.css';
 
 const HistoryQuiz = () => {
     // 16 Preguntas generadas a partir del contenido

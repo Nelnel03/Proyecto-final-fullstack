@@ -288,7 +288,7 @@ function MainPagesLogin() {
 
     } catch (error) {
       console.error("Error general:", error);
-      toastError('Problema inesperado al conectarse.');
+      Swal.fire('Error', 'Problema inesperado al conectarse.', 'error');
     } finally {
       setLoading(false);
     }

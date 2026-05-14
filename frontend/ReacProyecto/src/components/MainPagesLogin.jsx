@@ -5,6 +5,8 @@ import emailjs from '@emailjs/browser';
 import { BASE_URL } from '../services/config.jsx';
 import DarkModeToggle from './DarkModeToggle';
 import LoadingButton from './ui/LoadingButton';
+import { useFormErrors } from '../hooks/useFormErrors';
+import ErrorMessage from './ui/ErrorMessage';
 import '../styles/MainPagesInicoVisitante.css';
 import '../styles/Login.css';
 
@@ -52,8 +54,9 @@ function MainPagesLogin() {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { errors, setFieldError, clearAllErrors, getInputProps } = useFormErrors();
 
   const navigate = useNavigate();
 
@@ -65,14 +68,23 @@ function MainPagesLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    clearAllErrors();
     setLoading(true);
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
+    let hasErrors = false;
     if (!validateEmail(trimmedEmail)) {
-      Swal.fire('Error', 'Por favor, ingresa un correo electrónico válido', 'error');
+      setFieldError('email', 'Por favor, ingresa un correo electrónico válido');
+      hasErrors = true;
+    }
+    if (!trimmedPassword) {
+      setFieldError('password', 'La contraseña es requerida');
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
       setLoading(false);
       return;
     }
@@ -165,57 +177,30 @@ function MainPagesLogin() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
+    clearAllErrors();
+    let hasErrors = false;
 
-    if (!nombre.trim() || !email.trim() || !telefono.trim() || !password.trim()) {
-      Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
-      return;
-    }
+    if (!nombre.trim()) { setFieldError('nombre', 'El nombre es obligatorio'); hasErrors = true; }
+    else if (nombre.trim().length < 3) { setFieldError('nombre', 'El nombre debe tener al menos 3 caracteres'); hasErrors = true; }
+    else if (/\d/.test(nombre.trim())) { setFieldError('nombre', 'El nombre no debe contener números'); hasErrors = true; }
+    else if ((nombre.match(/[aeiouáéíóúü]/gi) || []).length < 2) { setFieldError('nombre', 'El nombre completo debe contener al menos dos vocales'); hasErrors = true; }
 
-    if (!validateEmail(email.trim())) {
-      Swal.fire('Error', 'Correo electrónico no válido', 'error');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
-      return;
-    }
-
-    if (password.length < 8) {
-      Swal.fire('Error', 'La contraseña debe tener al menos 8 caracteres', 'error');
-      return;
-    }
-
-    if (/\d/.test(nombre.trim())) {
-      Swal.fire('Error', 'El nombre no debe contener números', 'error');
-      return;
-    }
-
-    if (nombre.trim().length < 3) {
-      Swal.fire('Error', 'El nombre debe tener al menos 3 caracteres', 'error');
-      return;
-    }
+    if (!email.trim()) { setFieldError('email', 'El correo es obligatorio'); hasErrors = true; }
+    else if (!validateEmail(email.trim())) { setFieldError('email', 'Correo electrónico no válido'); hasErrors = true; }
+    else if (email.trim().length < 11) { setFieldError('email', 'El correo debe tener al menos 11 caracteres'); hasErrors = true; }
 
     const phoneRegex = /^\d{8}$/;
-    if (!phoneRegex.test(telefono.trim())) {
-      Swal.fire('Error', 'El número de teléfono debe tener exactamente 8 dígitos', 'error');
-      return;
-    }
+    if (!telefono.trim()) { setFieldError('telefono', 'El teléfono es obligatorio'); hasErrors = true; }
+    else if (!phoneRegex.test(telefono.trim())) { setFieldError('telefono', 'El número de teléfono debe tener exactamente 8 dígitos'); hasErrors = true; }
 
-    const vowelCount = (nombre.match(/[aeiouáéíóúü]/gi) || []).length;
-    if (vowelCount < 2) {
-      Swal.fire('Error', 'El nombre completo debe contener al menos dos vocales', 'error');
-      return;
-    }
+    if (!password.trim()) { setFieldError('password', 'La contraseña es obligatoria'); hasErrors = true; }
+    else if (password.length < 8) { setFieldError('password', 'La contraseña debe tener al menos 8 caracteres'); hasErrors = true; }
 
-    if (email.trim().length < 11) {
-      Swal.fire('Error', 'El correo electrónico debe tener al menos 11 caracteres', 'error');
-      return;
-    }
+    if (password !== confirmPassword) { setFieldError('confirmPassword', 'Las contraseñas no coinciden'); hasErrors = true; }
+
+    if (hasErrors) return;
 
     setLoading(true);
-
     try {
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
@@ -258,11 +243,11 @@ function MainPagesLogin() {
 
   const handleRecovery = async (e) => {
     e.preventDefault();
-    setError('');
+    clearAllErrors();
     const trimmedEmail = email.trim();
 
     if (!validateEmail(trimmedEmail)) {
-      Swal.fire('Error', 'Por favor, ingresa un correo electrónico válido', 'error');
+      setFieldError('email', 'Por favor, ingresa un correo electrónico válido');
       return;
     }
 
@@ -303,7 +288,7 @@ function MainPagesLogin() {
 
     } catch (error) {
       console.error("Error general:", error);
-      Swal.fire('Error', 'Problema inesperado al conectarse.', 'error');
+      toastError('Problema inesperado al conectarse.');
     } finally {
       setLoading(false);
     }
@@ -333,7 +318,7 @@ function MainPagesLogin() {
           </div>
         )}
 
-        <form onSubmit={isRecovering ? handleRecovery : isRegistering ? handleRegister : handleLogin}>
+        <form onSubmit={isRecovering ? handleRecovery : isRegistering ? handleRegister : handleLogin} noValidate>
           {!isRecovering && isRegistering && (
             <>
               <div className="form-group">
@@ -341,10 +326,12 @@ function MainPagesLogin() {
                 <input
                   type="text"
                   value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
+                  onChange={(e) => { setNombre(e.target.value); errors.nombre && clearAllErrors(); }}
                   required
                   placeholder="Ej: Juan Pérez"
+                  {...getInputProps('nombre')}
                 />
+                <ErrorMessage error={errors.nombre} id="nombre-error" />
               </div>
               <div className="form-group">
                 <label>Número de Teléfono</label>
@@ -354,11 +341,14 @@ function MainPagesLogin() {
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '');
                     if (val.length <= 8) setTelefono(val);
+                    errors.telefono && clearAllErrors();
                   }}
                   required
                   placeholder="88888888"
                   maxLength="8"
+                  {...getInputProps('telefono')}
                 />
+                <ErrorMessage error={errors.telefono} id="telefono-error" />
               </div>
             </>
           )}
@@ -366,12 +356,14 @@ function MainPagesLogin() {
           <div className="form-group">
             <label>Correo Electrónico</label>
             <input
-              type="text"
+              type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); errors.email && clearAllErrors(); }}
               placeholder="tu@correo.com"
               required
+              {...getInputProps('email')}
             />
+            <ErrorMessage error={errors.email} id="email-error" />
           </div>
 
           {!isRecovering && (
@@ -394,11 +386,13 @@ function MainPagesLogin() {
               <input
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => { setConfirmPassword(e.target.value); errors.confirmPassword && clearAllErrors(); }}
                 required
                 placeholder="••••••••"
                 maxLength="15"
+                {...getInputProps('confirmPassword')}
               />
+              <ErrorMessage error={errors.confirmPassword} id="confirmPassword-error" />
             </div>
           )}
 

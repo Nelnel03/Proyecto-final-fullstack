@@ -1,5 +1,5 @@
 import React from 'react';
-import { Camera, Loader2 } from 'lucide-react';
+import { Camera, Loader2, Search, UserPlus, Shield, User, Mail, Hash, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { ImageUploadField } from '../common';
 import services, { uploadImage } from '../../services/services';
 import Swal from 'sweetalert2';
@@ -25,7 +25,6 @@ function UsuariosTab({
   const [busqueda, setBusqueda] = React.useState('');
   const [actualizandoAvatarId, setActualizandoAvatarId] = React.useState(null);
 
-  // Normalizar campo rol para compatibilidad con ambas versiones de la API
   const getRol = (user) => user.Rol?.nombre || user.rol || 'usuario';
   const isBanned = (user) => user.status === 'baneado' || user.status === 'banned';
 
@@ -72,7 +71,6 @@ function UsuariosTab({
       user.email.toLowerCase().includes(busqueda.toLowerCase())
     );
 
-  // Implementación de Paginación (8 elementos por página)
   const {
     currentPage,
     currentItems,
@@ -83,70 +81,75 @@ function UsuariosTab({
   } = usePagination(usuariosFiltrados, 8);
 
   return (
-    <div>
-      <div className="admin-section-header admin-section-header-flex">
-        <div className="admin-header-row" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+    <div className="admin-tab-content-wrapper fade-in">
+      <div className="admin-section-header premium-card" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
+        <div className="flex-between" style={{ flexWrap: 'wrap', gap: '1.5rem' }}>
           <div>
-            <h2 className="admin-section-title-white">Gestión de Usuarios</h2>
-            <p className="admin-section-subtitle-green">Administrar accesos y cuentas del sistema</p>
+            <h2 className="text-gradient" style={{ fontSize: '1.6rem', margin: 0 }}>Gestión de Usuarios</h2>
+            <p className="text-muted">Control de accesos y perfiles del sistema administrativo</p>
           </div>
-
-          <div className="admin-controls-row">
-            <div className="admin-search-box">
+          
+          <div className="admin-controls-row" style={{ display: 'flex', gap: '1rem' }}>
+            <div className="admin-search-container" style={{ position: 'relative', width: '300px' }}>
+              <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
               <input
                 type="text"
-                placeholder="Buscar usuario por nombre o correo..."
+                placeholder="Buscar por nombre o email..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="admin-search-input"
-                style={{ width: '250px' }}
+                className="ui-input"
+                style={{ paddingLeft: '45px', width: '100%', borderRadius: '12px' }}
               />
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="admin-tabs-container" style={{ padding: '0 0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--admin-border-color)' }}>
-        <div className="admin-tabs-pills" style={{ background: 'transparent', display: 'flex', gap: '20px' }}>
+        <div className="admin-tabs-navigation" style={{ marginTop: '2.5rem', display: 'flex', gap: '2rem', borderBottom: '1px solid var(--glass-border)' }}>
           <button
             onClick={() => setSubTab('activos')}
-            className={`admin-tab-pill ${subTab === 'activos' ? 'active' : ''}`}
+            className={`tab-link ${subTab === 'activos' ? 'active' : ''}`}
+            style={{ padding: '12px 0', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', position: 'relative', color: subTab === 'activos' ? 'var(--ui-primary)' : 'var(--admin-text-muted)' }}
           >
             Usuarios Activos
+            {subTab === 'activos' && <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '3px', background: 'var(--ui-primary)', borderRadius: '3px' }}></div>}
           </button>
           <button
             onClick={() => setSubTab('cancelados')}
-            className={`admin-tab-pill ${subTab === 'cancelados' ? 'active' : ''}`}
-            style={{
-              color: subTab === 'cancelados' ? '#e53e3e' : '#9ca3af',
-              borderBottomColor: subTab === 'cancelados' ? '#e53e3e' : 'transparent'
-            }}
+            className={`tab-link ${subTab === 'cancelados' ? 'active' : ''}`}
+            style={{ padding: '12px 0', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', position: 'relative', color: subTab === 'cancelados' ? 'var(--ui-error)' : 'var(--admin-text-muted)' }}
           >
-            Usuarios Cancelados
+            Cuentas Restringidas
+            {subTab === 'cancelados' && <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '3px', background: 'var(--ui-error)', borderRadius: '3px' }}></div>}
           </button>
         </div>
       </div>
 
-      <div className="admin-arboles-lista admin-user-list">
-        {currentItems.map(user => (
-          <div key={user.id} className="admin-arbol-card admin-user-card" style={{ border: isBanned(user) ? '1px solid #feb2b2' : '' }}>
-            <div className="admin-user-card-header">
-              <div
-                className={`admin-user-avatar ${getRol(user)} interactive-avatar ${actualizandoAvatarId === user.id ? 'loading' : ''}`}
+      <div className="admin-user-grid grid-auto" style={{ marginBottom: '3rem' }}>
+        {currentItems.map((user, idx) => (
+          <div 
+            key={user.id} 
+            className={`premium-card user-card fade-in ${isBanned(user) ? 'banned-border' : ''}`}
+            style={{ animationDelay: `${idx * 0.05}s`, padding: '1.5rem' }}
+          >
+            <div className="user-card-top flex-between" style={{ marginBottom: '1.5rem' }}>
+              <div 
+                className="avatar-container interactive-avatar" 
                 onClick={() => handleAvatarClick(user.id)}
-                title="Haga clic para cambiar la foto de perfil"
+                style={{ position: 'relative', width: '64px', height: '64px' }}
               >
                 {actualizandoAvatarId === user.id ? (
-                  <Loader2 className="animate-spin" size={24} color="#fff" />
+                  <div className="flex-center" style={{ width: '100%', height: '100%', background: 'rgba(0,0,0,0.1)', borderRadius: '16px' }}>
+                    <Loader2 className="animate-spin" size={24} />
+                  </div>
                 ) : user.fotoPerfil ? (
-                  <img src={user.fotoPerfil} alt={user.nombre} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={user.fotoPerfil} alt={user.nombre} style={{ width: '100%', height: '100%', borderRadius: '16px', objectFit: 'cover' }} />
                 ) : (
-                  <span className="avatar-initials">
+                  <div className="flex-center" style={{ width: '100%', height: '100%', background: 'var(--ui-primary)', color: '#fff', borderRadius: '16px', fontWeight: 800, fontSize: '1.5rem' }}>
                     {user.nombre?.charAt(0).toUpperCase()}
-                  </span>
+                  </div>
                 )}
-                <div className="avatar-overlay">
-                  <Camera size={18} color="#fff" />
+                <div className="avatar-hover-overlay flex-center" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', borderRadius: '16px', opacity: 0, transition: '0.3s' }}>
+                  <Camera size={20} color="#fff" />
                 </div>
                 <input
                   type="file"
@@ -156,71 +159,65 @@ function UsuariosTab({
                   style={{ display: 'none' }}
                 />
               </div>
-              <div className="admin-user-info-text">
-                <h3>{user.nombre}</h3>
-                <p>{user.email}</p>
+
+              <div className="role-tag-container">
+                <div className={`role-badge ${getRol(user)}`} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800, background: getRol(user) === 'admin' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)', color: getRol(user) === 'admin' ? 'var(--ui-error)' : 'var(--ui-info)' }}>
+                  {getRol(user) === 'admin' ? <Shield size={12} /> : <User size={12} />}
+                  {getRol(user).toUpperCase()}
+                </div>
               </div>
             </div>
 
-            <div className="admin-user-id-badge">
-              <span className="admin-user-id-label">ID</span>
-              <span className="admin-user-id-value">#{user.id}</span>
-            </div>
-
-            <div className={`admin-user-role-badge ${getRol(user)}`}>
-              <span className="admin-user-role-dot"></span>
-              {getRol(user) === 'admin' ? 'Administrador' : 'Usuario'}
+            <div className="user-details" style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 800 }}>{user.nombre}</h3>
+              <div className="flex-between" style={{ fontSize: '0.85rem', opacity: 0.7 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Mail size={14} /> {user.email}</span>
+              </div>
+              <div style={{ marginTop: '8px', fontSize: '0.75rem', fontWeight: 700, opacity: 0.5, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Hash size={12} /> ID: {user.id}
+              </div>
             </div>
 
             {isBanned(user) && (
-              <div style={{ marginTop: '1rem', padding: '0.8rem', background: '#fff5f5', borderRadius: '8px', border: '1px solid #feb2b2' }}>
-                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', color: '#c53030', textTransform: 'uppercase', marginBottom: '4px' }}>Motivo de Cancelación:</span>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#742a2a', fontStyle: 'italic' }}>"{user.motivoBan}"</p>
+              <div className="ban-reason-box" style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.1)', marginBottom: '1.5rem' }}>
+                <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: 800, color: 'var(--ui-error)' }}>MOTIVO DE RESTRICCIÓN:</p>
+                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', fontStyle: 'italic', opacity: 0.8 }}>"{user.motivoBan}"</p>
               </div>
             )}
 
-            <div className="admin-user-card-footer">
+            <div className="user-actions-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {!isBanned(user) ? (
                 <>
-                  <button
-                    onClick={() => handleEditarUsuario(user)}
-                    className="admin-btn-user-edit"
-                  >
-                    Editar
+                  <button onClick={() => handleEditarUsuario(user)} className="ui-btn ui-btn--ghost" style={{ fontSize: '0.8rem', padding: '10px' }}>
+                    Editar Perfil
                   </button>
-                  <button
-                    onClick={() => handleBanUsuario(user.id, user.nombre)}
-                    disabled={getRol(user) === 'admin'}
-                    className="admin-btn-user-delete"
-                    style={{ background: '#feb2b2', color: '#c53030' }}
-                    title={getRol(user) === 'admin' ? "No se puede cancelar administradores principales" : ""}
+                  <button 
+                    onClick={() => handleBanUsuario(user.id, user.nombre)} 
+                    disabled={getRol(user) === 'admin'} 
+                    className="ui-btn ui-btn--danger-outline" 
+                    style={{ fontSize: '0.8rem', padding: '10px' }}
                   >
-                    Cancelar Cuenta
+                    Restringir
                   </button>
                   {getRol(user) !== 'admin' && (
-                    <button
-                      onClick={() => handleConvertirUsuarioAVoluntariado(user)}
-                      className="admin-btn-user-convert"
-                    >
-                      Convertir a Voluntario
+                    <button onClick={() => handleConvertirUsuarioAVoluntariado(user)} className="ui-btn ui-btn--secondary" style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '10px' }}>
+                      Promover a Voluntario
                     </button>
                   )}
                 </>
               ) : (
-                <button
-                  onClick={() => handleActivarUsuario(user.id, user.nombre)}
-                  className="admin-btn-user-edit"
-                  style={{ flex: '1', background: '#c6f6d5', color: '#22543d' }}
-                >
-                  Reactivar Cuenta
+                <button onClick={() => handleActivarUsuario(user.id, user.nombre)} className="ui-btn ui-btn--primary" style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '12px' }}>
+                  <CheckCircle size={16} style={{ marginRight: '8px' }} /> Rehabilitar Cuenta
                 </button>
               )}
             </div>
           </div>
         ))}
+
         {usuariosFiltrados.length === 0 && (
-          <div className="admin-no-results" style={{ gridColumn: '1/-1', width: '100%' }}>
-            No se encontraron usuarios que coincidan con el nombre o correo ingresado.
+          <div className="empty-state-large flex-center" style={{ gridColumn: '1 / -1', padding: '5rem', background: 'var(--glass-bg)', borderRadius: '24px', opacity: 0.5 }}>
+            <XCircle size={48} strokeWidth={1} style={{ marginBottom: '1rem' }} />
+            <p>No se encontraron usuarios bajo este criterio.</p>
           </div>
         )}
       </div>
@@ -233,90 +230,101 @@ function UsuariosTab({
         itemsPerPage={itemsPerPage}
       />
 
-      <div style={{ marginTop: '3rem', borderTop: '2px dashed rgba(58, 90, 64, 0.2)', paddingTop: '2rem' }}>
-        {subTab === 'activos' && (
-          <div id="user-form-container" className="admin-form-card admin-user-form-container">
-            <h3 className="admin-user-form-title">
-              <span className="admin-user-form-title-icon"></span>
-              {modoEdicionUsuario ? 'Editar Usuario' : 'Crear Usuarios'}
-            </h3>
-
-            <form onSubmit={handleUserSubmit} className="admin-user-form">
-              <div className="admin-form-group admin-form-group-no-margin">
-                <label className="admin-user-input-label">Nombre Completo</label>
-                <input
-                  type="text"
-                  required
-                  value={formUsuario.nombre}
-                  onChange={(e) => setFormUsuario({...formUsuario, nombre: e.target.value})}
-                  placeholder="Ej: Juan Pérez"
-                  className="admin-user-input"
-                />
+      {/* Formulario de Creación/Edición Premium */}
+      {subTab === 'activos' && (
+        <div id="user-form-container" className="premium-card fade-in" style={{ marginTop: '4rem', padding: '2.5rem' }}>
+          <div className="form-header flex-between" style={{ marginBottom: '2.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div className="flex-center" style={{ width: '48px', height: '48px', background: 'var(--ui-primary)', color: '#fff', borderRadius: '14px' }}>
+                <UserPlus size={24} />
               </div>
-
-              <div className="admin-form-group admin-form-group-no-margin">
-                <label className="admin-user-input-label">Correo Electrónico</label>
-                <input
-                  type="email"
-                  required
-                  value={formUsuario.email}
-                  onChange={(e) => setFormUsuario({...formUsuario, email: e.target.value})}
-                  placeholder="usuario@ejemplo.com"
-                  className="admin-user-input"
-                />
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>{modoEdicionUsuario ? 'Actualizar Usuario' : 'Crear Nuevo Usuario'}</h3>
+                <p className="text-muted" style={{ margin: 0, fontSize: '0.85rem' }}>Define los parámetros de acceso y perfil</p>
               </div>
+            </div>
+            {modoEdicionUsuario && (
+              <button onClick={resetFormUsuario} className="ui-btn ui-btn--ghost" style={{ padding: '8px 16px' }}>
+                Descartar cambios
+              </button>
+            )}
+          </div>
 
-              <div className="admin-form-group admin-form-group-no-margin">
-                <label className="admin-user-input-label">Contraseña</label>
-                <input
-                  type="password"
-                  required={!modoEdicionUsuario}
-                  value={formUsuario.password}
-                  onChange={(e) => setFormUsuario({...formUsuario, password: e.target.value})}
-                  placeholder={modoEdicionUsuario ? "Dejar en blanco para no cambiar..." : "••••••••"}
-                  className="admin-user-input"
-                  maxLength="15"
-                />
-              </div>
+          <form onSubmit={handleUserSubmit} className="grid-auto" style={{ gap: '2rem' }}>
+            <div className="input-group">
+              <label className="ui-label">Nombre Completo</label>
+              <input
+                type="text"
+                required
+                value={formUsuario.nombre}
+                onChange={(e) => setFormUsuario({...formUsuario, nombre: e.target.value})}
+                placeholder="Ej: Juan Pérez"
+                className="ui-input"
+                style={{ width: '100%', borderRadius: '12px' }}
+              />
+            </div>
 
+            <div className="input-group">
+              <label className="ui-label">Correo Electrónico</label>
+              <input
+                type="email"
+                required
+                value={formUsuario.email}
+                onChange={(e) => setFormUsuario({...formUsuario, email: e.target.value})}
+                placeholder="usuario@ejemplo.com"
+                className="ui-input"
+                style={{ width: '100%', borderRadius: '12px' }}
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="ui-label">Contraseña</label>
+              <input
+                type="password"
+                required={!modoEdicionUsuario}
+                value={formUsuario.password}
+                onChange={(e) => setFormUsuario({...formUsuario, password: e.target.value})}
+                placeholder={modoEdicionUsuario ? "•••••••• (Sin cambios)" : "••••••••"}
+                className="ui-input"
+                style={{ width: '100%', borderRadius: '12px' }}
+                maxLength="15"
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="ui-label">Rol de Acceso</label>
+              <select
+                value={formUsuario.rol}
+                onChange={(e) => setFormUsuario({...formUsuario, rol: e.target.value})}
+                disabled={formUsuario.rol === 'admin'}
+                className="ui-input"
+                style={{ width: '100%', borderRadius: '12px' }}
+              >
+                <option value="usuario">Usuario Estándar</option>
+                {formUsuario.rol === 'admin' && (
+                  <option value="admin">Administrador del Sistema</option>
+                )}
+              </select>
+            </div>
+
+            <div className="input-group" style={{ gridColumn: 'span 2' }}>
               <ImageUploadField
-                label="Foto de Perfil"
+                label="Imagen de Perfil"
                 value={formUsuario.fotoPerfil || ''}
                 onChange={(url) => setFormUsuario({...formUsuario, fotoPerfil: url})}
-                placeholder="Subir foto de perfil"
+                placeholder="Seleccionar imagen..."
                 circular={true}
               />
+            </div>
 
-              <div className="admin-form-group admin-form-group-no-margin">
-                <label className="admin-user-input-label">Rol de Acceso</label>
-                <select
-                  value={formUsuario.rol}
-                  onChange={(e) => setFormUsuario({...formUsuario, rol: e.target.value})}
-                  disabled={formUsuario.rol === 'admin'}
-                  className="admin-user-select"
-                >
-                  <option value="usuario">Usuario (Solo visualista)</option>
-                  {formUsuario.rol === 'admin' && (
-                    <option value="admin">Administrador (Control total)</option>
-                  )}
-                </select>
-              </div>
-
-              <div className="admin-user-form-footer">
-                <button type="submit" className="admin-btn-user-submit">
-                  {modoEdicionUsuario ? 'Guardar Cambios' : 'Crear Usuario'}
-                </button>
-                {modoEdicionUsuario && (
-                  <button type="button" onClick={resetFormUsuario} className="admin-btn-user-cancel">
-                    Cancelar
-                  </button>
-                )}
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
-
+            <div className="form-submit-area" style={{ gridColumn: 'span 2', marginTop: '1rem' }}>
+              <button type="submit" className="ui-btn ui-btn--primary" style={{ width: '100%', padding: '14px', borderRadius: '14px', fontWeight: 800 }}>
+                {modoEdicionUsuario ? 'Aplicar Cambios en Perfil' : 'Finalizar Registro de Usuario'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

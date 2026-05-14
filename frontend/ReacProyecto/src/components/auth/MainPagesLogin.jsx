@@ -6,6 +6,24 @@ import { BASE_URL } from '../../services/config.jsx';
 import { DarkModeToggle } from '../common';
 import { LoadingButton, ErrorMessage } from '../ui';
 import { useFormErrors } from '../../hooks/useFormErrors';
+
+import { useToast } from '../../context/ToastContext';
+import { 
+  Mail, 
+  Lock, 
+  User, 
+  Phone, 
+  Eye, 
+  EyeOff, 
+  ArrowLeft, 
+  ShieldCheck, 
+  Leaf,
+  ChevronRight,
+  LogIn,
+  UserPlus,
+  RefreshCw
+} from 'lucide-react';
+
 import '../../styles/visitante/MainPagesInicoVisitante.css';
 import '../../styles/auth/Login.css';
 
@@ -48,6 +66,7 @@ const enviarCorreo = async (nombre, correo, token) => {
 function MainPagesLogin() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
@@ -113,7 +132,6 @@ function MainPagesLogin() {
 
       const { token, user } = data;
 
-      // Manejar primer inicio de sesión de voluntario
       if (user.debeCambiarPassword) {
         const { value: newPassword } = await Swal.fire({
           title: 'Primer Inicio de Sesión',
@@ -198,6 +216,10 @@ function MainPagesLogin() {
     if (password !== confirmPassword) { setFieldError('confirmPassword', 'Las contraseñas no coinciden'); hasErrors = true; }
 
     if (hasErrors) return;
+
+
+    setLoading(true);
+
 
     try {
       const response = await fetch(`${BASE_URL}/auth/register`, {
@@ -293,173 +315,228 @@ function MainPagesLogin() {
   };
 
   return (
-    <div className="login-minimal-wrapper">
-      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 100 }}>
+    <div className="login-premium-page fade-in">
+      {/* Decorative Background Elements */}
+      <div className="login-bg-decor-1"></div>
+      <div className="login-bg-decor-2"></div>
+
+      <div className="login-top-nav">
+        <button className="login-back-pill" onClick={() => navigate('/')}>
+          <ArrowLeft size={18} />
+          <span>Inicio</span>
+        </button>
         <DarkModeToggle />
       </div>
-      <div className="login-card">
-        <button
-          className="login-back-btn"
-          onClick={() => navigate('/')}
-          title="Volver a la página principal"
-        >
-          ← Volver al Inicio
-        </button>
 
-        <h2>
-          {isRecovering ? 'Recuperar Contraseña' : isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
-        </h2>
-
-        {errors.general && (
-          <div className="login-error-msg">
-            {errors.general}
-          </div>
-        )}
-
-        <form onSubmit={isRecovering ? handleRecovery : isRegistering ? handleRegister : handleLogin} noValidate>
-          {!isRecovering && isRegistering && (
-            <>
-              <div className="form-group">
-                <label>Nombre Completo</label>
-                <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => { setNombre(e.target.value); errors.nombre && clearAllErrors(); }}
-                  required
-                  placeholder="Ej: Juan Pérez"
-                  {...getInputProps('nombre')}
-                />
-                <ErrorMessage error={errors.nombre} id="nombre-error" />
-              </div>
-              <div className="form-group">
-                <label>Número de Teléfono</label>
-                <input
-                  type="tel"
-                  value={telefono}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '');
-                    if (val.length <= 8) setTelefono(val);
-                    errors.telefono && clearAllErrors();
-                  }}
-                  required
-                  placeholder="88888888"
-                  maxLength="8"
-                  {...getInputProps('telefono')}
-                />
-                <ErrorMessage error={errors.telefono} id="telefono-error" />
-              </div>
-            </>
-          )}
-
-          <div className="form-group">
-            <label>Correo Electrónico</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); errors.email && clearAllErrors(); }}
-              placeholder="tu@correo.com"
-              required
-              {...getInputProps('email')}
-            />
-            <ErrorMessage error={errors.email} id="email-error" />
-          </div>
-
-          {!isRecovering && (
-            <div className="form-group">
-              <label>Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                maxLength="15"
-              />
+      <div className="login-container">
+        <div className="login-visual-side">
+          <div className="visual-content">
+            <div className="visual-logo">
+              <Leaf size={48} className="logo-icon-leaf" />
+              <h1>BioMon</h1>
             </div>
-          )}
-
-          {!isRecovering && isRegistering && (
-            <div className="form-group">
-              <label>Confirmar Contraseña</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => { setConfirmPassword(e.target.value); errors.confirmPassword && clearAllErrors(); }}
-                required
-                placeholder="••••••••"
-                maxLength="15"
-                {...getInputProps('confirmPassword')}
-              />
-              <ErrorMessage error={errors.confirmPassword} id="confirmPassword-error" />
+            <p className="visual-tagline">Tu conexión vital con la naturaleza y el monitoreo forestal.</p>
+            
+            <div className="visual-features">
+              <div className="feature-item">
+                <ShieldCheck size={20} />
+                <span>Acceso Seguro y Protegido</span>
+              </div>
+              <div className="feature-item">
+                <Leaf size={20} />
+                <span>Gestión de Especies Nativas</span>
+              </div>
             </div>
-          )}
+          </div>
+          <div className="visual-footer">
+            <p>&copy; 2026 BioMon System. Todos los derechos reservados.</p>
+          </div>
+        </div>
 
-          {!isRegistering && !isRecovering && (
-            <div className="login-forgot-password" style={{ textAlign: 'right', marginBottom: '15px' }}>
-              <button 
-                type="button" 
-                className="login-footer-link" 
-                onClick={() => {
-                  setIsRecovering(true);
-                  clearAllErrors();
-                }}
+        <div className="login-form-side">
+          <div className="login-form-card premium-card">
+            <div className="form-header">
+              <h2>
+                {isRecovering ? 'Recuperación' : isRegistering ? 'Únete a BioMon' : 'Bienvenido de nuevo'}
+              </h2>
+              <p className="text-muted">
+                {isRecovering ? 'Restablece tu acceso de forma segura' : 
+                 isRegistering ? 'Crea tu perfil y comienza a monitorear' : 
+                 'Ingresa tus credenciales para continuar'}
+              </p>
+            </div>
+
+            <form onSubmit={isRecovering ? handleRecovery : isRegistering ? handleRegister : handleLogin} noValidate>
+              {!isRecovering && isRegistering && (
+                <div className="form-row">
+                  <div className="form-group-premium">
+                    <label className="ui-label">Nombre Completo</label>
+                    <div className="input-with-icon">
+                      <User size={18} className="field-icon" />
+                      <input
+                        type="text"
+                        className="ui-input"
+                        value={nombre}
+                        onChange={(e) => { setNombre(e.target.value); errors.nombre && clearAllErrors(); }}
+                        placeholder="Ej: Juan Pérez"
+                        {...getInputProps('nombre')}
+                      />
+                    </div>
+                    <ErrorMessage error={errors.nombre} id="nombre-error" />
+                  </div>
+
+                  <div className="form-group-premium">
+                    <label className="ui-label">Teléfono</label>
+                    <div className="input-with-icon">
+                      <Phone size={18} className="field-icon" />
+                      <input
+                        type="tel"
+                        className="ui-input"
+                        value={telefono}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '');
+                          if (val.length <= 8) setTelefono(val);
+                          errors.telefono && clearAllErrors();
+                        }}
+                        placeholder="88888888"
+                        maxLength="8"
+                        {...getInputProps('telefono')}
+                      />
+                    </div>
+                    <ErrorMessage error={errors.telefono} id="telefono-error" />
+                  </div>
+                </div>
+              )}
+
+              <div className="form-group-premium">
+                <label className="ui-label">Correo Electrónico</label>
+                <div className="input-with-icon">
+                  <Mail size={18} className="field-icon" />
+                  <input
+                    type="email"
+                    className="ui-input"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); errors.email && clearAllErrors(); }}
+                    placeholder="tu@correo.com"
+                    {...getInputProps('email')}
+                  />
+                </div>
+                <ErrorMessage error={errors.email} id="email-error" />
+              </div>
+
+              {!isRecovering && (
+                <div className="form-group-premium">
+                  <div className="flex-between">
+                    <label className="ui-label">Contraseña</label>
+                    {!isRegistering && (
+                      <button 
+                        type="button" 
+                        className="text-link-small" 
+                        onClick={() => { setIsRecovering(true); clearAllErrors(); }}
+                      >
+                        ¿Olvidaste tu clave?
+                      </button>
+                    )}
+                  </div>
+                  <div className="input-with-icon">
+                    <Lock size={18} className="field-icon" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="ui-input"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      maxLength="15"
+                    />
+                    <button 
+                      type="button" 
+                      className="password-toggle-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <ErrorMessage error={errors.password} id="password-error" />
+                </div>
+              )}
+
+              {!isRecovering && isRegistering && (
+                <div className="form-group-premium">
+                  <label className="ui-label">Confirmar Contraseña</label>
+                  <div className="input-with-icon">
+                    <Lock size={18} className="field-icon" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="ui-input"
+                      value={confirmPassword}
+                      onChange={(e) => { setConfirmPassword(e.target.value); errors.confirmPassword && clearAllErrors(); }}
+                      placeholder="••••••••"
+                      maxLength="15"
+                      {...getInputProps('confirmPassword')}
+                    />
+                  </div>
+                  <ErrorMessage error={errors.confirmPassword} id="confirmPassword-error" />
+                </div>
+              )}
+
+              <LoadingButton
+                type="submit"
+                className="ui-btn ui-btn--primary login-submit-btn"
+                loading={loading}
+                loadingText={
+                  isRecovering ? 'Procesando…' :
+                  isRegistering ? 'Creando cuenta…' :
+                  'Autenticando…'
+                }
               >
-                ¿Olvidaste tu contraseña?
-              </button>
+                <span>
+                  {isRecovering ? 'Restablecer Acceso' : isRegistering ? 'Unirse Ahora' : 'Entrar al Sistema'}
+                </span>
+                {!loading && (
+                  isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />
+                )}
+              </LoadingButton>
+            </form>
+
+            <div className="form-footer">
+              <p>
+                {isRecovering ? (
+                  <>
+                    ¿Ya recordaste tu acceso?{' '}
+                    <button
+                      type="button"
+                      onClick={() => { setIsRecovering(false); clearAllErrors(); }}
+                      className="text-link"
+                    >
+                      Volver al Login
+                    </button>
+                  </>
+                ) : isRegistering ? (
+                  <>
+                    ¿Ya eres parte de BioMon?{' '}
+                    <button
+                      type="button"
+                      onClick={() => { setIsRegistering(false); clearAllErrors(); }}
+                      className="text-link"
+                    >
+                      Inicia Sesión
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    ¿Eres nuevo por aquí?{' '}
+                    <button
+                      type="button"
+                      onClick={() => { setIsRegistering(true); clearAllErrors(); }}
+                      className="text-link"
+                    >
+                      Crea una cuenta gratis
+                    </button>
+                  </>
+                )}
+              </p>
             </div>
-          )}
-
-          <LoadingButton
-            type="submit"
-            className="login-btn"
-            loading={loading}
-            loadingText={
-              isRecovering ? 'Enviando…' :
-              isRegistering ? 'Registrando…' :
-              'Entrando…'
-            }
-          >
-            {isRecovering ? 'Enviar Instrucciones' : isRegistering ? 'Registrarse' : 'Entrar'}
-          </LoadingButton>
-        </form>
-
-        <div className="login-footer-container">
-          <p className="login-footer-text">
-            {isRecovering ? (
-              <>
-                ¿Recordaste tu contraseña?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setIsRecovering(false); clearAllErrors(); }}
-                  className="login-footer-link"
-                >
-                  Inicia Sesión
-                </button>
-              </>
-            ) : isRegistering ? (
-              <>
-                ¿Ya tienes una cuenta?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setIsRegistering(false); clearAllErrors(); }}
-                  className="login-footer-link"
-                >
-                  Inicia Sesión
-                </button>
-              </>
-            ) : (
-              <>
-                ¿No tienes una cuenta?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setIsRegistering(true); clearAllErrors(); }}
-                  className="login-footer-link"
-                >
-                  Regístrate aquí
-                </button>
-              </>
-            )}
-          </p>
+          </div>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ function ReportesTab() {
                     <span className="task-type-badge">
                       {reporte.tipoTarea || 'Tarea General'}
                     </span>
-                    <span className="voluntario-id">ID: {reporte.voluntarioId}</span>
+                    <span className="voluntario-id">ID: {reporte.voluntario_id || reporte.voluntarioId}</span>
                   </div>
                 </div>
                 <div className="reporte-timing">

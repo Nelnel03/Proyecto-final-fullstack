@@ -26,6 +26,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(100),
       allowNull: true
     },
+    altura: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    crecimiento: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    cuidados: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     altura_min_m: {
       type: DataTypes.DECIMAL(6, 2),
       allowNull: true
@@ -54,6 +66,11 @@ module.exports = (sequelize, DataTypes) => {
     fechaRegistro: {
       type: DataTypes.DATEONLY,
       allowNull: false
+    },
+    historialAbono: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: []
     }
   }, {
     timestamps: true,

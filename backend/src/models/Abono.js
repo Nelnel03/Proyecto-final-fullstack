@@ -7,11 +7,27 @@ module.exports = (sequelize, DataTypes) => {
     },
     arbol_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     voluntario_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
+    },
+    nombre: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    stock: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true
+    },
+    unidad: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    imagenUrl: {
+      type: DataTypes.STRING(500),
+      allowNull: true
     },
     tipo_abono: {
       type: DataTypes.STRING(100),
@@ -23,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     fecha: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: true
     },
     notas: {
       type: DataTypes.TEXT,

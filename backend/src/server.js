@@ -9,8 +9,17 @@ async function startServer() {
         await sequelize.authenticate();
         console.log('✅ Conexión a MySQL establecida correctamente.');
 
-        // Sincronizar modelos (opcional, útil en desarrollo inicial)
-        // await sequelize.sync({ force: false });
+        // Sincronizar modelos con la BD (alter:true actualiza columnas sin borrar datos)
+        // SOLO en development — desactivar en producción
+        if (process.env.NODE_ENV !== 'production') {
+            // Migrate stats_tipos from old volunteer-task schema to tree-type tracking schema
+            try {
+                await sequelize.query("ALTER TABLE `stats_tipos` MODIFY `tarea_id` INT NULL DEFAULT NULL");
+                await sequelize.query("ALTER TABLE `stats_tipos` MODIFY `periodo` DATE NULL DEFAULT NULL");
+            } catch (e) { /* Table may not exist yet or already migrated — safe to ignore */ }
+            await sequelize.sync({ alter: true });
+            console.log('✅ Esquema de BD sincronizado.');
+        }
 
         app.listen(PORT, () => {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);

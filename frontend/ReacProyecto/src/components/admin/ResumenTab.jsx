@@ -17,7 +17,7 @@ const ResumenTab = ({
           </div>
           <div className="admin-stat-label">Usuarios Totales</div>
           <div className="admin-stat-value">{usuarios.length}</div>
-          <div className="admin-stat-subtitle">{usuarios.filter(u => u.rol === 'voluntario').length} Voluntarios</div>
+          <div className="admin-stat-subtitle">{usuarios.filter(u => (u.Rol?.nombre || u.rol) === 'voluntario').length} Voluntarios</div>
         </div>
 
         <div className="admin-stat-card clickable" onClick={() => setTab('lista')}>
@@ -34,7 +34,7 @@ const ResumenTab = ({
             <div className="admin-stat-icon-box blue"><FileText size={20} /></div>
           </div>
           <div className="admin-stat-label">Cuentas Inactivas</div>
-          <div className="admin-stat-value">{usuarios.filter(u => u.status === 'banned').length}</div>
+          <div className="admin-stat-value">{usuarios.filter(u => u.status === 'baneado' || u.status === 'banned').length}</div>
           <div className="admin-stat-subtitle">Usuarios restringidos</div>
         </div>
 

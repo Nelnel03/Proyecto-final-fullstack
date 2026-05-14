@@ -97,7 +97,7 @@ function UserProfile({ user, onUpdateUser }) {
       if (user && user.rol === 'user') {
         try {
           const solicitudes = await services.getSolicitudesVoluntariado();
-          const miSolicitud = solicitudes.find(s => s.userId === user.id && s.estado === 'pendiente');
+          const miSolicitud = solicitudes.find(s => (s.usuario_id === user.id || s.userId === user.id) && (s.estado || '').toLowerCase() === 'pendiente');
           setSolicitud(miSolicitud);
         } catch (e) {
           console.error("Error al buscar solicitud:", e);

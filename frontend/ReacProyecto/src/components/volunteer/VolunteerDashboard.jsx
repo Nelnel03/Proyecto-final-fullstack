@@ -65,7 +65,7 @@ function VolunteerDashboard() {
     try {
       const all = await services.getReportesVoluntariado();
       const mis = (all || [])
-        .filter(r => r.voluntarioId === volId)
+        .filter(r => r.voluntario_id === volId || r.voluntarioId === volId)
         .sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
       setLogs(mis);
       if (mis.length > 0) setSelectedLog(mis[0]);

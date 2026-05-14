@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BASE_URL } from '../services/config.jsx';
-import '../styles/Login.css';
-import '../styles/ResetPassword.css';
+import '../styles/auth/Login.css';
+import '../styles/auth/ResetPassword.css';
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
-import '../../styles/BuzonTab.css';
+import '../../styles/admin/BuzonTab.css';
 
 const ESTADOS_SOPORTE = ['Pendiente', 'En Proceso', 'Leído', 'Solucionado'];
 const ESTADOS_ROBO    = ['Pendiente', 'En Investigación', 'Resuelto'];

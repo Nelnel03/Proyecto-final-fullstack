@@ -1,10 +1,9 @@
 import React from 'react';
-import '../../styles/MainPagesInicoAdmin.css';
-import '../../styles/Arboles.css';
+import '../../styles/admin/MainPagesInicoAdmin.css';
+import '../../styles/visitante/Arboles.css';
 import ArbolFormTab from './ArbolFormTab';
-import { SkeletonCardGrid } from '../ui/Skeleton';
+import { SkeletonCardGrid, Pagination } from '../ui';
 import { usePagination } from '../../hooks/usePagination';
-import { Pagination } from '../ui';
 
 function ListaTab({ 
   busqueda, 

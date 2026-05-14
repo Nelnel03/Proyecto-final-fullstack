@@ -1,11 +1,11 @@
 import React from 'react';
 import { Camera, Loader2 } from 'lucide-react';
-import ImageUploadField from '../ImageUploadField';
+import { ImageUploadField } from '../common';
 import services, { uploadImage } from '../../services/services';
 import Swal from 'sweetalert2';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui';
-import '../../styles/MainPagesInicoAdmin.css';
+import '../../styles/admin/MainPagesInicoAdmin.css';
 
 function UsuariosTab({
   modoEdicionUsuario,

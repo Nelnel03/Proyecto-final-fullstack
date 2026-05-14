@@ -1,7 +1,7 @@
 import React from 'react';
 import { Leaf, ArrowRight, Shield, Map as MapIcon, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Landing.css';
+import '../../styles/visitante/Landing.css';
 
 const Landing = () => {
     const navigate = useNavigate();

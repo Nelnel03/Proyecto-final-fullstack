@@ -24,8 +24,8 @@ import services from '../../services/services';
 import Swal from 'sweetalert2';
 import UserProfile from '../user/UserProfile';
 import ReporteForm from './ReporteForm';
-import DarkModeToggle from '../DarkModeToggle';
-import '../../styles/VoluntariadoPremium.css';
+import { DarkModeToggle } from '../common';
+import '../../styles/admin/VoluntariadoPremium.css';
 
 const SIDEBAR = '#283618';
 const SIDEBAR_ACTIVE = '#344e41';

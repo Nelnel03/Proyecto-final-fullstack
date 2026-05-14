@@ -31,17 +31,14 @@ import {
 import Swal from 'sweetalert2';
 import services from '../../services/services';
 
-import ArbolesSection from '../ArbolesSection';
-import ConocenosTab from '../ConocenosTab';
+import { ArbolesSection, ConocenosTab } from '../visitante';
 import UserProfile from './UserProfile';
 
 import UserReports from './UserReports';
 import UserReportesRobo from './UserReportesRobo';
 import MisReportesTab from './MisReportesTab';
-import CorridorMap from '../CorridorMap';
-import History from '../History';
-import HistoryQuiz from '../HistoryQuiz';
-import DarkModeToggle from '../DarkModeToggle';
+import { CorridorMap, DarkModeToggle } from '../common';
+import { History, HistoryQuiz } from '../history';
 import SolicitudVoluntariadoTab from './SolicitudVoluntariadoTab';
 
 import UserSidebar from './UserSidebar';

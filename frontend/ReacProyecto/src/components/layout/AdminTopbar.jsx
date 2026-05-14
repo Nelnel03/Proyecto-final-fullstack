@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users, Bell, Menu } from 'lucide-react';
-import DarkModeToggle from '../DarkModeToggle';
+import { DarkModeToggle } from '../common';
 
 const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar }) => {
   return (

@@ -10,7 +10,7 @@ import {
   Lightbulb,
   AlertCircle
 } from 'lucide-react';
-import '../../styles/AdminControlCenter.css';
+import '../../styles/admin/AdminControlCenter.css';
 
 function AyudaTab() {
   const [openFaq, setOpenFaq] = React.useState(null);

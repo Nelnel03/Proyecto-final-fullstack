@@ -1,5 +1,5 @@
 import React from 'react'
-import CorridorMap from '../components/CorridorMap'
+import { CorridorMap } from '../components/common';
 
 function Mapa() {
   return (

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import services from '../../services/services';
-import ArbolesSection from '../ArbolesSection';
+import { ArbolesSection } from '../visitante';
 import UserProfile from './UserProfile';
 import UserReports from './UserReports';
 import UserReportesRobo from './UserReportesRobo';
 import MisReportesTab from './MisReportesTab';
-import '../../styles/MainPagesInicoVisitante.css';
-import '../../styles/UserDashboard.css';
+import '../../styles/visitante/MainPagesInicoVisitante.css';
+import '../../styles/user/UserDashboard.css';
 
 function UserDashboard() {
   const [user, setUser] = useState(null);

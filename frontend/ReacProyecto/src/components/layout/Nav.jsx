@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import DarkModeToggle from './DarkModeToggle';
-import '../styles/Nav.css';
+import { DarkModeToggle } from '../common';
+import '../../styles/layout/Nav.css';
 
 function Nav() {
   const location = useLocation();

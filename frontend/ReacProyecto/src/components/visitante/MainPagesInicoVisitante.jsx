@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import services from '../services/services';
+import services from '../../services/services';
 import ArbolesSection from './ArbolesSection';
-import '../styles/MainPagesInicoVisitante.css';
-import '../styles/MainPagesInicoUser.css';
+import '../../styles/visitante/MainPagesInicoVisitante.css';
+import '../../styles/user/MainPagesInicoUser.css';
 
 function MainPagesInicoVisitante() {
   const [formData, setFormData] = useState({

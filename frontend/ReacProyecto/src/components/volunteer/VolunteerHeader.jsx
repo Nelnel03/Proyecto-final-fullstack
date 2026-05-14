@@ -1,5 +1,5 @@
 import React from 'react';
-import DarkModeToggle from '../DarkModeToggle';
+import { DarkModeToggle } from '../common';
 
 const VolunteerHeader = ({ user }) => {
   return (

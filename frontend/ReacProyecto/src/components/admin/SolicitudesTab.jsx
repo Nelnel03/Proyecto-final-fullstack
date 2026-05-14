@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
-import { UserCheck, UserX, Clock, Mail, Calendar } from 'lucide-react';
+import { UserCheck, UserX, Clock, Mail, Calendar, Loader2, Sparkles, AlertCircle } from 'lucide-react';
 
 function SolicitudesTab({ onUpdate }) {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -11,7 +11,6 @@ function SolicitudesTab({ onUpdate }) {
     setCargando(true);
     try {
       const datos = await services.getSolicitudesVoluntariado();
-      // Solo mostrar las pendientes
       setSolicitudes(datos.filter(s => s.estado === 'pendiente'));
     } catch (error) {
       console.error(error);
@@ -27,8 +26,8 @@ function SolicitudesTab({ onUpdate }) {
   const handleAprobar = async (solicitud) => {
     const nombreUsuario = solicitud.Usuario?.nombre || solicitud.userName || 'Usuario';
     const { value: area } = await Swal.fire({
-      title: 'Aprobar Voluntario',
-      text: `Asigna un área de trabajo para ${nombreUsuario}:`,
+      title: 'Validar Incorporación',
+      html: `<p>Asigna un área de trabajo para <b>${nombreUsuario}</b>:</p>`,
       input: 'select',
       inputOptions: {
         'Reforestación': 'Reforestación',
@@ -39,26 +38,23 @@ function SolicitudesTab({ onUpdate }) {
       },
       inputPlaceholder: 'Selecciona un área...',
       showCancelButton: true,
-      confirmButtonColor: '#1a4d2e',
-      inputValidator: (value) => {
-        if (!value) return 'Debes seleccionar un área';
-      }
+      confirmButtonColor: 'var(--ui-primary)',
+      cancelButtonColor: 'var(--ui-error)',
+      confirmButtonText: 'Aprobar Voluntario',
+      inputValidator: (value) => !value && 'Debes seleccionar un área'
     });
 
     if (area) {
       try {
         const userId = solicitud.usuario_id || solicitud.userId;
-
-        // 1. Obtener datos completos del usuario
         const todosUsuarios = await services.getUsuarios();
         const elUsuario = todosUsuarios.find(u => u.id === userId);
 
         if (!elUsuario) {
-            Swal.fire('Error', 'No se encontró al usuario original.', 'error');
+            Swal.fire('Error', 'No se encontró el registro original del usuario.', 'error');
             return;
         }
 
-        // 2. Actualizar rol del usuario
         const usuarioActualizado = {
           ...elUsuario,
           rol: 'voluntario',
@@ -67,86 +63,138 @@ function SolicitudesTab({ onUpdate }) {
           telefono: elUsuario.telefono || 'Sin especificar'
         };
         await services.putUsuarios(usuarioActualizado, userId);
-
-        // 3. Eliminar la solicitud
         await services.deleteSolicitudVoluntariado(solicitud.id);
 
-        Swal.fire('Aprobado', `${nombreUsuario} ahora es voluntario.`, 'success');
+        Swal.fire({
+          title: '¡Felicidades!',
+          text: `${nombreUsuario} ha sido incorporado al equipo de voluntarios.`,
+          icon: 'success',
+          confirmButtonColor: 'var(--ui-primary)'
+        });
+        
         cargarSolicitudes();
         if (onUpdate) onUpdate();
       } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'No se pudo procesar la aprobación.', 'error');
+        Swal.fire('Error', 'No se pudo procesar la solicitud en este momento.', 'error');
       }
     }
   };
 
   const handleRechazar = async (id, nombre) => {
     const confirm = await Swal.fire({
-      title: '¿Rechazar solicitud?',
-      text: `Se eliminará la solicitud de voluntariado de ${nombre}.`,
+      title: '¿Rechazar Solicitud?',
+      text: `Se descartará la postulación de ${nombre}. Esta acción no se puede deshacer.`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      confirmButtonText: 'Sí, rechazar',
+      confirmButtonColor: 'var(--ui-error)',
+      cancelButtonColor: 'var(--ui-primary)',
+      confirmButtonText: 'Sí, descartar',
       cancelButtonText: 'Cancelar'
     });
 
     if (confirm.isConfirmed) {
       try {
         await services.deleteSolicitudVoluntariado(id);
-        Swal.fire('Rechazada', 'La solicitud ha sido eliminada.', 'success');
+        Swal.fire('Acción Realizada', 'La solicitud ha sido retirada.', 'info');
         cargarSolicitudes();
       } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'No se pudo eliminar la solicitud.', 'error');
+        Swal.fire('Error', 'No se pudo completar la operación.', 'error');
       }
     }
   };
 
-  if (cargando) return <div className="admin-loading">Cargando solicitudes...</div>;
+  if (cargando) {
+    return (
+      <div className="flex-center" style={{ height: '300px', flexDirection: 'column', gap: '1rem' }}>
+        <Loader2 size={40} className="animate-spin text-primary" />
+        <p className="text-muted">Procesando solicitudes...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="solicitudes-container">
-      <div className="tab-header-flex">
-        <h2 className="admin-tab-title">Solicitudes de Voluntariado</h2>
-        <span className="badge-count">{solicitudes.length} Pendientes</span>
+    <div className="admin-tab-content-wrapper fade-in">
+      <div className="admin-section-header premium-card flex-between" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
+        <div>
+          <h2 className="text-gradient" style={{ fontSize: '1.6rem', margin: 0 }}>Gestión de Incorporaciones</h2>
+          <p className="text-muted">Revisión de solicitudes para el equipo de voluntarios BioMon</p>
+        </div>
+        <div className="flex-center" style={{ gap: '1rem' }}>
+          <span style={{ 
+            padding: '8px 16px', 
+            borderRadius: '12px', 
+            background: 'var(--ui-primary-bg)', 
+            color: 'var(--ui-primary)', 
+            fontWeight: 800,
+            fontSize: '0.85rem'
+          }}>
+            {solicitudes.length} PENDIENTE{solicitudes.length !== 1 ? 'S' : ''}
+          </span>
+        </div>
       </div>
 
       {solicitudes.length === 0 ? (
-        <div className="empty-state-card">
-          <Clock size={48} opacity={0.3} />
-          <p>No hay solicitudes pendientes en este momento.</p>
+        <div className="premium-card flex-center" style={{ padding: '5rem', flexDirection: 'column', textAlign: 'center' }}>
+          <div className="flex-center" style={{ 
+            width: '80px', 
+            height: '80px', 
+            borderRadius: '50%', 
+            background: 'rgba(0,0,0,0.03)', 
+            marginBottom: '1.5rem',
+            color: 'var(--ui-primary)'
+          }}>
+            <Sparkles size={40} />
+          </div>
+          <h3 style={{ margin: '0 0 0.5rem', fontWeight: 800 }}>Bandeja Vacía</h3>
+          <p className="text-muted" style={{ maxWidth: '300px' }}>
+            No hay solicitudes de voluntariado pendientes de aprobación por ahora.
+          </p>
         </div>
       ) : (
-        <div className="solicitudes-grid">
-          {solicitudes.map(sol => (
-            <div key={sol.id} className="solicitud-card glass-card">
-              <div className="solicitud-info">
-                <div className="user-avatar-placeholder">
+        <div className="grid-auto">
+          {solicitudes.map((sol, idx) => (
+            <div key={sol.id} className="premium-card fade-in" style={{ animationDelay: `${idx * 0.1}s`, padding: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div className="flex-center" style={{ 
+                  width: '56px', 
+                  height: '56px', 
+                  borderRadius: '16px', 
+                  background: 'var(--ui-primary)', 
+                  color: '#fff',
+                  fontSize: '1.4rem',
+                  fontWeight: 900
+                }}>
                   {(sol.Usuario?.nombre || sol.userName || '?').charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3>{sol.Usuario?.nombre || sol.userName}</h3>
-                  <p className="sol-email"><Mail size={14} /> {sol.Usuario?.email || sol.userEmail}</p>
-                  <p className="sol-date"><Calendar size={14} /> Solicitado el: {sol.fecha ? new Date(sol.fecha).toLocaleDateString() : sol.fechaSolicitud}</p>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 800 }}>
+                    {sol.Usuario?.nombre || sol.userName}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--ui-primary)', fontWeight: 700 }}>
+                       <Mail size={12} /> {sol.Usuario?.email || sol.userEmail}
+                    </div>
+                    <div className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem' }}>
+                       <Calendar size={12} /> {sol.fecha ? new Date(sol.fecha).toLocaleDateString() : sol.fechaSolicitud}
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div className="solicitud-actions">
+              <div style={{ display: 'flex', gap: '8px', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.03)' }}>
                 <button 
-                  className="btn-approve" 
+                  className="ui-btn ui-btn--primary" 
+                  style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
                   onClick={() => handleAprobar(sol)}
-                  title="Aprobar Solicitud"
                 >
-                  <UserCheck size={18} /> Aprobar
+                  <UserCheck size={16} style={{ marginRight: '6px' }} /> Aprobar
                 </button>
                 <button 
-                  className="btn-reject" 
+                  className="ui-btn ui-btn--ghost" 
+                  style={{ flex: 0.5, padding: '10px', color: 'var(--ui-error)' }}
                   onClick={() => handleRechazar(sol.id, sol.Usuario?.nombre || sol.userName)}
-                  title="Rechazar Solicitud"
                 >
-                  <UserX size={18} /> Rechazar
+                  <UserX size={16} />
                 </button>
               </div>
             </div>

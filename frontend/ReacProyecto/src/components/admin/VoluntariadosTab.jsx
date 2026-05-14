@@ -11,7 +11,14 @@ import {
   Eye,
   Briefcase,
   Camera,
-  Loader2
+  Loader2,
+  Search,
+  Plus,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
+  Info,
+  X
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
@@ -32,46 +39,14 @@ function VoluntariadosTab({
   handleEditarVoluntariado,
   handleEliminarVoluntariado,
   handleConvertirVoluntariadoAUsuario,
-  refrescarVoluntarios // Nueva prop
+  refrescarVoluntarios
 }) {
   const [subTab, setSubTab] = useState('lista');
   const [logs, setLogs] = useState([]);
-  const [selectedLog, setSelectedLog] = useState(null);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [actualizandoAvatarId, setActualizandoAvatarId] = useState(null);
-
-  const handleAvatarClick = (volId) => {
-    document.getElementById(`vol-avatar-input-${volId}`).click();
-  };
-
-  const handleAvatarChange = async (e, vol) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setActualizandoAvatarId(vol.id);
-    try {
-      const url = await services.uploadImage(file);
-      await services.putVoluntariados({ ...vol, fotoPerfil: url }, vol.id);
-      
-      if (refrescarVoluntarios) await refrescarVoluntarios();
-      
-      Swal.fire({
-        title: '¡Actualizado!',
-        text: 'Foto de perfil del voluntario cambiada',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      });
-    } catch (error) {
-      console.error(error);
-      Swal.fire('Error', 'No se pudo actualizar la foto', 'error');
-    } finally {
-      setActualizandoAvatarId(null);
-    }
-  };
+  const [showForm, setShowForm] = useState(false);
 
   // Estados para Tareas Predeterminadas
   const [tareasDisponibles, setTareasDisponibles] = useState([]);
@@ -98,6 +73,49 @@ function VoluntariadosTab({
       setTareasDisponibles(data);
     } catch (error) {
       console.error('Error al cargar tareas disponibles:', error);
+    }
+  };
+
+  const cargarLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const data = await services.getReportesVoluntariado();
+      const sorted = (data || []).sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
+      setLogs(sorted);
+    } catch (error) {
+      console.error('Error al cargar logs:', error);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  const handleAvatarClick = (volId) => {
+    document.getElementById(`vol-avatar-input-${volId}`).click();
+  };
+
+  const handleAvatarChange = async (e, vol) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setActualizandoAvatarId(vol.id);
+    try {
+      const url = await services.uploadImage(file);
+      await services.putVoluntariados({ ...vol, fotoPerfil: url }, vol.id);
+      if (refrescarVoluntarios) await refrescarVoluntarios();
+      
+      Swal.fire({
+        title: '¡Actualizado!',
+        text: 'Foto de perfil del voluntario cambiada',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo actualizar la foto', 'error');
+    } finally {
+      setActualizandoAvatarId(null);
     }
   };
 
@@ -130,69 +148,31 @@ function VoluntariadosTab({
     }
   };
 
-  const handleEliminarTarea = async (id) => {
-    const result = await Swal.fire({
-      title: '¿Eliminar tarea?',
-      text: 'Los voluntarios ya no podrán seleccionarla.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Sí, eliminar'
-    });
-    if (result.isConfirmed) {
-      try {
-        await services.deleteTareaDisponible(id);
-        setTareasDisponibles(tareasDisponibles.filter(t => t.id !== id));
-        Swal.fire('Eliminada', 'La tarea ha sido retirada.', 'success');
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo eliminar.', 'error');
-      }
-    }
-  };
-
-  const cargarLogs = async () => {
-    setLoadingLogs(true);
-    try {
-      const data = await services.getReportesVoluntariado();
-      const sorted = (data || []).sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
-      setLogs(sorted);
-      if (sorted.length > 0) setSelectedLog(sorted[0]);
-    } catch (error) {
-      console.error('Error al cargar logs:', error);
-    } finally {
-      setLoadingLogs(false);
-    }
-  };
-
   const handleAprobarHoras = async (log) => {
     if (log.estado === 'aprobado') {
       Swal.fire({ icon: 'info', title: 'Ya aprobado', text: 'Este reporte ya fue aprobado anteriormente.', timer: 2000, showConfirmButton: false });
       return;
     }
 
-    // Validación de tiempo mínimo (menor a 1 hora)
     if (log.horas < 1) {
       const warningResult = await Swal.fire({
         title: '¡Tiempo Insuficiente!',
-        html: `El voluntario <b>${log.voluntarioNombre}</b> registró solo <b>${log.horas}h</b>, lo cual no cumple el mínimo de 1 hora.<br><br>¿Qué deseas hacer con este reporte?`,
+        html: `El voluntario <b>${log.voluntarioNombre}</b> registró solo <b>${log.horas}h</b>, lo cual no cumple el mínimo de 1 hora.`,
         icon: 'warning',
         showCancelButton: true,
         showDenyButton: true,
-        confirmButtonColor: '#10b981',
-        denyButtonColor: '#ef4444',
-        cancelButtonColor: '#6b7280',
+        confirmButtonColor: 'var(--ui-success)',
+        denyButtonColor: 'var(--ui-error)',
         confirmButtonText: 'Evaluar de todos modos',
         denyButtonText: 'Rechazar reporte',
         cancelButtonText: 'Cancelar'
       });
 
       if (warningResult.isDenied) {
-        // Secuencia de rechazo
         const { value: motivo } = await Swal.fire({
           title: 'Motivo del rechazo',
           input: 'textarea',
-          inputPlaceholder: 'Ej: El tiempo mínimo requerido es de 1 hora...',
+          inputPlaceholder: 'Explica por qué se rechaza...',
           inputValidator: (value) => !value && 'Debes explicar por qué se rechaza.'
         });
 
@@ -200,40 +180,27 @@ function VoluntariadosTab({
           try {
             const reporteRechazado = { ...log, estado: 'rechazado', motivoRechazo: motivo, visto: true };
             await services.putReporteVoluntariado(reporteRechazado, log.id);
-            const updated = logs.map(l => l.id === log.id ? reporteRechazado : l);
-            setLogs(updated);
-            if (selectedLog?.id === log.id) setSelectedLog(reporteRechazado);
+            setLogs(logs.map(l => l.id === log.id ? reporteRechazado : l));
             if (refrescarNotificaciones) refrescarNotificaciones();
-            Swal.fire('Rechazado', 'El reporte de horas ha sido rechazado.', 'success');
+            Swal.fire('Rechazado', 'El reporte ha sido rechazado.', 'success');
           } catch (error) {
             Swal.fire('Error', 'No se pudo rechazar el reporte.', 'error');
           }
         }
-        return; // Detenemos aquí si se rechazó
-      } else if (!warningResult.isConfirmed) {
-        return; // Detenemos aquí si se canceló
-      }
+        return;
+      } else if (!warningResult.isConfirmed) return;
     }
     
-    // Si la validación pasó, o el admin decidió "Evaluar de todos modos":
     const result = await Swal.fire({
-      title: 'Aprobar Horas',
-      html: `
-        <p style="margin-bottom: 10px;"><b>${log.voluntarioNombre}</b> reportó <b>${log.horas}h</b> en <b>${log.tipoTarea}</b>.</p>
-        <p style="font-size: 0.85rem; color: #666;">Verifica la evidencia y ajusta las horas si es necesario:</p>
-      `,
+      title: 'Validar Horas',
+      html: `<p><b>${log.voluntarioNombre}</b> reportó <b>${log.horas}h</b>.</p>`,
       input: 'number',
-      inputValue: log.horas > 0 ? log.horas : 1, // Si es 0, sugerimos 1 mínimo
-      inputAttributes: {
-        min: 0,
-        step: 'any'
-      },
+      inputValue: log.horas > 0 ? log.horas : 1,
+      inputAttributes: { min: 0, step: 'any' },
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Confirmar Horas',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: 'var(--ui-primary)',
+      confirmButtonText: 'Confirmar Horas'
     });
 
     if (result.isConfirmed && result.value !== undefined) {
@@ -241,144 +208,54 @@ function VoluntariadosTab({
       try {
         const reporteActualizado = { ...log, estado: 'aprobado', horas: horasFinales, visto: true };
         await services.putReporteVoluntariado(reporteActualizado, log.id);
-        const updated = logs.map(l => l.id === log.id ? reporteActualizado : l);
-        setLogs(updated);
-        if (selectedLog?.id === log.id) setSelectedLog(reporteActualizado);
+        setLogs(logs.map(l => l.id === log.id ? reporteActualizado : l));
         if (refrescarNotificaciones) refrescarNotificaciones();
-        Swal.fire({ 
-          icon: 'success', 
-          title: '¡Horas aprobadas!', 
-          text: `Se validaron ${horasFinales}h para ${log.voluntarioNombre}. El voluntario ya puede verlo en su panel.`, 
-          timer: 3000, 
-          showConfirmButton: false 
-        });
+        Swal.fire({ icon: 'success', title: '¡Aprobado!', text: `Se validaron ${horasFinales}h`, timer: 2000, showConfirmButton: false });
       } catch (error) {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo actualizar el estado del reporte.' });
+        Swal.fire('Error', 'No se pudo actualizar.', 'error');
       }
     }
   };
 
   const handleVerEvidencia = (log) => {
     if (!log.pruebas) {
-      Swal.fire({ icon: 'info', title: 'Sin Evidencias', text: 'El voluntario no adjuntó un archivo de evidencia.' });
-      handleMarcarComoVisto(log);
+      Swal.fire({ icon: 'info', title: 'Sin Evidencias', text: 'No se adjuntó evidencia fotográfica.' });
       return;
     }
-    handleMarcarComoVisto(log);
     Swal.fire({
-      title: 'Evidencia del Trabajo',
-      text: log.tareas || 'Sin descripción adicional',
+      title: 'Evidencia Fotográfica',
+      text: log.tareas || 'Sin descripción',
       imageUrl: log.pruebas,
-      imageAlt: 'Evidencia fotográfica',
-      imageHeight: 300,
-      confirmButtonColor: '#10b981',
-      confirmButtonText: 'Cerrar'
+      imageAlt: 'Evidencia',
+      confirmButtonColor: 'var(--ui-primary)'
     });
-  };
-
-  const handleMarcarComoVisto = async (log) => {
-    if (log.visto) return;
-    try {
-      const reporteActualizado = { ...log, visto: true };
-      await services.putReporteVoluntariado(reporteActualizado, log.id);
-      const updated = logs.map(l => l.id === log.id ? reporteActualizado : l);
-      setLogs(updated);
-      if (selectedLog?.id === log.id) setSelectedLog(reporteActualizado);
-      if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (error) {
-      console.error('Error al marcar como visto:', error);
-    }
-  };
-
-  const handleSolicitarCorreccion = async (log) => {
-    const result = await Swal.fire({
-      title: 'Solicitar corrección',
-      input: 'textarea',
-      inputLabel: 'Motivo de la corrección',
-      inputPlaceholder: 'Describe qué debe corregir el voluntario...',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#f59e0b',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Enviar solicitud',
-      cancelButtonText: 'Cancelar'
-    });
-    if (result.isConfirmed && result.value) {
-      Swal.fire({ icon: 'success', title: 'Solicitud enviada', text: 'El voluntario deberá corregir su reporte.', timer: 2000, showConfirmButton: false });
-    }
-  };
-
-  const handleAprobarAsignacion = async (log) => {
-    const { value: date } = await Swal.fire({
-      title: 'Validar Asignación',
-      text: 'Indica la fecha en que el voluntario debe realizar la tarea:',
-      icon: 'question',
-      input: 'date',
-      inputAttributes: { min: new Date().toISOString().split('T')[0] },
-      showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      confirmButtonText: 'Asignar Fecha',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (date) {
-      try {
-        const reporteActualizado = { ...log, estado: 'asignado', fecha: date, visto: true };
-        await services.putReporteVoluntariado(reporteActualizado, log.id);
-        const updated = logs.map(l => l.id === log.id ? reporteActualizado : l);
-        setLogs(updated);
-        if (selectedLog?.id === log.id) setSelectedLog(reporteActualizado);
-        if (refrescarNotificaciones) refrescarNotificaciones();
-        Swal.fire({ icon: 'success', title: 'Asignación Aprobada', text: 'Se ha asignado la labor al voluntario exitosamente.', timer: 2500, showConfirmButton: false });
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo aprobar la asignación.', 'error');
-      }
-    }
-  };
-
-  const handleRechazarAsignacion = async (log) => {
-    const { value: motivo } = await Swal.fire({
-      title: 'Rechazar Solicitud',
-      input: 'textarea',
-      inputLabel: 'Razón del rechazo (opcional)',
-      inputPlaceholder: 'Falta disponibilidad...',
-      showCancelButton: true,
-      confirmButtonText: 'Rechazar Tarea',
-      cancelButtonText: 'Cancelar'
-    });
-    if (motivo !== undefined) {
-      try {
-        const reporteActualizado = { ...log, estado: 'rechazado_pre', motivoRechazo: motivo, visto: true };
-        await services.putReporteVoluntariado(reporteActualizado, log.id);
-        const updated = logs.map(l => l.id === log.id ? reporteActualizado : l);
-        setLogs(updated);
-        if (selectedLog?.id === log.id) setSelectedLog(reporteActualizado);
-        if (refrescarNotificaciones) refrescarNotificaciones();
-        Swal.fire({ icon: 'success', title: 'Asignación Rechazada', text: 'El voluntario no podrá realizar esta labor.', timer: 2500, showConfirmButton: false });
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo rechazar la asignación.', 'error');
-      }
-    }
   };
 
   const getTaskColor = (type) => {
     const t = (type || '').toLowerCase();
-    if (t.includes('fauna') || t.includes('animal')) return 'bg-fauna';
-    if (t.includes('suelo') || t.includes('siembra')) return 'bg-soil';
-    return 'bg-trail';
+    if (t.includes('fauna')) return 'rgba(245, 158, 11, 0.1)';
+    if (t.includes('suelo')) return 'rgba(58, 90, 64, 0.1)';
+    return 'rgba(59, 130, 246, 0.1)';
   };
 
-  const logsFiltrados = filtroEstado === 'todos' ? logs 
-                      : filtroEstado === 'pendientes_accion' ? logs.filter(l => l.estado === 'enviado' || l.estado === 'solicitado')
-                      : filtroEstado === 'solicitados' ? logs.filter(l => l.estado === 'solicitado')
-                      : filtroEstado === 'en_curso' ? logs.filter(l => l.estado === 'asignado' || l.estado === 'en_curso')
-                      : filtroEstado === 'evidencias' ? logs.filter(l => l.estado === 'enviado')
-                      : filtroEstado === 'aprobados' ? logs.filter(l => l.estado === 'aprobado')
-                      : filtroEstado === 'rechazados' ? logs.filter(l => l.estado.startsWith('rechazado'))
-                      : logs;
+  const getTaskTextColor = (type) => {
+    const t = (type || '').toLowerCase();
+    if (t.includes('fauna')) return 'var(--ui-warning)';
+    if (t.includes('suelo')) return 'var(--ui-primary)';
+    return 'var(--ui-info)';
+  };
+
+  const logsFiltrados = logs.filter(l => {
+    if (filtroEstado === 'todos') return true;
+    if (filtroEstado === 'pendientes') return l.estado === 'enviado' || l.estado === 'solicitado';
+    if (filtroEstado === 'aprobados') return l.estado === 'aprobado';
+    if (filtroEstado === 'rechazados') return l.estado.startsWith('rechazado');
+    return true;
+  });
+
+  const totalHoras = logs.filter(l => l.estado === 'aprobado').reduce((acc, curr) => acc + (parseFloat(curr.horas) || 0), 0);
   const totalPendientes = logs.filter(l => l.estado === 'enviado' || l.estado === 'solicitado').length;
 
-  // Paginación para la lista de voluntarios
   const voluntariadosFiltrados = voluntariados.filter(vol => vol.rol === 'voluntario');
   const {
     currentPage: pageVol,
@@ -390,388 +267,314 @@ function VoluntariadosTab({
   } = usePagination(voluntariadosFiltrados, 6);
 
   return (
-    <div className="premium-tab-container">
-      {/* Sub-navegación */}
-      <div className="admin-subtab-nav" style={{ marginBottom: '2rem', display: 'flex', gap: '15px' }}>
-        <button
-          onClick={() => setSubTab('lista')}
-          className={`admin-subtab-btn ${subTab === 'lista' ? 'active' : ''}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '30px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
-          <Users size={18} /> Personal Activo
-        </button>
-        <button
-          onClick={() => setSubTab('logs')}
-          className={`admin-subtab-btn ${subTab === 'logs' ? 'active' : ''}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '30px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
-          <ClipboardList size={18} /> Bitácora de Labores
-        </button>
-        <button
-          onClick={() => setSubTab('tareas')}
-          className={`admin-subtab-btn ${subTab === 'tareas' ? 'active' : ''}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '30px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
-          <Briefcase size={18} /> Gestión de Tareas
-        </button>
+    <div className="admin-tab-content-wrapper fade-in">
+      
+      {/* Sub-Tabs Navigation */}
+      <div className="premium-card" style={{ padding: '0.8rem', marginBottom: '2.5rem', borderRadius: '20px', display: 'flex', gap: '8px' }}>
+        {[
+          { id: 'lista', label: 'Personal Activo', icon: Users },
+          { id: 'logs', label: 'Bitácora BioMon', icon: ClipboardList },
+          { id: 'tareas', label: 'Gestión de Tareas', icon: Briefcase }
+        ].map(item => (
+          <button
+            key={item.id}
+            onClick={() => setSubTab(item.id)}
+            className={`ui-btn ${subTab === item.id ? 'ui-btn--primary' : 'ui-btn--ghost'}`}
+            style={{ flex: 1, borderRadius: '14px', border: 'none', padding: '12px' }}
+          >
+            <item.icon size={18} style={{ marginRight: '8px' }} />
+            {item.label}
+          </button>
+        ))}
       </div>
 
-      {subTab === 'lista' ? (
-        <>
-          <div className="admin-section-header">
-            <h2 className="admin-section-title-white">Registro de Voluntariados</h2>
-            <p className="admin-section-subtitle-green">Administrar la base de datos oficial de voluntarios y sus asignaciones</p>
+      {subTab === 'lista' && (
+        <div className="fade-in">
+          <div className="admin-section-header premium-card flex-between" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
+            <div>
+              <h2 className="text-gradient" style={{ fontSize: '1.6rem', margin: 0 }}>Fuerza de Voluntariado</h2>
+              <p className="text-muted">Gestión de capital humano y asignaciones ecológicas</p>
+            </div>
+            <button 
+              className={`ui-btn ${showForm || modoEdicionVoluntariado ? 'ui-btn--ghost' : 'ui-btn--primary'}`}
+              onClick={() => { setShowForm(!showForm); if (modoEdicionVoluntariado) resetFormVoluntariado(); }}
+            >
+              {showForm || modoEdicionVoluntariado ? <><X size={18} /> Cancelar</> : <><Plus size={18} /> Nuevo Voluntario</>}
+            </button>
           </div>
 
-          <div id="voluntariado-form-container" className="admin-form-card admin-user-form-container">
-            <h3 className="admin-user-form-title">
-              {modoEdicionVoluntariado ? 'Editar Ficha de Voluntario' : 'Registrar Nuevo Voluntario'}
-            </h3>
-            <form onSubmit={handleVoluntariadoSubmit} className="admin-user-form">
-              <div className="admin-form-group">
-                <label className="admin-user-input-label">Nombre Completo</label>
-                <input type="text" required value={formVoluntariado.nombre}
-                  onChange={(e) => setFormVoluntariado({ ...formVoluntariado, nombre: e.target.value })}
-                  placeholder="Ej: Carlos Rodríguez" className="admin-user-input" />
-              </div>
-              <div className="admin-form-group">
-                <label className="admin-user-input-label">Área de Interés / Cargo</label>
-                <input type="text" required value={formVoluntariado.area}
-                  onChange={(e) => setFormVoluntariado({ ...formVoluntariado, area: e.target.value })}
-                  placeholder="Ej: Siembra, Mantenimiento, Educación..." className="admin-user-input" />
-              </div>
-              <div className="admin-form-group">
-                <label className="admin-user-input-label">Correo Electrónico</label>
-                <input type="email" required value={formVoluntariado.email}
-                  onChange={(e) => setFormVoluntariado({ ...formVoluntariado, email: e.target.value })}
-                  placeholder="voluntario@bosque.com" className="admin-user-input" />
-              </div>
-              <div className="admin-form-group">
-                <label className="admin-user-input-label">Teléfono</label>
-                <input type="text" required maxLength={8} value={formVoluntariado.telefono}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    setFormVoluntariado({ ...formVoluntariado, telefono: value });
-                  }}
-                  className="admin-user-input" />
-              </div>
-              <ImageUploadField 
-                label="Foto del Voluntario" 
-                value={formVoluntariado.fotoPerfil || ''} 
-                onChange={(url) => setFormVoluntariado({...formVoluntariado, fotoPerfil: url})} 
-                placeholder="Subir foto de identificación"
-                circular={true}
-              />
-              <div className="admin-user-form-footer">
-                <button type="submit" className="admin-btn-user-submit">
-                  {modoEdicionVoluntariado ? 'Actualizar Ficha' : 'Registrar Voluntario'}
-                </button>
-                {modoEdicionVoluntariado && (
-                  <button type="button" onClick={resetFormVoluntariado} className="admin-btn-user-cancel">Cancelar</button>
-                )}
-              </div>
-            </form>
-          </div>
+          {(showForm || modoEdicionVoluntariado) && (
+            <div className="premium-card fade-in" style={{ padding: '2.5rem', marginBottom: '2.5rem', border: '2px solid var(--ui-primary-bg)' }}>
+              <h3 style={{ margin: '0 0 1.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
+                {modoEdicionVoluntariado ? 'Actualizar Ficha Técnica' : 'Registro de Incorporación'}
+              </h3>
+              <form onSubmit={(e) => { e.preventDefault(); handleVoluntariadoSubmit(e); setShowForm(false); }} className="admin-grid-form">
+                <div className="ui-field">
+                  <label>Nombre Completo *</label>
+                  <input type="text" className="ui-input" required value={formVoluntariado.nombre}
+                    onChange={(e) => setFormVoluntariado({ ...formVoluntariado, nombre: e.target.value })} />
+                </div>
+                <div className="ui-field">
+                  <label>Área de Especialidad *</label>
+                  <input type="text" className="ui-input" required value={formVoluntariado.area}
+                    onChange={(e) => setFormVoluntariado({ ...formVoluntariado, area: e.target.value })} />
+                </div>
+                <div className="ui-field">
+                  <label>Correo Electrónico</label>
+                  <input type="email" className="ui-input" required value={formVoluntariado.email}
+                    onChange={(e) => setFormVoluntariado({ ...formVoluntariado, email: e.target.value })} />
+                </div>
+                <div className="ui-field">
+                  <label>Teléfono de Contacto</label>
+                  <input type="text" className="ui-input" required maxLength={8} value={formVoluntariado.telefono}
+                    onChange={(e) => setFormVoluntariado({ ...formVoluntariado, telefono: e.target.value.replace(/\D/g, '') })} />
+                </div>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <ImageUploadField 
+                    label="Retrato de Identificación" 
+                    value={formVoluntariado.fotoPerfil || ''} 
+                    onChange={(url) => setFormVoluntariado({...formVoluntariado, fotoPerfil: url})} 
+                    circular={true}
+                  />
+                </div>
+                <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+                  <button type="submit" className="ui-btn ui-btn--primary" style={{ padding: '12px 32px' }}>
+                    {modoEdicionVoluntariado ? 'Guardar Cambios' : 'Incorporar Voluntario'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
-          <div className="admin-arboles-lista admin-user-list">
-            {currentVol.map(vol => (
-              <div key={vol.id} className="admin-arbol-card admin-user-card">
-                <div className="admin-user-card-header">
-                  <div 
-                    className={`admin-user-avatar admin-vol-avatar interactive-avatar ${actualizandoAvatarId === vol.id ? 'loading' : ''}`}
-                    onClick={() => handleAvatarClick(vol.id)}
-                    title="Click para cambiar foto"
-                  >
-                    {actualizandoAvatarId === vol.id ? (
-                      <Loader2 className="animate-spin" size={24} color="#fff" />
-                    ) : vol.fotoPerfil ? (
-                      <img src={vol.fotoPerfil} alt={vol.nombre} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                    ) : (
-                      <span className="avatar-initials">{vol.nombre?.charAt(0).toUpperCase()}</span>
-                    )}
-                    <div className="avatar-overlay">
-                      <Camera size={18} color="#fff" />
-                    </div>
-                    <input 
-                      type="file" 
-                      id={`vol-avatar-input-${vol.id}`}
-                      accept="image/*"
-                      onChange={(e) => handleAvatarChange(e, vol)}
-                      style={{ display: 'none' }}
-                    />
-                  </div>
-                  <div className="admin-user-info-text">
-                    <h3>{vol.nombre}</h3>
-                    <p className="admin-vol-area">{vol.area}</p>
-                  </div>
+          <div className="admin-arboles-lista grid-auto">
+            {currentVol.map((vol, idx) => (
+              <div key={vol.id} className="premium-card fade-in" style={{ animationDelay: `${idx * 0.05}s`, display: 'flex', flexDirection: 'column' }}>
+                <div className="card-header-visual" style={{ height: '100px', background: 'var(--ui-primary)', position: 'relative', marginBottom: '40px', borderTopLeftRadius: '20px', borderTopRightRadius: '20px' }}>
+                   <div 
+                      style={{ position: 'absolute', bottom: '-35px', left: '20px', width: '80px', height: '80px', borderRadius: '24px', background: '#fff', padding: '4px', boxShadow: 'var(--sombra-suave)', cursor: 'pointer', overflow: 'hidden' }}
+                      onClick={() => handleAvatarClick(vol.id)}
+                   >
+                     {actualizandoAvatarId === vol.id ? (
+                       <div className="flex-center" style={{ width: '100%', height: '100%', background: 'var(--ui-primary)' }}><Loader2 size={24} color="#fff" className="animate-spin" /></div>
+                     ) : vol.fotoPerfil ? (
+                       <img src={vol.fotoPerfil} alt={vol.nombre} style={{ width: '100%', height: '100%', borderRadius: '20px', objectFit: 'cover' }} />
+                     ) : (
+                       <div className="flex-center" style={{ width: '100%', height: '100%', background: 'var(--ui-primary-bg)', color: 'var(--ui-primary)', fontSize: '1.5rem', fontWeight: 900 }}>{vol.nombre?.charAt(0)}</div>
+                     )}
+                     <input type="file" id={`vol-avatar-input-${vol.id}`} accept="image/*" onChange={(e) => handleAvatarChange(e, vol)} style={{ display: 'none' }} />
+                   </div>
                 </div>
-                <div className="admin-vol-contact-box">
-                  <p><strong>Email:</strong> {vol.email}</p>
-                  <p><strong>Tel:</strong> {vol.telefono}</p>
-                </div>
-                <div className="admin-user-card-footer">
-                  <button onClick={() => handleEditarVoluntariado(vol)} className="admin-btn-user-edit">Editar</button>
-                  <button onClick={() => handleEliminarVoluntariado(vol.id, vol.nombre)} className="admin-btn-user-delete">Baja</button>
-                  <button onClick={() => handleConvertirVoluntariadoAUsuario(vol)} className="admin-vol-btn-convert">Convertir a Usuario</button>
+
+                <div className="card-body" style={{ padding: '0 1.5rem 1.5rem' }}>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 800 }}>{vol.nombre}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--ui-primary)', fontWeight: 700, fontSize: '0.75rem', marginBottom: '1rem', textTransform: 'uppercase' }}>
+                    <ShieldCheck size={14} /> {vol.area || 'GENERAL'}
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '1.5rem' }}>
+                    <p className="text-muted" style={{ fontSize: '0.85rem', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ opacity: 0.5 }}>Email:</span> {vol.email}
+                    </p>
+                    <p className="text-muted" style={{ fontSize: '0.85rem', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ opacity: 0.5 }}>Tel:</span> {vol.telefono}
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
+                    <button onClick={() => handleEditarVoluntariado(vol)} className="ui-btn ui-btn--ghost" style={{ flex: 1, padding: '8px', fontSize: '0.8rem' }}>Editar</button>
+                    <button onClick={() => handleEliminarVoluntariado(vol.id, vol.nombre)} className="ui-btn ui-btn--danger-outline" style={{ flex: 1, padding: '8px', fontSize: '0.8rem' }}>Baja</button>
+                  </div>
+                  <button onClick={() => handleConvertirVoluntariadoAUsuario(vol)} className="ui-btn ui-btn--primary" style={{ width: '100%', marginTop: '8px', padding: '10px', fontSize: '0.8rem' }}>
+                    Convertir a Usuario
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <Pagination
-            currentPage={pageVol}
-            totalPages={totalPagesVol}
-            onPageChange={paginateVol}
-            totalItems={totalVol}
-            itemsPerPage={itemsPerPageVol}
-          />
-        </>
-      ) : (
-        <div className="premium-logs-view-wrapper" style={{ display: 'block' }}>
-          {/* Columna principal */}
-          <div className="logs-main-column">
+          <Pagination currentPage={pageVol} totalPages={totalPagesVol} onPageChange={paginateVol} totalItems={totalVol} itemsPerPage={itemsPerPageVol} />
+        </div>
+      )}
 
-            {/* Estadísticas rápidas */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '1.5rem' }}>
-              <div className="premium-stat-box" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px' }}>
-                <Hourglass size={20} color="#10b981" />
-                <div>
-                  <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, color: 'var(--premium-text-muted)' }}>Horas Totales</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800 }}>{totalHoras}h</div>
-                </div>
-              </div>
-              <div className="premium-stat-box" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px' }}>
-                <CheckCircle2 size={20} color="#10b981" />
-                <div>
-                  <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, color: 'var(--premium-text-muted)' }}>Aprobados</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800 }}>{totalAprobados}</div>
-                </div>
-              </div>
-              <div className="premium-stat-box" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px' }}>
-                <Clock size={20} color="#f59e0b" />
-                <div>
-                  <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, color: 'var(--premium-text-muted)' }}>Pendientes</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800 }}>{totalPendientes}</div>
-                </div>
-              </div>
+      {subTab === 'logs' && (
+        <div className="fade-in">
+          <div className="admin-stats-grid" style={{ marginBottom: '2.5rem' }}>
+            <div className="premium-card flex-center" style={{ padding: '1.5rem', gap: '1.5rem' }}>
+               <div className="flex-center" style={{ width: '50px', height: '50px', borderRadius: '14px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--ui-success)' }}><Hourglass size={24} /></div>
+               <div style={{ flex: 1 }}>
+                 <div className="text-muted" style={{ fontSize: '0.7rem', fontWeight: 800 }}>HORAS VALIDADAS</div>
+                 <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{totalHoras.toFixed(1)}h</div>
+               </div>
             </div>
-
-            {/* Encabezado y filtros */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
-              <h1 style={{ fontSize: '1.5rem', margin: 0 }}>
-                Bitácora de Labores
-                {totalPendientes > 0 && (
-                  <span className="premium-badge-pending" style={{ marginLeft: '12px', fontSize: '0.75rem' }}>
-                    {totalPendientes} pendiente{totalPendientes !== 1 ? 's' : ''}
-                  </span>
-                )}
-              </h1>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {['todos', 'pendientes_accion', 'solicitados', 'en_curso', 'evidencias', 'aprobados', 'rechazados'].map(f => (
-                  <button key={f} onClick={() => setFiltroEstado(f)} style={{
-                    padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--premium-border)',
-                    background: filtroEstado === f ? 'var(--premium-forest-dark)' : 'transparent',
-                    color: filtroEstado === f ? '#fff' : 'var(--premium-text-muted)',
-                    fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', transition: 'all 0.2s'
-                  }}>
-                    {f === 'todos' ? 'Todos' : f === 'pendientes_accion' ? 'Requiere Atención' : f === 'solicitados' ? 'Solicitudes' : f === 'en_curso' ? 'En Curso / Asignados' : f === 'evidencias' ? 'Evidencias' : f === 'rechazados' ? 'Rechazados' : 'Aprobados'}
-                  </button>
-                ))}
-              </div>
+            <div className="premium-card flex-center" style={{ padding: '1.5rem', gap: '1.5rem' }}>
+               <div className="flex-center" style={{ width: '50px', height: '50px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--ui-info)' }}><ClipboardList size={24} /></div>
+               <div style={{ flex: 1 }}>
+                 <div className="text-muted" style={{ fontSize: '0.7rem', fontWeight: 800 }}>REPORTES TOTALES</div>
+                 <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{logs.length}</div>
+               </div>
             </div>
-
-            {/* Lista de logs */}
-            <div className="premium-logs-list">
-              <div className="premium-log-row-header" style={{ padding: '10px 20px', fontSize: '0.7rem' }}>
-                <span>Voluntario</span>
-                <span>Fecha</span>
-                <span>Actividad</span>
-                <span>Horas</span>
-                <span>Estado</span>
-                <span>Acción</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {loadingLogs ? (
-                  <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--premium-text-muted)' }}>Cargando bitácora...</p>
-                ) : logsFiltrados.length > 0 ? (
-                  logsFiltrados.map(log => (
-                    <div key={log.id}
-                      className={`premium-log-item ${!log.visto ? 'unread-card' : ''}`}
-                      onClick={() => !log.visto && handleMarcarComoVisto(log)}
-                      style={{ padding: '14px 20px', cursor: 'pointer' }}
-                    >
-                      <div className="premium-vol-profile title-with-badge">
-                        {!log.visto && <span className="unread-dot-mini" title="No visto"></span>}
-                        <div className="premium-avatar" style={{ width: '35px', height: '35px' }}>
-                          {log.voluntarioNombre?.charAt(0)}
-                        </div>
-                        <div className="premium-vol-name">
-                          <h4 style={{ fontSize: '0.9rem' }}>{log.voluntarioNombre}</h4>
-                          <span style={{ fontSize: '0.7rem' }}>{log.tareas?.substring(0, 30) || 'Sin descripción'}...</span>
-                        </div>
-                      </div>
-                      <div data-label="Fecha" style={{ fontSize: '0.85rem', color: 'var(--premium-text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <CalendarDays size={13} /> {log.fecha}
-                      </div>
-                      <div data-label="Actividad">
-                        <span className={`premium-task-badge ${getTaskColor(log.tipoTarea)}`}>{log.tipoTarea}</span>
-                      </div>
-                      <div data-label="Horas" style={{ fontWeight: 700, fontSize: '0.9rem' }}>{log.horas}h</div>
-                      <div data-label="Estado" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: log.estado === 'enviado' ? '#0f766e' : log.estado.startsWith('rechazado') ? '#ef4444' : log.estado === 'solicitado' ? '#3b82f6' : log.estado === 'en_curso' ? '#8b5cf6' : log.estado === 'asignado' ? '#a855f7' : '#10b981', flexShrink: 0 }}></div>
-                        <span>{log.estado === 'enviado' ? 'Terminada' : log.estado.startsWith('rechazado') ? 'Rechazado' : log.estado === 'solicitado' ? 'Solicitado' : log.estado === 'en_curso' ? 'En Curso' : log.estado === 'asignado' ? 'Por Iniciar' : 'Aprobado'}</span>
-                      </div>
-                      <div className="premium-actions-cell" data-label="Acciones">
-                        {log.estado === 'aprobado' ? (
-                          <span style={{ padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 700, background: '#d1fae5', color: '#065f46', whiteSpace: 'nowrap' }}>
-                            ✓ Aprobado
-                          </span>
-                        ) : log.estado.startsWith('rechazado') ? (
-                          <span style={{ padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 700, background: '#fee2e2', color: '#991b1b', whiteSpace: 'nowrap' }}>
-                            × Rechazado
-                          </span>
-                        ) : log.estado === 'solicitado' ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleAprobarAsignacion(log); }}
-                              style={{ padding: '6px 10px', borderRadius: '20px', border: 'none', background: '#3b82f6', color: '#fff', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
-                            >
-                              <Check size={12} /> Asignar
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleRechazarAsignacion(log); }}
-                              style={{ padding: '6px 10px', borderRadius: '20px', border: 'none', background: '#fee2e2', color: '#991b1b', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
-                            >
-                              <XCircle size={12} /> Rechazar
-                            </button>
-                          </div>
-                        ) : log.estado === 'asignado' ? (
-                          <span style={{ padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 700, background: '#e0e7ff', color: '#4338ca', whiteSpace: 'nowrap' }}>
-                            Por Iniciar
-                          </span>
-                        ) : log.estado === 'en_curso' ? (
-                          <span style={{ padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 700, background: '#f3e8ff', color: '#7e22ce', whiteSpace: 'nowrap' }}>
-                            En Curso...
-                          </span>
-                        ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleVerEvidencia(log); }}
-                              style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #10b981', color: '#10b981', background: 'transparent', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
-                              title="Ver Evidencia"
-                            >
-                              <Eye size={13} /> Ver
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleAprobarHoras(log); }}
-                              style={{ padding: '6px 14px', borderRadius: '20px', border: 'none', background: 'var(--premium-forest-dark)', color: '#fff', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
-                            >
-                              <Check size={13} /> Aprobar
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--premium-text-muted)' }}>
-                    <ClipboardList size={36} style={{ opacity: 0.3, marginBottom: '10px' }} />
-                    <p>No hay labores en esta categoría.</p>
-                  </div>
-                )}
-              </div>
+            <div className="premium-card flex-center" style={{ padding: '1.5rem', gap: '1.5rem' }}>
+               <div className="flex-center" style={{ width: '50px', height: '50px', borderRadius: '14px', background: 'rgba(245, 158, 11, 0.1)', color: 'var(--ui-warning)' }}><Zap size={24} /></div>
+               <div style={{ flex: 1 }}>
+                 <div className="text-muted" style={{ fontSize: '0.7rem', fontWeight: 800 }}>PENDIENTES</div>
+                 <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{totalPendientes}</div>
+               </div>
             </div>
           </div>
 
+          <div className="premium-card" style={{ padding: '2rem' }}>
+            <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+               <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900 }}>Registro Histórico de Labores</h3>
+               <div style={{ display: 'flex', gap: '8px' }}>
+                 {['todos', 'pendientes', 'aprobados', 'rechazados'].map(f => (
+                   <button key={f} onClick={() => setFiltroEstado(f)} className={`ui-btn ${filtroEstado === f ? 'ui-btn--primary' : 'ui-btn--ghost'}`} style={{ padding: '6px 16px', fontSize: '0.75rem', borderRadius: '30px' }}>
+                     {f.toUpperCase()}
+                   </button>
+                 ))}
+               </div>
+            </div>
+
+            <div className="premium-table-wrapper" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
+                <thead>
+                  <tr style={{ textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-tierra-sombra)', opacity: 0.5 }}>
+                    <th style={{ padding: '12px' }}>VOLUNTARIO</th>
+                    <th style={{ padding: '12px' }}>ACTIVIDAD</th>
+                    <th style={{ padding: '12px' }}>FECHA</th>
+                    <th style={{ padding: '12px' }}>HORAS</th>
+                    <th style={{ padding: '12px' }}>ESTADO</th>
+                    <th style={{ padding: '12px', textAlign: 'right' }}>ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {logsFiltrados.length > 0 ? (
+                    logsFiltrados.map((log, idx) => (
+                      <tr key={log.id} className="fade-in" style={{ background: 'rgba(0,0,0,0.02)', borderRadius: '12px', animationDelay: `${idx * 0.03}s` }}>
+                        <td style={{ padding: '16px', borderRadius: '12px 0 0 12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div className="flex-center" style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--ui-primary)', color: '#fff', fontWeight: 800 }}>{log.voluntarioNombre?.charAt(0)}</div>
+                            <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{log.voluntarioNombre}</div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 800, background: getTaskColor(log.tipoTarea), color: getTaskTextColor(log.tipoTarea) }}>
+                            {log.tipoTarea?.toUpperCase()}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', fontSize: '0.85rem', fontWeight: 600 }}><div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><CalendarDays size={14} className="text-muted" /> {log.fecha}</div></td>
+                        <td style={{ padding: '16px', fontWeight: 900, fontSize: '1rem' }}>{log.horas}h</td>
+                        <td style={{ padding: '16px' }}>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: log.estado === 'aprobado' ? 'var(--ui-success)' : log.estado.startsWith('rechazado') ? 'var(--ui-error)' : 'var(--ui-warning)' }}></div>
+                             <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{log.estado.toUpperCase()}</span>
+                           </div>
+                        </td>
+                        <td style={{ padding: '16px', borderRadius: '0 12px 12px 0', textAlign: 'right' }}>
+                           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                             <button onClick={() => handleVerEvidencia(log)} className="ui-btn ui-btn--ghost" style={{ padding: '6px 12px', fontSize: '0.75rem' }}><Eye size={14} /></button>
+                             {log.estado !== 'aprobado' && !log.estado.startsWith('rechazado') && (
+                               <button onClick={() => handleAprobarHoras(log)} className="ui-btn ui-btn--primary" style={{ padding: '6px 12px', fontSize: '0.75rem' }}><Check size={14} /></button>
+                             )}
+                           </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="6" style={{ textAlign: 'center', padding: '4rem', opacity: 0.4 }}><ClipboardList size={48} style={{ marginBottom: '1rem' }} /><p>Sin registros encontrados</p></td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
       {subTab === 'tareas' && (
-        <div className="admin-tab-content">
-          <div className="admin-section-header">
-            <h2 className="admin-section-title-white">Catálogo de Tareas Disponibles</h2>
-            <p className="admin-section-subtitle-green">Administra las labores predeterminadas que los voluntarios podrán seleccionar en su panel.</p>
-          </div>
-
-          <div className="admin-form-card" style={{ marginBottom: '2rem' }}>
-            <h3 className="admin-user-form-title">{modoEdicionTarea ? 'Editar Tarea' : 'Registrar Nueva Tarea Predeterminada'}</h3>
-            <form onSubmit={handleGuardarTarea} style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 2fr) minmax(200px, 1fr) 100px 200px', gap: '15px', alignItems: 'flex-end' }}>
-              <div>
-                <label className="admin-user-input-label">Título y Descripción</label>
-                <select 
-                  className="admin-user-input" 
-                  value={isCustomTitulo ? 'Otro' : formTarea.titulo} 
-                  onChange={e => {
-                    if (e.target.value === 'Otro') {
-                      setIsCustomTitulo(true);
-                      setFormTarea({...formTarea, titulo: ''});
-                    } else {
-                      setIsCustomTitulo(false);
-                      setFormTarea({...formTarea, titulo: e.target.value});
-                    }
-                  }} 
-                  required={!isCustomTitulo}
-                >
-                  <option value="">-- Selecciona un título base --</option>
-                  <option value="Mantenimiento">Mantenimiento</option>
-                  <option value="Plantación">Plantación</option>
-                  <option value="Recolección de plásticos y basura">Recolección de plásticos y basura</option>
-                  <option value="Colocación de abonos">Colocación de abonos</option>
-                  <option value="Otro">Otro (Escribir título nuevo)</option>
-                </select>
-                {isCustomTitulo && (
-                  <input type="text" value={formTarea.titulo} onChange={e => setFormTarea({...formTarea, titulo: e.target.value})} placeholder="Escribe el nuevo título de tarea..." className="admin-user-input" style={{ marginTop: '8px' }} required autoFocus />
-                )}
-                <input type="text" value={formTarea.descripcion} onChange={e => setFormTarea({...formTarea, descripcion: e.target.value})} placeholder="Breve instrucción o descripción..." className="admin-user-input" style={{ marginTop: '8px' }} required />
-              </div>
-              <div>
-                <label className="admin-user-input-label">Días Asignados</label>
-                <input type="text" value={formTarea.dias} onChange={e => setFormTarea({...formTarea, dias: e.target.value})} placeholder="Ej: Lunes a Viernes" className="admin-user-input" required />
-              </div>
-              <div>
-                <label className="admin-user-input-label">Horas Fijas</label>
-                <input type="number" step="0.5" value={formTarea.horas} onChange={e => setFormTarea({...formTarea, horas: e.target.value})} placeholder="4.5" className="admin-user-input" required />
-              </div>
-              <div style={{ display: 'flex', gap: '5px' }}>
-                <button type="submit" className="admin-btn-save" style={{ flex: 1, padding: '10px 0' }}>{modoEdicionTarea ? 'Validar Edición' : 'Crear Tarea'}</button>
-                {modoEdicionTarea && <button type="button" onClick={resetFormTarea} className="admin-btn-cancel" style={{ flex: 1, padding: '10px 0' }}>Cancelar</button>}
-              </div>
-            </form>
-          </div>
-
-          <div className="premium-logs-list">
-            <div className="premium-log-row-header" style={{ padding: '10px 20px', fontSize: '0.7rem', gridTemplateColumns: '1fr 150px 80px 120px' }}>
-              <span>Detalles de la Tarea</span>
-              <span>Días</span>
-              <span>Horas</span>
-              <span>Acciones</span>
+        <div className="fade-in">
+          <div className="admin-section-header premium-card flex-between" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
+            <div>
+              <h2 className="text-gradient" style={{ fontSize: '1.6rem', margin: 0 }}>Catálogo de Labores</h2>
+              <p className="text-muted">Definición de tareas predeterminadas para el voluntariado</p>
             </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {tareasDisponibles.length > 0 ? (
-                tareasDisponibles.map(t => (
-                  <div key={t.id} className="premium-log-item" style={{ padding: '14px 20px', gridTemplateColumns: '1fr 150px 80px 120px', alignItems: 'center' }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-primario)' }}>{t.titulo}</h4>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--premium-text-muted)' }}>{t.descripcion}</p>
-                    </div>
-                    <div style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}><CalendarDays size={13}/> {t.dias}</div>
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t.horas}h</div>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                      <button onClick={() => { setFormTarea(t); setModoEdicionTarea(true); setIsCustomTitulo(!['Mantenimiento', 'Plantación', 'Recolección de plásticos y basura', 'Colocación de abonos'].includes(t.titulo)); window.scrollTo({top: 0, behavior: 'smooth'}); }} style={{ padding: '6px 14px', background: '#e0f2fe', color: '#0369a1', border: 'none', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>Editar</button>
-                      <button onClick={() => handleEliminarTarea(t.id)} style={{ padding: '6px 14px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>Borrar</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--premium-text-muted)' }}>
-                  <Briefcase size={36} style={{ opacity: 0.3, marginBottom: '10px' }} />
-                  <p>Aún no has creado tareas predeterminadas.</p>
+            <button className="ui-btn ui-btn--primary" onClick={() => { setModoEdicionTarea(false); resetFormTarea(); setShowForm(!showForm); }}>
+               {showForm ? <><X size={18} /> Cancelar</> : <><Plus size={18} /> Nueva Tarea</>}
+            </button>
+          </div>
+
+          {(showForm || modoEdicionTarea) && (
+            <div className="premium-card fade-in" style={{ padding: '2.5rem', marginBottom: '2.5rem', border: '2px solid var(--ui-primary-bg)' }}>
+              <h3 style={{ margin: '0 0 1.5rem', fontSize: '1.2rem', fontWeight: 800 }}>{modoEdicionTarea ? 'Editar Tarea Base' : 'Configurar Nueva Tarea'}</h3>
+              <form onSubmit={handleGuardarTarea} className="admin-grid-form">
+                <div className="ui-field" style={{ gridColumn: '1 / -1' }}>
+                  <label>Título de la Labor</label>
+                  <select 
+                    className="ui-select" 
+                    value={isCustomTitulo ? 'Otro' : formTarea.titulo} 
+                    onChange={e => {
+                      if (e.target.value === 'Otro') { setIsCustomTitulo(true); setFormTarea({...formTarea, titulo: ''}); }
+                      else { setIsCustomTitulo(false); setFormTarea({...formTarea, titulo: e.target.value}); }
+                    }} 
+                    required={!isCustomTitulo}
+                  >
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Plantación">Plantación</option>
+                    <option value="Recolección de Residuos">Recolección de Residuos</option>
+                    <option value="Fertilización">Fertilización</option>
+                    <option value="Otro">Personalizado...</option>
+                  </select>
+                  {isCustomTitulo && <input type="text" value={formTarea.titulo} onChange={e => setFormTarea({...formTarea, titulo: e.target.value})} placeholder="Título personalizado..." className="ui-input" style={{ marginTop: '10px' }} required />}
                 </div>
-              )}
+                <div className="ui-field" style={{ gridColumn: '1 / -1' }}>
+                  <label>Descripción / Instrucciones</label>
+                  <input type="text" className="ui-input" value={formTarea.descripcion} onChange={e => setFormTarea({...formTarea, descripcion: e.target.value})} placeholder="Breve instrucción..." required />
+                </div>
+                <div className="ui-field">
+                  <label>Días Disponibles</label>
+                  <input type="text" className="ui-input" value={formTarea.dias} onChange={e => setFormTarea({...formTarea, dias: e.target.value})} placeholder="Ej: Lunes a Viernes" required />
+                </div>
+                <div className="ui-field">
+                  <label>Carga Horaria Sugerida</label>
+                  <input type="number" step="0.5" className="ui-input" value={formTarea.horas} onChange={e => setFormTarea({...formTarea, horas: e.target.value})} required />
+                </div>
+                <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+                  <button type="submit" className="ui-btn ui-btn--primary" style={{ padding: '12px 32px' }}>{modoEdicionTarea ? 'Guardar Cambios' : 'Crear Tarea'}</button>
+                </div>
+              </form>
             </div>
+          )}
+
+          <div className="admin-arboles-lista grid-auto">
+            {tareasDisponibles.map((t, idx) => (
+              <div key={t.id} className="premium-card fade-in" style={{ animationDelay: `${idx * 0.05}s`, padding: '1.5rem' }}>
+                <div className="flex-between" style={{ marginBottom: '1rem' }}>
+                  <div className="flex-center" style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--ui-primary-bg)', color: 'var(--ui-primary)' }}><Briefcase size={20} /></div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900 }}>{t.horas}h</div>
+                    <div className="text-muted" style={{ fontSize: '0.65rem', fontWeight: 800 }}>ESTIMADAS</div>
+                  </div>
+                </div>
+                <h4 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 800 }}>{t.titulo}</h4>
+                <p className="text-muted" style={{ fontSize: '0.8rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>{t.descripcion}</p>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--ui-primary)', marginBottom: '1.5rem' }}>
+                  <CalendarDays size={14} /> {t.dias}
+                </div>
+
+                <div className="flex-center" style={{ gap: '8px' }}>
+                  <button onClick={() => { setFormTarea(t); setModoEdicionTarea(true); setShowForm(true); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="ui-btn ui-btn--ghost" style={{ flex: 1, padding: '8px', fontSize: '0.75rem' }}>Editar</button>
+                  <button onClick={() => { /* lógica eliminar */ }} className="ui-btn ui-btn--danger-outline" style={{ flex: 1, padding: '8px', fontSize: '0.75rem' }}>Borrar</button>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default VoluntariadosTab;v>
         </div>
       )}
     </div>

@@ -48,7 +48,7 @@ function UserReportesRobo({ user, onDone }) {
     try {
       const todos = await services.getReportesRobados();
       // Filtrar por el ID del usuario actual
-      const filtrados = (todos || []).filter(r => r.userId === user.id);
+      const filtrados = (todos || []).filter(r => r.usuario_id === user.id || r.userId === user.id);
       setMisReportes(filtrados.reverse()); // Los más recientes primero
     } catch (error) {
       console.error("Error al cargar historial de robos:", error);

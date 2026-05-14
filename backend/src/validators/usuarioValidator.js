@@ -17,12 +17,13 @@ const usuarioValidator = [
         .normalizeEmail(),
 
     body('password')
-        .if(body('password').exists()) // Solo si se envía (ej: registro o cambio)
+        .if(body('password').exists({ checkFalsy: true })) // Solo si se envía y no está vacío
         .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres')
         .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
         .matches(/[A-Z]/).withMessage('La contraseña debe contener al menos una mayúscula'),
 
     body('rol_id')
+        .optional()
         .isInt().withMessage('El ID de rol debe ser un número válido'),
 
     body('telefono')

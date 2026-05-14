@@ -1,16 +1,21 @@
 const { Reporte, Usuario, Rol } = require('../models');
 
-/**
- * Controller para la gestión de Reportes Generales
- */
 const reporteController = {
-    // 1. Listar todos los reportes (con información de quién reporta)
     getAll: async (req, res) => {
         try {
+            const condition = {};
+            // Non-admin users only see their own reports
+            if (req.user.rol !== 'admin') {
+                condition.usuario_id = req.user.id;
+            } else {
+                if (req.query.tipo) condition.tipo = req.query.tipo;
+            }
+
             const reportes = await Reporte.findAll({
+                where: condition,
                 include: [
-                    { model: Usuario, attributes: ['nombre', 'email'] },
-                    { model: Rol, attributes: ['nombre'] }
+                    { model: Usuario, attributes: ['nombre', 'email'], required: false },
+                    { model: Rol, attributes: ['nombre'], required: false }
                 ],
                 order: [['created_at', 'DESC']]
             });
@@ -21,19 +26,22 @@ const reporteController = {
         }
     },
 
-    // 2. Obtener un reporte específico
     getById: async (req, res) => {
         try {
             const { id } = req.params;
             const reporte = await Reporte.findByPk(id, {
                 include: [
-                    { model: Usuario, attributes: ['nombre', 'email'] },
-                    { model: Rol, attributes: ['nombre'] }
+                    { model: Usuario, attributes: ['nombre', 'email'], required: false },
+                    { model: Rol, attributes: ['nombre'], required: false }
                 ]
             });
 
             if (!reporte) {
                 return res.status(404).json({ message: 'Reporte no encontrado' });
+            }
+
+            if (req.user.rol !== 'admin' && reporte.usuario_id !== req.user.id) {
+                return res.status(403).json({ message: 'Acceso denegado' });
             }
 
             return res.status(200).json(reporte);
@@ -43,17 +51,32 @@ const reporteController = {
         }
     },
 
-    // 3. Crear un nuevo reporte
     create: async (req, res) => {
         try {
-            const { usuario_id, rol_id, tipo, asunto, contenido } = req.body;
+            const body = req.body;
+
+            // Usuario from JWT (fallback if not provided)
+            const usuario_id = body.usuario_id || body.userId || req.user.id;
+            const rol_id = body.rol_id || req.user.rol_id || 4;
+
+            // Map flexible field names to model fields
+            // Support reports: asunto + mensaje/contenido
+            // Robo reports: tipo_arbol → asunto, descripcion → contenido, ubicacion included in contenido
+            let asunto = body.asunto || body.tipo_arbol || 'Sin asunto';
+            let contenido = body.contenido || body.mensaje || body.descripcion || 'Sin contenido';
+
+            // For robo reports: include ubicacion in contenido
+            if (body.ubicacion && !body.contenido && !body.mensaje) {
+                contenido = `Ubicación: ${body.ubicacion}\n\n${contenido}`;
+            }
 
             const nuevoReporte = await Reporte.create({
                 usuario_id,
                 rol_id,
-                tipo,
+                tipo: body.tipo || null,
                 asunto,
                 contenido,
+                estado: body.estado || 'Pendiente',
                 fecha: new Date(),
                 visto: 0
             });
@@ -68,11 +91,10 @@ const reporteController = {
         }
     },
 
-    // 4. Marcar como visto o actualizar
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const { visto, tipo, asunto, contenido } = req.body;
+            const { visto, tipo, asunto, contenido, estado } = req.body;
 
             const reporte = await Reporte.findByPk(id);
             if (!reporte) {
@@ -80,10 +102,11 @@ const reporteController = {
             }
 
             await reporte.update({
-                visto: visto !== undefined ? visto : reporte.visto,
-                tipo: tipo || reporte.tipo,
+                visto: visto !== undefined ? (visto ? 1 : 0) : reporte.visto,
+                tipo: tipo !== undefined ? tipo : reporte.tipo,
                 asunto: asunto || reporte.asunto,
-                contenido: contenido || reporte.contenido
+                contenido: contenido || reporte.contenido,
+                estado: estado !== undefined ? estado : reporte.estado
             });
 
             return res.status(200).json({
@@ -96,7 +119,6 @@ const reporteController = {
         }
     },
 
-    // 5. Eliminar reporte
     delete: async (req, res) => {
         try {
             const { id } = req.params;

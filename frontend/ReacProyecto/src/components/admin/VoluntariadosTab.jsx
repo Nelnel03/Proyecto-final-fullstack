@@ -119,7 +119,7 @@ function VoluntariadosTab({
           horas: parseFloat(formTarea.horas),
           dias: formTarea.dias || 'Cualquier día'
         });
-        setTareasDisponibles([...tareasDisponibles, nuevaTarea]);
+        setTareasDisponibles([...tareasDisponibles, nuevaTarea.tarea || nuevaTarea]);
         Swal.fire('Registrada', 'Nueva tarea creada exitosamente.', 'success');
       }
       resetFormTarea();

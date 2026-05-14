@@ -65,11 +65,16 @@ function BuzonTab({ refrescarNotificaciones }) {
     }
   };
 
+  // Helpers to normalize field names from backend (snake_case) or legacy (camelCase)
+  const getSolUserId = (sol) => sol.usuario_id || sol.userId;
+  const getSolUserName = (sol) => sol.Usuario?.nombre || sol.userName || 'Usuario';
+  const getSolUserEmail = (sol) => sol.Usuario?.email || sol.userEmail || '';
+
   /* ── Postulaciones: Aceptar/Rechazar ── */
   const handleAprobarSolicitud = async (sol) => {
     const res = await Swal.fire({
       title: '¿Aprobar nuevo voluntario?',
-      text: `El usuario ${sol.userName} pasará a tener rango de voluntario oficialmente.`,
+      text: `El usuario ${getSolUserName(sol)} pasará a tener rango de voluntario oficialmente.`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Aprobar',
@@ -78,31 +83,21 @@ function BuzonTab({ refrescarNotificaciones }) {
     if (!res.isConfirmed) return;
 
     try {
+      const userId = getSolUserId(sol);
       // 1. Obtener datos del usuario completo
       const allUsers = await services.getUsuarios();
-      const userObj = allUsers.find(u => u.id === sol.userId);
-      
+      const userObj = allUsers.find(u => u.id === userId);
+
       if (userObj) {
           // 2. Actualizar el rol del usuario a voluntario
           await services.putUsuarios({ ...userObj, rol: 'voluntario' }, userObj.id);
-          
-          // 3. Crear ficha de voluntariado oficial
-          const nuevaFicha = {
-              nombre: sol.userName,
-              email: sol.userEmail,
-              area: 'Por asignar',
-              fechaIngreso: new Date().toISOString().split('T')[0],
-              rol: 'voluntario',
-              fotoPerfil: userObj.fotoPerfil || ''
-          };
-          await services.postVoluntariados(nuevaFicha);
       }
 
-      // 4. Marcar solicitud como aprobada
-      await services.putSolicitudVoluntariado({ ...sol, estado: 'Aprobada' }, sol.id);
-      
-      // 5. Refrescar UI
-      setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'Aprobada' } : s));
+      // 3. Marcar solicitud como aprobada (backend normalizes casing)
+      await services.putSolicitudVoluntariado({ estado: 'aprobada' }, sol.id);
+
+      // 4. Refrescar UI
+      setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'aprobada' } : s));
       if (refrescarNotificaciones) refrescarNotificaciones();
       Swal.fire('¡Felicidades!', 'Nuevo voluntariado registrado con éxito.', 'success');
     } catch (err) {
@@ -123,8 +118,8 @@ function BuzonTab({ refrescarNotificaciones }) {
     if (!res.isConfirmed) return;
 
     try {
-      await services.putSolicitudVoluntariado({ ...sol, estado: 'Rechazada' }, sol.id);
-      setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'Rechazada' } : s));
+      await services.putSolicitudVoluntariado({ estado: 'rechazada' }, sol.id);
+      setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'rechazada' } : s));
       if (refrescarNotificaciones) refrescarNotificaciones();
       Swal.fire('Procesado', 'La solicitud ha sido rechazada.', 'info');
     } catch {
@@ -412,45 +407,47 @@ function BuzonTab({ refrescarNotificaciones }) {
           <div className="buzon-section-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 className="buzon-section-title" style={{ margin: 0 }}>Mensajes de Soporte</h2>
             <div className="buzon-tabs-sub" style={{ display: 'flex', gap: '10px' }}>
-              <button 
+              <button
                 className={`sub-tab-btn ${subSoporte === 'usuarios' ? 'active' : ''}`}
                 onClick={() => setSubSoporte('usuarios')}
                 style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: subSoporte === 'usuarios' ? '#22c55e' : '#e5e7eb', color: subSoporte === 'usuarios' ? '#fff' : '#4b5563', fontWeight: 700 }}
               >
-                Usuarios ({reportesSoporte.filter(r => !r.usuarioId?.startsWith('vol-')).length})
+                Usuarios ({reportesSoporte.filter(r => r.Rol?.nombre !== 'voluntario').length})
               </button>
-              <button 
+              <button
                 className={`sub-tab-btn ${subSoporte === 'voluntarios' ? 'active' : ''}`}
                 onClick={() => setSubSoporte('voluntarios')}
                 style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: subSoporte === 'voluntarios' ? '#22c55e' : '#e5e7eb', color: subSoporte === 'voluntarios' ? '#fff' : '#4b5563', fontWeight: 700 }}
               >
-                Voluntarios ({reportesSoporte.filter(r => r.usuarioId?.startsWith('vol-')).length})
+                Voluntarios ({reportesSoporte.filter(r => r.Rol?.nombre === 'voluntario').length})
               </button>
             </div>
           </div>
 
           <div className="reportes-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
-            {reportesSoporte.filter(r => subSoporte === 'voluntarios' ? r.usuarioId?.startsWith('vol-') : !r.usuarioId?.startsWith('vol-')).length === 0 ? (
+            {reportesSoporte.filter(r => subSoporte === 'voluntarios' ? r.Rol?.nombre === 'voluntario' : r.Rol?.nombre !== 'voluntario').length === 0 ? (
               <p style={{ gridColumn: '1/-1', textAlign: 'center', color: '#6b7280', padding: '2rem' }}>No hay mensajes en esta categoría.</p>
             ) : (
               reportesSoporte
-                .filter(r => subSoporte === 'voluntarios' ? r.usuarioId?.startsWith('vol-') : !r.usuarioId?.startsWith('vol-'))
-                .map((rep) => (
-                  <div key={rep.id} 
-                    className={`reporte-card card-soporte ${!rep.visto ? 'unread-card' : ''}`} 
+                .filter(r => subSoporte === 'voluntarios' ? r.Rol?.nombre === 'voluntario' : r.Rol?.nombre !== 'voluntario')
+                .map((rep) => {
+                  const esVoluntario = rep.Rol?.nombre === 'voluntario';
+                  return (
+                  <div key={rep.id}
+                    className={`reporte-card card-soporte ${!rep.visto ? 'unread-card' : ''}`}
                     onClick={() => handleVistoSoporte(rep)}
-                    style={{ background: '#fff', padding: '1.2rem', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', position: 'relative', borderLeft: `5px solid ${rep.usuarioId?.startsWith('vol-') ? '#f59e0b' : '#3b82f6'}`, cursor: 'pointer' }}>
+                    style={{ background: '#fff', padding: '1.2rem', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', position: 'relative', borderLeft: `5px solid ${esVoluntario ? '#f59e0b' : '#3b82f6'}`, cursor: 'pointer' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                       <div className="title-with-badge">
                         {!rep.visto && <span className="unread-dot-mini" title="No visto"></span>}
-                        <span style={{ fontSize: '0.65rem', fontWeight: 800, background: rep.usuarioId?.startsWith('vol-') ? '#fef3c7' : '#dbeafe', color: rep.usuarioId?.startsWith('vol-') ? '#92400e' : '#1e40af', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                          {rep.usuarioId?.startsWith('vol-') ? 'Soporte Voluntariado' : 'Soporte General'}
+                        <span style={{ fontSize: '0.65rem', fontWeight: 800, background: esVoluntario ? '#fef3c7' : '#dbeafe', color: esVoluntario ? '#92400e' : '#1e40af', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                          {esVoluntario ? 'Soporte Voluntariado' : 'Soporte General'}
                         </span>
                       </div>
                       <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{rep.fecha}</span>
                     </div>
                     <h3 style={{ margin: '0 0 4px', fontSize: '0.95rem', fontWeight: 800 }}>{rep.asunto}</h3>
-                    <p style={{ margin: '0 0 10px', fontSize: '0.8rem', color: '#6b7280' }}>De: <strong>{rep.usuarioNombre || rep.userName || rep.voluntarioNombre || 'Anónimo'}</strong></p>
+                    <p style={{ margin: '0 0 10px', fontSize: '0.8rem', color: '#6b7280' }}>De: <strong>{rep.Usuario?.nombre || rep.userName || 'Anónimo'}</strong></p>
                     <div style={{ background: '#f9fafb', padding: '10px', borderRadius: '8px', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '10px', border: '1px solid #e5e7eb', color: '#334155' }}>
                       {rep.contenido || rep.mensaje || '—'}
                     </div>
@@ -458,7 +455,8 @@ function BuzonTab({ refrescarNotificaciones }) {
                       <button onClick={() => services.deleteReportes(rep.id).then(() => cargarDatos())} style={{ background: '#fee2e2', color: '#ef4444', border: 'none', padding: '5px 10px', borderRadius: '5px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>Eliminar</button>
                     </div>
                   </div>
-                ))
+                  );
+                })
             )}
           </div>
         </div>
@@ -481,8 +479,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                     <div className="row-between">
                       <div className="title-with-badge">
                         {!rep.visto && <span className="unread-dot-mini" title="No visto"></span>}
-                        <h3 className="card-title title-robo">Árbol: {rep.tipo_arbol}</h3>
-                        <span className="meta-text">{rep.ubicacion}</span>
+                        <h3 className="card-title title-robo">Árbol: {rep.asunto}</h3>
                       </div>
                       <div className="card-actions-right">
                         <SelectEstado
@@ -497,10 +494,10 @@ function BuzonTab({ refrescarNotificaciones }) {
                     </div>
                     <div className="message-box box-robo">
                       <strong className="box-title-inner inner-title-robo">Descripción:</strong>
-                      <p className="message-text">{rep.descripcion}</p>
+                      <p className="message-text">{rep.contenido || rep.descripcion}</p>
                     </div>
                     <div className="card-footer-between">
-                      <span className="meta-text">Reportado por: <strong>{rep.userName}</strong></span>
+                      <span className="meta-text">Reportado por: <strong>{rep.Usuario?.nombre || rep.userName || 'Anónimo'}</strong></span>
                       <BtnEliminar onClick={() => handleEliminarRobo(rep.id)} />
                     </div>
                   </div>
@@ -566,13 +563,13 @@ function BuzonTab({ refrescarNotificaciones }) {
                             <div className="title-with-badge">
                               {!sol.visto && <span className="unread-dot-mini" title="No visto"></span>}
                               <h3 className="card-title">
-                                Postulación: {sol.userName}
+                                Postulación: {getSolUserName(sol)}
                               </h3>
-                              <span className="meta-text">{sol.userEmail}</span>
+                              <span className="meta-text">{getSolUserEmail(sol)}</span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '5px' }}>
                               <span className="status-date">{new Date(sol.fecha).toLocaleDateString()}</span>
-                              {sol.estado !== 'Pendiente' && <StatusBadge estado={sol.estado} />}
+                              {(sol.estado || '').toLowerCase() !== 'pendiente' && <StatusBadge estado={sol.estado} />}
                             </div>
                           </div>
                           <div className="message-box box-postulacion">
@@ -581,16 +578,16 @@ function BuzonTab({ refrescarNotificaciones }) {
                               {sol.mensaje}
                             </p>
                           </div>
-                          {sol.estado === 'Pendiente' && (
+                          {(sol.estado || '').toLowerCase() === 'pendiente' && (
                           <div className="card-footer" style={{ gap: '10px' }}>
-                            <button 
-                              onClick={() => handleRechazarSolicitud(sol)} 
+                            <button
+                              onClick={() => handleRechazarSolicitud(sol)}
                               className="btn-delete-basic btn-rechazar-post"
                             >
                               Rechazar
                             </button>
-                            <button 
-                              onClick={() => handleAprobarSolicitud(sol)} 
+                            <button
+                              onClick={() => handleAprobarSolicitud(sol)}
                               className="admin-btn-user-submit btn-aprobar-post"
                             >
                               Aprobar Voluntario

@@ -25,9 +25,10 @@ function SolicitudesTab({ onUpdate }) {
   }, []);
 
   const handleAprobar = async (solicitud) => {
+    const nombreUsuario = solicitud.Usuario?.nombre || solicitud.userName || 'Usuario';
     const { value: area } = await Swal.fire({
       title: 'Aprobar Voluntario',
-      text: `Asigna un área de trabajo para ${solicitud.userName}:`,
+      text: `Asigna un área de trabajo para ${nombreUsuario}:`,
       input: 'select',
       inputOptions: {
         'Reforestación': 'Reforestación',
@@ -46,9 +47,11 @@ function SolicitudesTab({ onUpdate }) {
 
     if (area) {
       try {
+        const userId = solicitud.usuario_id || solicitud.userId;
+
         // 1. Obtener datos completos del usuario
         const todosUsuarios = await services.getUsuarios();
-        const elUsuario = todosUsuarios.find(u => u.id === solicitud.userId);
+        const elUsuario = todosUsuarios.find(u => u.id === userId);
 
         if (!elUsuario) {
             Swal.fire('Error', 'No se encontró al usuario original.', 'error');
@@ -63,12 +66,12 @@ function SolicitudesTab({ onUpdate }) {
           fechaIngreso: new Date().toISOString().split('T')[0],
           telefono: elUsuario.telefono || 'Sin especificar'
         };
-        await services.putUsuarios(usuarioActualizado, solicitud.userId);
+        await services.putUsuarios(usuarioActualizado, userId);
 
-        // 3. Eliminar la solicitud (o marcar como aprobada)
+        // 3. Eliminar la solicitud
         await services.deleteSolicitudVoluntariado(solicitud.id);
 
-        Swal.fire('Aprobado', `${solicitud.userName} ahora es voluntario.`, 'success');
+        Swal.fire('Aprobado', `${nombreUsuario} ahora es voluntario.`, 'success');
         cargarSolicitudes();
         if (onUpdate) onUpdate();
       } catch (error) {
@@ -121,12 +124,12 @@ function SolicitudesTab({ onUpdate }) {
             <div key={sol.id} className="solicitud-card glass-card">
               <div className="solicitud-info">
                 <div className="user-avatar-placeholder">
-                  {sol.userName.charAt(0).toUpperCase()}
+                  {(sol.Usuario?.nombre || sol.userName || '?').charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3>{sol.userName}</h3>
-                  <p className="sol-email"><Mail size={14} /> {sol.userEmail}</p>
-                  <p className="sol-date"><Calendar size={14} /> Solicitado el: {sol.fechaSolicitud}</p>
+                  <h3>{sol.Usuario?.nombre || sol.userName}</h3>
+                  <p className="sol-email"><Mail size={14} /> {sol.Usuario?.email || sol.userEmail}</p>
+                  <p className="sol-date"><Calendar size={14} /> Solicitado el: {sol.fecha ? new Date(sol.fecha).toLocaleDateString() : sol.fechaSolicitud}</p>
                 </div>
               </div>
               
@@ -140,7 +143,7 @@ function SolicitudesTab({ onUpdate }) {
                 </button>
                 <button 
                   className="btn-reject" 
-                  onClick={() => handleRechazar(sol.id, sol.userName)}
+                  onClick={() => handleRechazar(sol.id, sol.Usuario?.nombre || sol.userName)}
                   title="Rechazar Solicitud"
                 >
                   <UserX size={18} /> Rechazar

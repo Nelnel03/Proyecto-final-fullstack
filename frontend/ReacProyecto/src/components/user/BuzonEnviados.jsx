@@ -54,8 +54,8 @@ function BuzonEnviados({ user }) {
           services.getReportesRobados(),
         ]);
         // Filtrar solo los del usuario actual
-        setReportes((todos || []).filter((r) => r.userId === user?.id));
-        setReportesRobo((robos || []).filter((r) => r.userId === user?.id));
+        setReportes((todos || []).filter((r) => r.usuario_id === user?.id || r.userId === user?.id));
+        setReportesRobo((robos || []).filter((r) => r.usuario_id === user?.id || r.userId === user?.id));
       } catch (err) {
         console.error("Error al cargar buzón:", err);
       } finally {
@@ -77,7 +77,7 @@ function BuzonEnviados({ user }) {
 
   const mensajesRobo = reportesRobo.map((r) => ({
     ...r,
-    titulo: `Árbol robado: ${r.tipo_arbol || "—"}`,
+    titulo: `Árbol robado: ${r.tipo_arbol || r.asunto || "—"}`,
     tipo: "Robo",
     tipoBadgeBg: "#fee2e2",
     tipoBadgeColor: "#991b1b",
@@ -164,14 +164,12 @@ function BuzonEnviados({ user }) {
               </div>
 
               {/* Detalle opcional */}
-              {item.mensaje && (
+              {(item.contenido || item.mensaje || item.descripcion) && (
                 <p className="buzon-item-preview">
-                  {item.mensaje.length > 120 ? item.mensaje.slice(0, 120) + "…" : item.mensaje}
-                </p>
-              )}
-              {item.descripcion && (
-                <p className="buzon-item-preview">
-                  {item.descripcion.length > 120 ? item.descripcion.slice(0, 120) + "…" : item.descripcion}
+                  {(() => {
+                    const txt = item.contenido || item.mensaje || item.descripcion || '';
+                    return txt.length > 120 ? txt.slice(0, 120) + "…" : txt;
+                  })()}
                 </p>
               )}
             </div>

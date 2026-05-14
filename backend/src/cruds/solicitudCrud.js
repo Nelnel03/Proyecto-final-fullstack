@@ -4,10 +4,15 @@ const { SolicitudVoluntariado, Usuario } = require('../models');
  * Controller para la gestión de Solicitudes de Voluntariado
  */
 const solicitudController = {
-    // 1. Listar todas las solicitudes (con info del solicitante)
+    // 1. Listar solicitudes (admin ve todas; usuarios ven las suyas)
     getAll: async (req, res) => {
         try {
+            const condition = {};
+            if (req.user.rol !== 'admin') {
+                condition.usuario_id = req.user.id;
+            }
             const solicitudes = await SolicitudVoluntariado.findAll({
+                where: condition,
                 include: [{ model: Usuario, attributes: ['nombre', 'email', 'telefono'] }],
                 order: [['created_at', 'DESC']]
             });
@@ -40,11 +45,17 @@ const solicitudController = {
     // 3. Crear una nueva solicitud
     create: async (req, res) => {
         try {
-            const { usuario_id, mensaje } = req.body;
+            // Accept both userId (camelCase from frontend) and usuario_id (snake_case)
+            const usuario_id = req.body.usuario_id || req.body.userId || req.user.id;
+            const { mensaje } = req.body;
+
+            if (!usuario_id) {
+                return res.status(400).json({ message: 'ID de usuario requerido' });
+            }
 
             // Verificar si ya tiene una solicitud pendiente
-            const existingRequest = await SolicitudVoluntariado.findOne({ 
-                where: { usuario_id, estado: 'pendiente' } 
+            const existingRequest = await SolicitudVoluntariado.findOne({
+                where: { usuario_id, estado: 'pendiente' }
             });
 
             if (existingRequest) {
@@ -72,17 +83,23 @@ const solicitudController = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const { estado } = req.body;
+            const { estado, visto } = req.body;
 
             const solicitud = await SolicitudVoluntariado.findByPk(id);
             if (!solicitud) {
                 return res.status(404).json({ message: 'Solicitud no encontrada' });
             }
 
-            await solicitud.update({ estado });
+            // Normalize estado to lowercase for ENUM compatibility
+            const estadoNorm = estado ? estado.toLowerCase() : undefined;
+            const updateData = {};
+            if (estadoNorm) updateData.estado = estadoNorm;
+            if (visto !== undefined) updateData.visto = visto ? 1 : 0;
+
+            await solicitud.update(updateData);
 
             return res.status(200).json({
-                message: `Solicitud marcada como ${estado}`,
+                message: `Solicitud actualizada`,
                 solicitud
             });
         } catch (error) {

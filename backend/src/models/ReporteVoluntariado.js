@@ -7,18 +7,30 @@ module.exports = (sequelize, DataTypes) => {
     },
     voluntario_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     tarea_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
+    },
+    voluntarioNombre: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    voluntarioEmail: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    tipoTarea: {
+      type: DataTypes.STRING(200),
+      allowNull: true
     },
     horaInicio: {
-      type: DataTypes.TIME,
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     horaFin: {
-      type: DataTypes.TIME,
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     horas: {
@@ -35,10 +47,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     fecha: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: true
+    },
+    timestamp: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
     estado: {
-      type: DataTypes.ENUM('pendiente', 'aprobado', 'rechazado'),
+      type: DataTypes.ENUM('pendiente', 'aprobado', 'rechazado', 'solicitado', 'enviado', 'asignado', 'en_curso', 'rechazado_pre'),
       allowNull: false,
       defaultValue: 'pendiente'
     },

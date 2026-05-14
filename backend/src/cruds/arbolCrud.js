@@ -23,7 +23,7 @@ const arbolController = {
                 where: condition,
                 limit,
                 offset,
-                include: [{ model: Abono, limit: 1, order: [['fecha', 'DESC']] }],
+                include: [{ model: Abono, required: false }],
                 order: [['fechaRegistro', 'DESC']]
             });
 
@@ -57,9 +57,11 @@ const arbolController = {
     // 3. Registrar un nuevo árbol
     create: async (req, res) => {
         try {
-            const { 
-                nombre, nombreCientifico, tipo, progreso, familia, 
-                altura_min_m, altura_max_m, clima, descripcion, imagenUrl 
+            const {
+                nombre, nombreCientifico, tipo, progreso, familia,
+                altura, crecimiento, cuidados,
+                altura_min_m, altura_max_m, clima, descripcion, imagenUrl,
+                estado, fechaRegistro
             } = req.body;
 
             const nuevoArbol = await Arbol.create({
@@ -68,12 +70,16 @@ const arbolController = {
                 tipo,
                 progreso: progreso || 0,
                 familia,
+                altura: altura || null,
+                crecimiento: crecimiento || null,
+                cuidados: cuidados || null,
                 altura_min_m,
                 altura_max_m,
                 clima,
                 descripcion,
                 imagenUrl,
-                fechaRegistro: new Date()
+                estado: estado || 'vivo',
+                fechaRegistro: fechaRegistro || new Date()
             });
 
             return res.status(201).json({

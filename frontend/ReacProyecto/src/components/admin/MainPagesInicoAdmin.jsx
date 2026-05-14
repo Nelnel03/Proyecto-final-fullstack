@@ -25,8 +25,8 @@ import Footer from '../Footer';
 const FORM_INICIAL = {
   nombre: '',
   nombreCientifico: '',
-  tipo: '', 
-  progreso: '0%', 
+  tipo: '',
+  progreso: 0,
   familia: '',
   altura: '',
   crecimiento: '',
@@ -221,7 +221,7 @@ function MainPagesInicoAdmin() {
         await services.putUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail }, idEditandoUsuario);
         Swal.fire('Éxito', 'Usuario actualizado', 'success');
       } else {
-        await services.postUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail, status: 'active' });
+        await services.postUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail, status: 'activo' });
         Swal.fire('Éxito', 'Usuario creado', 'success');
       }
       resetFormUsuario();
@@ -258,7 +258,7 @@ function MainPagesInicoAdmin() {
     if (motivo) {
       try {
         const user = usuarios.find(u => u.id === id);
-        await services.putUsuarios({ ...user, status: 'banned', motivoBan: motivo }, id);
+        await services.putUsuarios({ ...user, status: 'baneado', motivoBan: motivo }, id);
         Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
         await cargarArboles();
       } catch (err) {
@@ -279,8 +279,7 @@ function MainPagesInicoAdmin() {
     if (confirm.isConfirmed) {
       try {
         const user = usuarios.find(u => u.id === id);
-        const userActivo = { ...user, status: 'active' };
-        delete userActivo.motivoBan;
+        const userActivo = { ...user, status: 'activo', motivoBan: null };
         await services.putUsuarios(userActivo, id);
         Swal.fire('Reactivado', 'Usuario activado', 'success');
         await cargarArboles();
@@ -474,9 +473,11 @@ function MainPagesInicoAdmin() {
     });
     if (abonoId) {
       try {
-        const abono = abonos.find(a => a.id === abonoId);
-        await services.putAbonos({ ...abono, stock: abono.stock - 1 }, abonoId);
-        const nuevoHist = { abono: abono.nombre, fecha: new Date().toISOString().split('T')[0], idAbono: abonoId };
+        const abonoIdNum = parseInt(abonoId, 10);
+        const abono = abonos.find(a => a.id === abonoIdNum);
+        if (!abono) return;
+        await services.putAbonos({ ...abono, stock: abono.stock - 1 }, abonoIdNum);
+        const nuevoHist = { abono: abono.nombre, fecha: new Date().toISOString().split('T')[0], idAbono: abonoIdNum };
         await services.putArboles({ ...arbol, historialAbono: [...(arbol.historialAbono || []), nuevoHist] }, arbol.id);
         await cargarArboles();
       } catch (e) { Swal.fire('Error', 'Error al abonar', 'error'); }

@@ -4,6 +4,7 @@ const arbolCrud = require('../cruds/arbolCrud');
 const arbolValidator = require('../validators/arbolValidator');
 const validateResults = require('../middlewares/validateMiddleware');
 const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
+const { uploadArbol } = require('../utils/cloudinaryConfig');
 
 // --- Definición de Rutas ---
 
@@ -19,6 +20,7 @@ router.use(verifyToken);
 // POST: Registrar un nuevo árbol (Admin y Voluntario)
 router.post('/', [
     checkRole(['admin', 'voluntario']),
+    uploadArbol.single('imagen'),
     arbolValidator,
     validateResults
 ], arbolCrud.create);
@@ -26,6 +28,7 @@ router.post('/', [
 // PUT: Actualizar un árbol (Admin y Voluntario)
 router.put('/:id', [
     checkRole(['admin', 'voluntario']),
+    uploadArbol.single('imagen'),
     arbolValidator, 
     validateResults
 ], arbolCrud.update);

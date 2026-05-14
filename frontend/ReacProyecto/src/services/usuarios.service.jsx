@@ -59,3 +59,24 @@ export async function deleteUsuarios(id) {
     console.error("Error al eliminar el registro", error);
   }
 }
+
+export async function postFotoPerfil(file) {
+  try {
+    const formData = new FormData();
+    formData.append("foto", file); // Debe coincidir con el nombre esperado en el backend (uploadProfile.single('foto'))
+
+    const respuesta = await fetch(`${BASE_URL}/usuarios/perfil/foto`, {
+      method: "POST",
+      headers: { ...getAuthHeaders() }, // NO agregamos Content-Type, fetch lo pone automáticamente para FormData
+      body: formData,
+    });
+    
+    if (!respuesta.ok) throw new Error("Error al subir imagen al servidor");
+    
+    const data = await respuesta.json();
+    return data;
+  } catch (error) {
+    console.error("Error en postFotoPerfil", error);
+    throw error;
+  }
+}

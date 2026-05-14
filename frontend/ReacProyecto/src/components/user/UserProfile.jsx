@@ -54,12 +54,13 @@ function UserProfile({ user, onUpdateUser }) {
 
     setSubiendoAvatar(true);
     try {
-      const url = await uploadImage(file);
+      const response = await services.postFotoPerfil(file);
+      const url = response.fotoPerfil; // La URL viene en la respuesta del backend
+      
       setFormData(prev => ({ ...prev, fotoPerfil: url }));
       
-      // Actualizar inmediatamente si el usuario quiere
+      // Actualizar el estado local y la sesión (el backend ya guardó la nueva foto)
       const updatedUser = { ...user, ...formData, fotoPerfil: url };
-      await services.putUsuarios(updatedUser, user.id);
       sessionStorage.setItem("user", JSON.stringify(updatedUser));
       onUpdateUser(updatedUser);
 

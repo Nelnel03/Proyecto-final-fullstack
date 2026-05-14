@@ -21,27 +21,29 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
       const solicitudes = await services.getSolicitudesVoluntariado();
       // Obtener la más reciente
       const misSolicitudes = (solicitudes || [])
-        .filter(s => s.userId === user.id)
+        .filter(s => s.usuario_id === user.id || s.userId === user.id)
         .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
       
       const miSolicitud = misSolicitudes[0];
       
       if (miSolicitud) {
-        if (miSolicitud.estado === 'Rechazada') {
+        const estadoNorm = (miSolicitud.estado || '').toLowerCase();
+        if (estadoNorm === 'rechazada') {
           const fechaRechazo = new Date(miSolicitud.fecha);
           const ahora = new Date();
           const diffMs = ahora - fechaRechazo;
           const diffDias = diffMs / (1000 * 60 * 60 * 24);
-          
+
           if (diffDias < 15) {
             setDiasRestantes(Math.ceil(15 - diffDias));
-            setSolicitudEnviada(miSolicitud);
+            setSolicitudEnviada({ ...miSolicitud, estado: 'Rechazada' });
           } else {
-            // Ya pasaron los 15 días, puede volver a intentar
             setSolicitudEnviada(null);
           }
         } else {
-          setSolicitudEnviada(miSolicitud);
+          // Normalize to capitalized for display
+          const estadoDisplay = estadoNorm.charAt(0).toUpperCase() + estadoNorm.slice(1);
+          setSolicitudEnviada({ ...miSolicitud, estado: estadoDisplay });
         }
       }
     } catch (err) {
@@ -64,7 +66,7 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
         userEmail: user.email,
         mensaje: mensaje.trim(),
         fecha: new Date().toISOString(),
-        estado: 'Pendiente'
+        estado: 'pendiente'
       };
       await services.postSolicitudVoluntariado(nuevaSolicitud);
       setSolicitudEnviada(nuevaSolicitud);

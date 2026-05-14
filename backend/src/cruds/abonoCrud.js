@@ -9,10 +9,10 @@ const abonoController = {
         try {
             const abonos = await Abono.findAll({
                 include: [
-                    { model: Arbol, attributes: ['nombre', 'tipo'] },
-                    { model: Usuario, attributes: ['nombre'] }
+                    { model: Arbol, attributes: ['nombre', 'tipo'], required: false },
+                    { model: Usuario, attributes: ['nombre'], required: false }
                 ],
-                order: [['fecha', 'DESC']]
+                order: [['created_at', 'DESC']]
             });
             return res.status(200).json(abonos);
         } catch (error) {
@@ -27,8 +27,8 @@ const abonoController = {
             const { id } = req.params;
             const abono = await Abono.findByPk(id, {
                 include: [
-                    { model: Arbol, attributes: ['nombre', 'tipo', 'clima'] },
-                    { model: Usuario, attributes: ['nombre', 'area'] }
+                    { model: Arbol, attributes: ['nombre', 'tipo', 'clima'], required: false },
+                    { model: Usuario, attributes: ['nombre', 'area'], required: false }
                 ]
             });
 
@@ -43,42 +43,47 @@ const abonoController = {
         }
     },
 
-    // 3. Registrar una nueva fertilización (Con Transacción)
+    // 3. Registrar un abono / producto de inventario
     create: async (req, res) => {
-        const t = await sequelize.transaction(); // Iniciamos la transacción
+        const t = await sequelize.transaction();
         try {
-            const { arbol_id, voluntario_id, tipo_abono, cantidad_kg, fecha, notas, nuevo_progreso } = req.body;
+            const {
+                arbol_id, voluntario_id,
+                nombre, stock, unidad, imagenUrl,
+                tipo_abono, cantidad_kg,
+                fecha, notas, nuevo_progreso
+            } = req.body;
 
-            // 1. Crear el registro de abono
             const nuevoAbono = await Abono.create({
-                arbol_id,
-                voluntario_id,
-                tipo_abono,
-                cantidad_kg,
-                fecha: fecha || new Date(),
-                notas
+                arbol_id: arbol_id || null,
+                voluntario_id: voluntario_id || null,
+                nombre: nombre || null,
+                stock: stock !== undefined ? stock : null,
+                unidad: unidad || null,
+                imagenUrl: imagenUrl || null,
+                tipo_abono: tipo_abono || null,
+                cantidad_kg: cantidad_kg || null,
+                fecha: fecha || null,
+                notas: notas || null
             }, { transaction: t });
 
-            // 2. Si se envió un nuevo progreso, actualizamos el árbol
-            if (nuevo_progreso !== undefined) {
+            if (nuevo_progreso !== undefined && arbol_id) {
                 const arbol = await Arbol.findByPk(arbol_id);
                 if (arbol) {
                     await arbol.update({ progreso: nuevo_progreso }, { transaction: t });
                 }
             }
 
-            // Si todo salió bien, confirmamos los cambios
             await t.commit();
 
             return res.status(201).json({
-                message: 'Registro de abono y actualización de árbol completados',
+                message: 'Registro creado correctamente',
                 abono: nuevoAbono
             });
         } catch (error) {
-            // Si algo falló, revertimos TODO (rollback)
             await t.rollback();
-            console.error('Error en createAbono con Transacción:', error);
-            return res.status(500).json({ message: 'Error al registrar el abono. No se realizaron cambios.' });
+            console.error('Error en createAbono:', error);
+            return res.status(500).json({ message: 'Error al registrar el abono.' });
         }
     },
 

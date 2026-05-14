@@ -11,23 +11,23 @@ module.exports = {
       },
       arbol_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'arboles',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
+        onDelete: 'SET NULL'
       },
       voluntario_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'usuarios',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
+        onDelete: 'SET NULL'
       },
       tipo_abono: {
         type: Sequelize.STRING(100),

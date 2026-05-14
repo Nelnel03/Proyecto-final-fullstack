@@ -71,20 +71,21 @@ function MainLayout() {
               isAuth ? (
                 (() => {
                   const u = JSON.parse(sessionStorage.getItem('user') || '{}');
-                  return u.rol === 'voluntario' ? <Navigate to="/dashboard-voluntario" replace /> : <Navigate to="/dashboard-user" replace />;
+                  if (u.rol === 'voluntario') return <Navigate to="/dashboard-voluntario" replace />;
+                  if (u.rol === 'admin') return <Navigate to="/admin" replace />;
+                  return <Navigate to="/dashboard-user" replace />;
                 })()
               ) : <Navigate to="/login" replace />
             } 
           />
 
-          <Route 
-            path="/dashboard-user" 
+          <Route
+            path="/dashboard-user"
             element={
-              <PrivateRoutes rolesAllowed={['user']}>
+              <PrivateRoutes rolesAllowed={['user', 'usuario']}>
                 <ModernUserDashboard />
               </PrivateRoutes>
-
-            } 
+            }
           />
 
           <Route 

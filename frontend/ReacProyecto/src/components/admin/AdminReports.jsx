@@ -46,8 +46,8 @@ function AdminReports() {
                 <div>
                   <h3 className="admin-report-card-title">{reporte.asunto}</h3>
                   <div className="admin-report-card-meta">
-                    <span>{reporte.userName}</span>
-                    <span>{reporte.userEmail}</span>
+                    <span>{reporte.Usuario?.nombre || reporte.userName}</span>
+                    <span>{reporte.Usuario?.email || reporte.userEmail}</span>
                   </div>
                 </div>
                 <div className="admin-report-card-status-wrap">
@@ -60,7 +60,7 @@ function AdminReports() {
                 </div>
               </div>
               <p className="admin-report-card-message">
-                {reporte.mensaje}
+                {reporte.contenido || reporte.mensaje}
               </p>
             </div>
           ))}

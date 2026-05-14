@@ -1,3 +1,4 @@
+import React from 'react';
 import { Info, Leaf, Camera, Calendar, AlignLeft, Thermometer, ArrowUp, Zap } from 'lucide-react';
 import ImageUploadField from '../ImageUploadField';
 import LoadingButton from '../ui/LoadingButton';
@@ -197,9 +198,8 @@ function ArbolFormTab({
                 <label>Estado actual</label>
                 <select name="estado" value={form.estado} onChange={handleChange}>
                   <option value="vivo">🟢 Vivo / Saludable</option>
-                  <option value="en_riesgo">🟡 En Riesgo</option>
+                  <option value="enfermo">🟡 En Riesgo / Enfermo</option>
                   <option value="muerto">🔴 Muerto / Baja</option>
-                  <option value="protegido">💎 Protegido</option>
                 </select>
               </div>
 

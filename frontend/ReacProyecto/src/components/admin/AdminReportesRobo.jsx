@@ -82,9 +82,9 @@ function AdminReportesRobo() {
             <div key={reporte.id} className="admin-report-card admin-report-card-robo">
               <div className="admin-report-card-header admin-report-card-header-robo">
                 <div>
-                  <h3 className="admin-report-card-title admin-report-card-title-robo">Tipo: {reporte.tipo_arbol}</h3>
+                  <h3 className="admin-report-card-title admin-report-card-title-robo">Tipo: {reporte.asunto || reporte.tipo_arbol}</h3>
                   <div className="admin-report-card-meta admin-report-card-meta-robo">
-                    <span>{reporte.ubicacion}</span>
+                    <span>{reporte.Usuario?.email || reporte.userEmail}</span>
                   </div>
                 </div>
                 <div className="admin-report-card-status-wrap">
@@ -105,11 +105,11 @@ function AdminReportesRobo() {
 
               <p className="admin-report-card-message-robo">
                 <strong>Descripción:</strong><br/>
-                {reporte.descripcion}
+                {reporte.contenido || reporte.descripcion}
               </p>
               <div className="admin-report-card-footer">
                 <div className="admin-report-card-reporter">
-                  Reportado por: <strong>{reporte.userName}</strong> ({reporte.userEmail})
+                  Reportado por: <strong>{reporte.Usuario?.nombre || reporte.userName}</strong> ({reporte.Usuario?.email || reporte.userEmail})
                 </div>
                 <button 
                   onClick={() => handleEliminar(reporte.id)}

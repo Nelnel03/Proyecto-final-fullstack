@@ -1,6 +1,7 @@
-const { Usuario, Rol } = require('../models');
+const { Usuario, Rol, ResetToken } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 /**
  * CRUD/Controller para Autenticación
@@ -21,7 +22,7 @@ const authCrud = {
                 nombre,
                 email,
                 password, // Se envía en texto plano, el hook lo encripta
-                rol_id: rol_id || 4, 
+                rol_id: rol_id || 3, 
                 area,
                 telefono,
                 fechaIngreso: new Date()
@@ -51,14 +52,21 @@ const authCrud = {
 
             const user = await Usuario.findOne({ 
                 where: { email },
-                include: [{ model: Rol, attributes: ['nombre'] }]
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }]
             });
 
             if (!user) {
                 return res.status(401).json({ message: 'Credenciales inválidas' });
             }
 
-            // Usamos el método prototipo del modelo
+            if (user.status === 'baneado') {
+                return res.status(403).json({
+                    message: 'Cuenta suspendida',
+                    status: 'baneado',
+                    motivoBan: user.motivoBan
+                });
+            }
+
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -66,7 +74,7 @@ const authCrud = {
 
             // Generar Token con el rol incluido
             const token = jwt.sign(
-                { id: user.id, email: user.email, rol: user.Rol.nombre, rol_id: user.rol_id },
+                { id: user.id, email: user.email, rol: user.rol.nombre, rol_id: user.rol_id },
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
@@ -78,12 +86,103 @@ const authCrud = {
                     id: user.id,
                     nombre: user.nombre,
                     email: user.email,
-                    rol: user.Rol.nombre
+                    telefono: user.telefono,
+                    rol: user.rol.nombre,
+                    rol_id: user.rol_id,
+                    status: user.status,
+                    motivoBan: user.motivoBan,
+                    debeCambiarPassword: user.debeCambiarPassword,
+                    fotoPerfil: user.fotoPerfil
                 }
             });
         } catch (error) {
             console.error('Error en login:', error);
             return res.status(500).json({ message: 'Error en el servidor durante el login' });
+        }
+    },
+
+    // 3. Cambio de contraseña (primer login de voluntario)
+    changePassword: async (req, res) => {
+        try {
+            const { newPassword } = req.body;
+            const userId = req.user.id;
+
+            if (!newPassword || newPassword.length < 6) {
+                return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
+            }
+
+            const user = await Usuario.findByPk(userId);
+            if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+            await user.update({ password: newPassword, debeCambiarPassword: 0 });
+
+            return res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+        } catch (error) {
+            console.error('Error en changePassword:', error);
+            return res.status(500).json({ message: 'Error al cambiar la contraseña' });
+        }
+    },
+
+    // 4. Solicitud de recuperación de contraseña
+    forgotPassword: async (req, res) => {
+        try {
+            const { email } = req.body;
+
+            const user = await Usuario.findOne({ where: { email } });
+
+            if (!user) {
+                return res.status(200).json({ message: 'Si el correo existe, recibirás instrucciones.' });
+            }
+
+            await ResetToken.destroy({ where: { usuario_id: user.id } });
+
+            const token = crypto.randomBytes(32).toString('hex');
+            const expiry = new Date(Date.now() + 3600000);
+
+            await ResetToken.create({ usuario_id: user.id, token, expiry });
+
+            return res.status(200).json({
+                message: 'Si el correo existe, recibirás instrucciones.',
+                token,
+                nombre: user.nombre,
+                email: user.email
+            });
+        } catch (error) {
+            console.error('Error en forgotPassword:', error);
+            return res.status(500).json({ message: 'Error en el servidor' });
+        }
+    },
+
+    // 5. Restablecimiento de contraseña con token
+    resetPassword: async (req, res) => {
+        try {
+            const { token, newPassword } = req.body;
+
+            if (!newPassword || newPassword.length < 8) {
+                return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
+            }
+
+            const resetToken = await ResetToken.findOne({
+                where: { token, usado: 0 },
+                include: [{ model: Usuario }]
+            });
+
+            if (!resetToken) {
+                return res.status(400).json({ message: 'El enlace de recuperación es inválido o ya fue utilizado.' });
+            }
+
+            if (new Date() > new Date(resetToken.expiry)) {
+                return res.status(400).json({ message: 'El enlace de recuperación ha expirado.' });
+            }
+
+            const user = resetToken.Usuario;
+            await user.update({ password: newPassword });
+            await resetToken.update({ usado: 1 });
+
+            return res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+        } catch (error) {
+            console.error('Error en resetPassword:', error);
+            return res.status(500).json({ message: 'Error al restablecer la contraseña.' });
         }
     }
 };

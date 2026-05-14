@@ -4,8 +4,7 @@
  * el sistema global de loading sin requerir configuración manual en cada componente.
  * También estandariza las respuestas y maneja errores HTTP.
  */
-import { BASE_URL } from './config.jsx';
-import { parseApiError, NetworkError } from '../utils/errors';
+import { BASE_URL, getAuthHeaders } from './config.jsx';
 
 /* ─── Helpers internos ───────────────────────────────────────── */
 
@@ -17,9 +16,8 @@ function buildResponse(data, message = 'OK') {
   return { status: 'success', data, message, error: null };
 }
 
-function buildError(error, message) {
-  // Ahora manejamos instancias de ApiError y derivadas
-  return { status: 'error', data: null, message: message || error.message, error };
+function buildError(error, message = 'Error en la petición') {
+  return { status: 'error', data: null, message, error };
 }
 
 /* ─── Wrapper principal ──────────────────────────────────────── */
@@ -41,6 +39,7 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
 
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    ...getAuthHeaders(),
     ...options.headers,
   };
 
@@ -63,25 +62,24 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
     }
 
     if (!response.ok) {
-      const errorMsg = data?.message || data?.error;
-      throw parseApiError(response.status, data, errorMsg);
+      const errorMsg =
+        data?.message || data?.error || `Error HTTP ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
+    // Si la respuesta ya tiene el formato estandarizado del backend, la devolvemos directamente
+    if (data && typeof data === 'object' && 'status' in data) {
+      return data;
     }
 
     return buildResponse(data);
   } catch (err) {
     clearTimeout(timeoutId);
 
-    // Si ya es un error nuestro, lo relanzamos para que useRequestState/useErrorHandler lo atrape
-    if (err.name && err.name.endsWith('Error') && err.name !== 'TypeError') {
-      throw err;
-    }
-
     if (err.name === 'AbortError') {
-      throw new NetworkError('La solicitud tardó demasiado. Por favor reintenta.');
+      return buildError(err, 'La solicitud tardó demasiado. Por favor reintenta.');
     }
-    
-    // Si falla el fetch por CORS o red
-    throw new NetworkError();
+    return buildError(err, err.message || 'Error de red o servidor.');
   }
 }
 

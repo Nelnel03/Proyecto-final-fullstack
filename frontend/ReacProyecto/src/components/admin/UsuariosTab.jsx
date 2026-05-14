@@ -18,10 +18,14 @@ function UsuariosTab({
   handleConvertirUsuarioAVoluntariado,
   subTab,
   setSubTab,
-  refrescarUsuarios // Nueva prop para recargar la lista
+  refrescarUsuarios
 }) {
-  const [busqueda, setBusqueda] = React.useState(''); 
+  const [busqueda, setBusqueda] = React.useState('');
   const [actualizandoAvatarId, setActualizandoAvatarId] = React.useState(null);
+
+  // Normalizar campo rol para compatibilidad con ambas versiones de la API
+  const getRol = (user) => user.Rol?.nombre || user.rol || 'usuario';
+  const isBanned = (user) => user.status === 'baneado' || user.status === 'banned';
 
   const handleAvatarClick = (userId) => {
     document.getElementById(`avatar-input-${userId}`).click();
@@ -35,9 +39,9 @@ function UsuariosTab({
     try {
       const url = await uploadImage(file);
       await services.putUsuarios({ ...user, fotoPerfil: url }, user.id);
-      
+
       if (refrescarUsuarios) await refrescarUsuarios();
-      
+
       Swal.fire({
         title: '¡Actualizado!',
         text: 'Foto de perfil cambiada con éxito',
@@ -55,6 +59,17 @@ function UsuariosTab({
     }
   };
 
+  const usuariosFiltrados = usuarios
+    .filter(user => getRol(user) !== 'voluntario')
+    .filter(user => {
+      if (subTab === 'activos') return !isBanned(user);
+      return isBanned(user);
+    })
+    .filter(user =>
+      user.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      user.email.toLowerCase().includes(busqueda.toLowerCase())
+    );
+
   return (
     <div>
       <div className="admin-section-header admin-section-header-flex">
@@ -63,12 +78,12 @@ function UsuariosTab({
             <h2 className="admin-section-title-white">Gestión de Usuarios</h2>
             <p className="admin-section-subtitle-green">Administrar accesos y cuentas del sistema</p>
           </div>
-          
+
           <div className="admin-controls-row">
             <div className="admin-search-box">
-              <input 
-                type="text" 
-                placeholder="Buscar usuario por nombre o correo..." 
+              <input
+                type="text"
+                placeholder="Buscar usuario por nombre o correo..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 className="admin-search-input"
@@ -81,18 +96,18 @@ function UsuariosTab({
 
       <div className="admin-tabs-container" style={{ padding: '0 0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--admin-border-color)' }}>
         <div className="admin-tabs-pills" style={{ background: 'transparent', display: 'flex', gap: '20px' }}>
-          <button 
-            onClick={() => setSubTab('activos')} 
+          <button
+            onClick={() => setSubTab('activos')}
             className={`admin-tab-pill ${subTab === 'activos' ? 'active' : ''}`}
           >
             Usuarios Activos
           </button>
-          <button 
-            onClick={() => setSubTab('cancelados')} 
+          <button
+            onClick={() => setSubTab('cancelados')}
             className={`admin-tab-pill ${subTab === 'cancelados' ? 'active' : ''}`}
-            style={{ 
+            style={{
               color: subTab === 'cancelados' ? '#e53e3e' : '#9ca3af',
-              borderBottomColor: subTab === 'cancelados' ? '#e53e3e' : 'transparent' 
+              borderBottomColor: subTab === 'cancelados' ? '#e53e3e' : 'transparent'
             }}
           >
             Usuarios Cancelados
@@ -101,21 +116,11 @@ function UsuariosTab({
       </div>
 
       <div className="admin-arboles-lista admin-user-list">
-        {usuarios
-          .filter(user => user.rol !== 'voluntario')
-          .filter(user => {
-            if (subTab === 'activos') return user.status !== 'banned';
-            return user.status === 'banned';
-          })
-          .filter(user => 
-            user.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-            user.email.toLowerCase().includes(busqueda.toLowerCase())
-          )
-          .map(user => (
-          <div key={user.id} className="admin-arbol-card admin-user-card" style={{ border: user.status === 'banned' ? '1px solid #feb2b2' : '' }}>
+        {usuariosFiltrados.map(user => (
+          <div key={user.id} className="admin-arbol-card admin-user-card" style={{ border: isBanned(user) ? '1px solid #feb2b2' : '' }}>
             <div className="admin-user-card-header">
-              <div 
-                className={`admin-user-avatar ${user.rol} interactive-avatar ${actualizandoAvatarId === user.id ? 'loading' : ''}`}
+              <div
+                className={`admin-user-avatar ${getRol(user)} interactive-avatar ${actualizandoAvatarId === user.id ? 'loading' : ''}`}
                 onClick={() => handleAvatarClick(user.id)}
                 title="Haga clic para cambiar la foto de perfil"
               >
@@ -131,8 +136,8 @@ function UsuariosTab({
                 <div className="avatar-overlay">
                   <Camera size={18} color="#fff" />
                 </div>
-                <input 
-                  type="file" 
+                <input
+                  type="file"
                   id={`avatar-input-${user.id}`}
                   accept="image/*"
                   onChange={(e) => handleAvatarChange(e, user)}
@@ -144,18 +149,18 @@ function UsuariosTab({
                 <p>{user.email}</p>
               </div>
             </div>
-            
+
             <div className="admin-user-id-badge">
               <span className="admin-user-id-label">ID</span>
               <span className="admin-user-id-value">#{user.id}</span>
             </div>
 
-            <div className={`admin-user-role-badge ${user.rol}`}>
+            <div className={`admin-user-role-badge ${getRol(user)}`}>
               <span className="admin-user-role-dot"></span>
-              {user.rol === 'admin' ? 'Administrador' : 'Usuario'}
+              {getRol(user) === 'admin' ? 'Administrador' : 'Usuario'}
             </div>
 
-            {user.status === 'banned' && (
+            {isBanned(user) && (
               <div style={{ marginTop: '1rem', padding: '0.8rem', background: '#fff5f5', borderRadius: '8px', border: '1px solid #feb2b2' }}>
                 <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', color: '#c53030', textTransform: 'uppercase', marginBottom: '4px' }}>Motivo de Cancelación:</span>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: '#742a2a', fontStyle: 'italic' }}>"{user.motivoBan}"</p>
@@ -163,26 +168,26 @@ function UsuariosTab({
             )}
 
             <div className="admin-user-card-footer">
-              {user.status !== 'banned' ? (
+              {!isBanned(user) ? (
                 <>
-                  <button 
-                    onClick={() => handleEditarUsuario(user)} 
+                  <button
+                    onClick={() => handleEditarUsuario(user)}
                     className="admin-btn-user-edit"
                   >
                     Editar
                   </button>
-                  <button 
-                    onClick={() => handleBanUsuario(user.id, user.nombre)} 
-                    disabled={user.rol === 'admin'} 
+                  <button
+                    onClick={() => handleBanUsuario(user.id, user.nombre)}
+                    disabled={getRol(user) === 'admin'}
                     className="admin-btn-user-delete"
                     style={{ background: '#feb2b2', color: '#c53030' }}
-                    title={user.rol === 'admin' ? "No se puede cancelar administradores principales" : ""}
+                    title={getRol(user) === 'admin' ? "No se puede cancelar administradores principales" : ""}
                   >
                     Cancelar Cuenta
                   </button>
-                  {user.rol !== 'admin' && (
-                    <button 
-                      onClick={() => handleConvertirUsuarioAVoluntariado(user)} 
+                  {getRol(user) !== 'admin' && (
+                    <button
+                      onClick={() => handleConvertirUsuarioAVoluntariado(user)}
                       className="admin-btn-user-convert"
                     >
                       Convertir a Voluntario
@@ -190,8 +195,8 @@ function UsuariosTab({
                   )}
                 </>
               ) : (
-                <button 
-                  onClick={() => handleActivarUsuario(user.id, user.nombre)} 
+                <button
+                  onClick={() => handleActivarUsuario(user.id, user.nombre)}
                   className="admin-btn-user-edit"
                   style={{ flex: '1', background: '#c6f6d5', color: '#22543d' }}
                 >
@@ -201,7 +206,7 @@ function UsuariosTab({
             </div>
           </div>
         ))}
-        {usuarios.filter(user => user.rol !== 'voluntario').filter(user => subTab === 'activos' ? user.status !== 'banned' : user.status === 'banned').filter(user => user.nombre.toLowerCase().includes(busqueda.toLowerCase()) || user.email.toLowerCase().includes(busqueda.toLowerCase())).length === 0 && (
+        {usuariosFiltrados.length === 0 && (
           <div className="admin-no-results" style={{ gridColumn: '1/-1', width: '100%' }}>
             No se encontraron usuarios que coincidan con el nombre o correo ingresado.
           </div>
@@ -215,7 +220,7 @@ function UsuariosTab({
               <span className="admin-user-form-title-icon"></span>
               {modoEdicionUsuario ? 'Editar Usuario' : 'Crear Usuarios'}
             </h3>
-            
+
             <form onSubmit={handleUserSubmit} className="admin-user-form">
               <div className="admin-form-group admin-form-group-no-margin">
                 <label className="admin-user-input-label">Nombre Completo</label>
@@ -228,7 +233,7 @@ function UsuariosTab({
                   className="admin-user-input"
                 />
               </div>
-              
+
               <div className="admin-form-group admin-form-group-no-margin">
                 <label className="admin-user-input-label">Correo Electrónico</label>
                 <input
@@ -240,7 +245,7 @@ function UsuariosTab({
                   className="admin-user-input"
                 />
               </div>
-              
+
               <div className="admin-form-group admin-form-group-no-margin">
                 <label className="admin-user-input-label">Contraseña</label>
                 <input
@@ -253,30 +258,30 @@ function UsuariosTab({
                   maxLength="15"
                 />
               </div>
-              
-              <ImageUploadField 
-                label="Foto de Perfil" 
-                value={formUsuario.fotoPerfil || ''} 
-                onChange={(url) => setFormUsuario({...formUsuario, fotoPerfil: url})} 
+
+              <ImageUploadField
+                label="Foto de Perfil"
+                value={formUsuario.fotoPerfil || ''}
+                onChange={(url) => setFormUsuario({...formUsuario, fotoPerfil: url})}
                 placeholder="Subir foto de perfil"
                 circular={true}
               />
-              
+
               <div className="admin-form-group admin-form-group-no-margin">
                 <label className="admin-user-input-label">Rol de Acceso</label>
                 <select
                   value={formUsuario.rol}
                   onChange={(e) => setFormUsuario({...formUsuario, rol: e.target.value})}
-                  disabled={formUsuario.rol === 'admin'} // Un admin no puede bajarse el rango ni a otros
+                  disabled={formUsuario.rol === 'admin'}
                   className="admin-user-select"
                 >
-                  <option value="user">Usuario (Solo visualista)</option>
+                  <option value="usuario">Usuario (Solo visualista)</option>
                   {formUsuario.rol === 'admin' && (
                     <option value="admin">Administrador (Control total)</option>
                   )}
                 </select>
               </div>
-              
+
               <div className="admin-user-form-footer">
                 <button type="submit" className="admin-btn-user-submit">
                   {modoEdicionUsuario ? 'Guardar Cambios' : 'Crear Usuario'}

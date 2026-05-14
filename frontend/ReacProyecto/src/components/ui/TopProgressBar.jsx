@@ -35,12 +35,14 @@ function TopProgressBar() {
     } else {
       /* Completar y ocultar con fade */
       clearInterval(timerRef.current);
-      setProgress(100);
-
-      fadeRef.current = setTimeout(() => {
-        setVisible(false);
-        setProgress(0);
-      }, 500);
+      
+      setTimeout(() => {
+        setProgress(100);
+        fadeRef.current = setTimeout(() => {
+          setVisible(false);
+          setProgress(0);
+        }, 500);
+      }, 0);
     }
 
     return () => {

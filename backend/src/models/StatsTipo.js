@@ -5,30 +5,16 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    tarea_id: {
-      type: DataTypes.INTEGER,
+    tipo: {
+      type: DataTypes.STRING(100),
       allowNull: false
     },
-    periodo: {
-      type: DataTypes.DATEONLY,
-      allowNull: false
-    },
-    total_reportes: {
+    planificados: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
-    total_horas: {
-      type: DataTypes.DECIMAL(8, 2),
-      allowNull: false,
-      defaultValue: 0
-    },
-    total_aprobados: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    total_rechazados: {
+    muertos: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
@@ -38,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created_at',
     updatedAt: 'updated_at'
   });
-
-  StatsTipo.associate = (models) => {
-    StatsTipo.belongsTo(models.TareaDisponible, { foreignKey: 'tarea_id' });
-  };
 
   return StatsTipo;
 };

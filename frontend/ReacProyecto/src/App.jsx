@@ -9,8 +9,8 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <ToastProvider>
-          <LoadingProvider>
+        <LoadingProvider>
+          <ToastProvider>
             {/* Barra de progreso superior: se activa automáticamente con peticiones */}
             <TopProgressBar />
 
@@ -18,8 +18,8 @@ function App() {
             <GlobalOverlay />
 
             <Rooting />
-          </LoadingProvider>
-        </ToastProvider>
+          </ToastProvider>
+        </LoadingProvider>
       </ThemeProvider>
     </ErrorBoundary>
   )

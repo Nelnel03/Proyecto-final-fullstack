@@ -1,10 +1,13 @@
-import { BASE_URL } from "./config.jsx";
+import { BASE_URL, getAuthHeaders } from "./config.jsx";
 
 export const getSolicitudesVoluntariado = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/solicitudesVoluntariado`);
+    const response = await fetch(`${BASE_URL}/solicitudes`, {
+      headers: { ...getAuthHeaders() }
+    });
+    if (!response.ok) return [];
     const data = await response.json();
-    return data;
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error al obtener solicitudes", error);
     return [];
@@ -13,9 +16,9 @@ export const getSolicitudesVoluntariado = async () => {
 
 export const postSolicitudVoluntariado = async (solicitud) => {
   try {
-    const response = await fetch(`${BASE_URL}/solicitudesVoluntariado`, {
+    const response = await fetch(`${BASE_URL}/solicitudes`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify(solicitud),
     });
     return await response.json();
@@ -27,9 +30,9 @@ export const postSolicitudVoluntariado = async (solicitud) => {
 
 export const putSolicitudVoluntariado = async (solicitud, id) => {
   try {
-    const response = await fetch(`${BASE_URL}/solicitudesVoluntariado/${id}`, {
+    const response = await fetch(`${BASE_URL}/solicitudes/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify(solicitud),
     });
     return await response.json();
@@ -41,8 +44,9 @@ export const putSolicitudVoluntariado = async (solicitud, id) => {
 
 export const deleteSolicitudVoluntariado = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/solicitudesVoluntariado/${id}`, {
+    const response = await fetch(`${BASE_URL}/solicitudes/${id}`, {
       method: "DELETE",
+      headers: { ...getAuthHeaders() }
     });
     return await response.json();
   } catch (error) {

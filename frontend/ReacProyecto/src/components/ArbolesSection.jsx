@@ -27,7 +27,6 @@ function ArbolModal({ arbol, onClose }) {
 
         ) : (
           <div className="modal-img-placeholder">
-           
           </div>
         )}
 

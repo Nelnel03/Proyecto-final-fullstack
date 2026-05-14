@@ -244,19 +244,27 @@ function BuzonTab({ refrescarNotificaciones }) {
   };
 
   const handleEstadoRobo = async (rep, nuevoEstado) => {
+    // GUARDAR ESTADO PREVIO PARA ROLLBACK
+    const previousState = [...reportesRobo];
+    const updated = { ...rep, estado: nuevoEstado, visto: true };
+
+    // ACTUALIZACIÓN OPTIMISTA
+    setReportesRobo(prev => prev.map(r => r.id === rep.id ? updated : r));
+
     try {
-      const updated = { ...rep, estado: nuevoEstado, visto: true };
       await services.putReportesRobados(updated, rep.id);
-      setReportesRobo(prev => prev.map(r => r.id === rep.id ? updated : r));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch {
-      Swal.fire('Error', 'No se pudo actualizar el estado.', 'error');
+    } catch (err) {
+      // ROLLBACK EN CASO DE ERROR
+      setReportesRobo(previousState);
+      Swal.fire('Error de Conexión', 'No se pudo actualizar el estado en el servidor. El cambio ha sido revertido.', 'error');
     }
   };
 
   const handleEliminarRobo = async (id) => {
     const res = await Swal.fire({
       title: '¿Archivar Alerta?',
+      text: 'Esta alerta dejará de ser visible en el centro de control.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: 'var(--ui-error)',
@@ -264,21 +272,32 @@ function BuzonTab({ refrescarNotificaciones }) {
       cancelButtonText: 'Cancelar'
     });
     if (!res.isConfirmed) return;
+
+    const previousState = [...reportesRobo];
+    // ACTUALIZACIÓN OPTIMISTA
+    setReportesRobo(prev => prev.filter(r => r.id !== id));
+
     try {
       await services.deleteReportesRobados(id);
-      setReportesRobo(prev => prev.filter(r => r.id !== id));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch {
-      Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+    } catch (err) {
+      // ROLLBACK
+      setReportesRobo(previousState);
+      Swal.fire('Error', 'No se pudo archivar el registro. Intenta de nuevo.', 'error');
     }
   };
 
   const handleEliminarSoporte = async (id) => {
+    const previousState = [...reportesSoporte];
+    // ACTUALIZACIÓN OPTIMISTA
+    setReportesSoporte(prev => prev.filter(r => r.id !== id));
+    
     try {
       await services.deleteReportes(id);
-      setReportesSoporte(prev => prev.filter(r => r.id !== id));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch {
+    } catch (err) {
+      // ROLLBACK
+      setReportesSoporte(previousState);
       Swal.fire('Error', 'No se pudo borrar el mensaje.', 'error');
     }
   };

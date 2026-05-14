@@ -217,13 +217,14 @@ function MainPagesInicoAdmin() {
     try {
       if (modoEdicionUsuario) {
         await services.putUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail }, idEditandoUsuario);
+        setUsuarios(prev => prev.map(u => u.id === idEditandoUsuario ? { ...u, ...formUsuario, nombre: trimmedNombre, email: trimmedEmail } : u));
         Swal.fire('Éxito', 'Usuario actualizado', 'success');
       } else {
-        await services.postUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail, status: 'activo' });
+        const nuevoUser = await services.postUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail, status: 'activo' });
+        setUsuarios(prev => [...prev, nuevoUser]);
         Swal.fire('Éxito', 'Usuario creado', 'success');
       }
       resetFormUsuario();
-      await cargarArboles();
     } catch (err) {
       Swal.fire('Error', 'No se pudo guardar el usuario', 'error');
     }
@@ -257,8 +258,8 @@ function MainPagesInicoAdmin() {
       try {
         const user = usuarios.find(u => u.id === id);
         await services.putUsuarios({ ...user, status: 'baneado', motivoBan: motivo }, id);
+        setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'baneado', motivoBan: motivo } : u));
         Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
-        await cargarArboles();
       } catch (err) {
         Swal.fire('Error', 'No se pudo cancelar la cuenta', 'error');
       }
@@ -279,8 +280,8 @@ function MainPagesInicoAdmin() {
         const user = usuarios.find(u => u.id === id);
         const userActivo = { ...user, status: 'activo', motivoBan: null };
         await services.putUsuarios(userActivo, id);
+        setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'activo', motivoBan: null } : u));
         Swal.fire('Reactivado', 'Usuario activado', 'success');
-        await cargarArboles();
       } catch (err) {
         Swal.fire('Error', 'No se pudo reactivar la cuenta', 'error');
       }
@@ -309,13 +310,14 @@ function MainPagesInicoAdmin() {
     try {
       if (modoEdicionVoluntariado) {
         await services.putVoluntariados(formVoluntariado, idEditandoVoluntariado);
+        setVoluntariados(prev => prev.map(v => v.id === idEditandoVoluntariado ? { ...v, ...formVoluntariado } : v));
         Swal.fire('Éxito', 'Voluntario actualizado', 'success');
       } else {
-        await services.postVoluntariados({ ...formVoluntariado, rol: 'voluntario', password: 'Voluntario123', debeCambiarPassword: true });
+        const nuevoVol = await services.postVoluntariados({ ...formVoluntariado, rol: 'voluntario', password: 'Voluntario123', debeCambiarPassword: true });
+        setVoluntariados(prev => [...prev, nuevoVol]);
         Swal.fire('Registrado', 'Voluntario creado. Pwd temporal: Voluntario123', 'success');
       }
       resetFormVoluntariado();
-      await cargarArboles();
     } catch (err) {
       Swal.fire('Error', 'No se pudo gestionar el voluntariado', 'error');
     }
@@ -343,8 +345,8 @@ function MainPagesInicoAdmin() {
     if (confirm.isConfirmed) {
       try {
         await services.deleteVoluntariados(id);
+        setVoluntariados(prev => prev.filter(v => v.id !== id));
         Swal.fire('Eliminado', 'Voluntario eliminado', 'success');
-        await cargarArboles();
       } catch (err) {
         Swal.fire('Error', 'No se pudo eliminar', 'error');
       }
@@ -446,18 +448,31 @@ function MainPagesInicoAdmin() {
       return;
     }
     try {
-      if (modoEdicionAbono) await services.putAbonos(formAbono, idEditandoAbono);
-      else await services.postAbonos(formAbono);
-      resetFormAbono(); await cargarArboles();
-    } catch (err) { Swal.fire('Error', 'No se pudo guardar abono', 'error'); }
+      if (modoEdicionAbono) {
+        await services.putAbonos(formAbono, idEditandoAbono);
+        setAbonos(prev => prev.map(a => a.id === idEditandoAbono ? { ...a, ...formAbono } : a));
+      } else {
+        const nuevoAbono = await services.postAbonos(formAbono);
+        setAbonos(prev => [...prev, nuevoAbono]);
+      }
+      resetFormAbono();
+      Swal.fire('Éxito', 'Abono gestionado correctamente', 'success');
+    } catch (err) { 
+      Swal.fire('Error', 'No se pudo guardar abono', 'error'); 
+    }
   };
 
   const handleEditarAbono = (abono) => { setFormAbono(abono); setModoEdicionAbono(true); setIdEditandoAbono(abono.id); setTab('abonos'); };
 
   const handleEliminarAbono = async (id, nombre) => {
     if ((await Swal.fire({ title: `¿Eliminar "${nombre}"?`, showCancelButton: true })).isConfirmed) {
-      try { await services.deleteAbonos(id); await cargarArboles(); }
-      catch (err) { Swal.fire('Error', 'Error al eliminar', 'error'); }
+      try { 
+        await services.deleteAbonos(id); 
+        setAbonos(prev => prev.filter(a => a.id !== id));
+        Swal.fire('Eliminado', 'Abono eliminado', 'success');
+      } catch (err) { 
+        Swal.fire('Error', 'Error al eliminar', 'error'); 
+      }
     }
   };
 
@@ -510,14 +525,23 @@ function MainPagesInicoAdmin() {
         tipo: form.tipo ? form.tipo.toLowerCase().trim() : '' 
       };
 
-      if (modoEdicion) await services.putArboles(formNormalizado, idEditando);
-      else await services.postArboles(formNormalizado);
+      if (modoEdicion) {
+        await services.putArboles(formNormalizado, idEditando);
+        // ACTUALIZACIÓN LOCAL: Modificamos el elemento en el estado
+        setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...formNormalizado } : a));
+        Swal.fire('Éxito', 'Especie actualizada correctamente', 'success');
+      } else {
+        const nuevoArbol = await services.postArboles(formNormalizado);
+        // ACTUALIZACIÓN LOCAL: Agregamos el nuevo elemento al inicio
+        setArboles(prev => [nuevoArbol, ...prev]);
+        Swal.fire('Éxito', 'Especie guardada correctamente', 'success');
+      }
       
       resetForm(); 
       setTab('lista'); 
-      await cargarArboles();
+      // Ya no es necesario llamar a cargarArboles() para ver el cambio
     } catch (err) { 
-      Swal.fire('Error', 'No se pudo guardar la especie. Revisa la conexión con el servidor.', 'error'); 
+      Swal.fire('Error', 'No se pudo guardar la especie.', 'error'); 
     } finally {
       setIsSubmitting(false);
     }
@@ -527,15 +551,31 @@ function MainPagesInicoAdmin() {
     setForm({ ...FORM_INICIAL, ...arbol }); 
     setModoEdicion(true); 
     setIdEditando(arbol.id); 
-    // Si ya estamos en lista, no cambiamos de pestaña para que el scroll ariba funcione
     if (tab !== 'lista') setTab('lista'); 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleEliminar = async (arbol) => {
-    if ((await Swal.fire({ title: `¿Eliminar "${arbol.nombre}"?`, showCancelButton: true, icon: 'warning' })).isConfirmed) {
-      try { await services.deleteArboles(arbol.id); await cargarArboles(); }
-      catch (err) { Swal.fire('Error', 'Error al eliminar', 'error'); }
+    const result = await Swal.fire({ 
+      title: `¿Eliminar "${arbol.nombre}"?`, 
+      text: "Esta acción no se puede deshacer.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#344e41',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try { 
+        await services.deleteArboles(arbol.id); 
+        // ACTUALIZACIÓN OPTIMISTA/LOCAL: Removemos el elemento del estado
+        setArboles(prev => prev.filter(a => a.id !== arbol.id));
+        Swal.fire('Eliminado', 'El registro ha sido borrado.', 'success');
+      } catch (err) { 
+        Swal.fire('Error', 'No se pudo eliminar el registro.', 'error'); 
+      }
     }
   };
 

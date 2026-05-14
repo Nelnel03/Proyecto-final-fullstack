@@ -4,7 +4,7 @@
  * el sistema global de loading sin requerir configuración manual en cada componente.
  * También estandariza las respuestas y maneja errores HTTP.
  */
-import { BASE_URL } from './config.jsx';
+import { BASE_URL, getAuthHeaders } from './config.jsx';
 
 /* ─── Helpers internos ───────────────────────────────────────── */
 
@@ -39,6 +39,7 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
 
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    ...getAuthHeaders(),
     ...options.headers,
   };
 

@@ -8,58 +8,78 @@ import {
   FileText, 
   HelpCircle, 
   LogOut,
-  X
+  X,
+  PlusCircle
 } from 'lucide-react';
 
 const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, isOpen, onClose, isMobile }) => {
   const sidebarLinks = [
-    { id: 'resumen', label: 'Panel de Control', icon: LayoutDashboard },
-    { id: 'usuarios', label: 'Gestión de Usuarios', icon: Users },
-    { id: 'lista', label: 'Catálogo de Especies', icon: List },
-    { id: 'bajas', label: 'Historial de Bajas', icon: History },
-    { id: 'voluntariados', label: 'Registro de Voluntariados', icon: CheckCircle },
-    { id: 'buzon', label: 'Buzón / Reportes', icon: FileText },
+    { id: 'resumen', label: 'Resumen Global', icon: LayoutDashboard },
+    { id: 'usuarios', label: 'Usuarios', icon: Users },
+    { id: 'lista', label: 'Especies', icon: List },
+    { id: 'voluntariados', label: 'Voluntariados', icon: CheckCircle },
+    { id: 'bajas', label: 'Historial', icon: History },
+    { id: 'buzon', label: 'Buzón', icon: FileText },
   ];
+
+  const handleLinkClick = (id) => {
+    setTab(id);
+    resetForm();
+    resetFormUsuario();
+    if (isMobile) onClose();
+  };
 
   return (
     <aside className={`admin-sidebar ${isMobile ? (isOpen ? 'mobile-open' : 'mobile-hidden') : ''}`}>
-
       <div className="admin-logo-section">
         <div className="admin-logo-icon">
-          <img src="/src/assets/logo.png" alt="Logo BioMon" className="admin-logo-img" />
+          <img src="/src/assets/logo.png" alt="Logo" className="admin-logo-img" />
         </div>
         <div className="admin-logo-text">
-          <h2>BioMon ADI</h2>
-          <span>Plano de Control Administrativo</span>
+          <h2>BioMon</h2>
+          <span>Admin Center</span>
         </div>
         {isMobile && (
-          <button className="admin-sidebar-close-btn" onClick={onClose}>
-            <X size={18} />
+          <button className="admin-sidebar-close-btn" onClick={onClose} aria-label="Cerrar menú">
+            <X size={20} />
           </button>
         )}
       </div>
 
-      <nav className="admin-nav">
-        {sidebarLinks.map(link => (
-          <button 
-            key={link.id}
-            className={`admin-nav-item ${tab === link.id ? 'active' : ''}`}
-            onClick={() => { setTab(link.id); resetForm(); resetFormUsuario(); }}
-          >
-            <link.icon size={18} />
-            <span className="nav-label">{link.label}</span>
-          </button>
-        ))}
-      </nav>
+      <div className="admin-sidebar-content">
+        <div className="admin-nav-label">Menú Principal</div>
+        <nav className="admin-nav">
+          {sidebarLinks.map(link => (
+            <button 
+              key={link.id}
+              className={`admin-nav-item ${tab === link.id ? 'active' : ''}`}
+              onClick={() => handleLinkClick(link.id)}
+              aria-label={link.label}
+            >
+              <link.icon size={20} strokeWidth={tab === link.id ? 2.5 : 2} />
+              <span className="nav-label">{link.label}</span>
+            </button>
+          ))}
+        </nav>
 
-      <div className="admin-sidebar-footer">
-        <div className={`admin-footer-link ${tab === 'ayuda' ? 'active-text' : ''}`} onClick={() => setTab('ayuda')}>
-          <HelpCircle size={16} />
-          <span>Centro de Ayuda</span>
-        </div>
-        <div className="admin-footer-link" onClick={handleLogout}>
-          <LogOut size={16} />
-          <span>Cerrar Sesión</span>
+        <div className="admin-nav-label" style={{ marginTop: '2rem' }}>Soporte</div>
+        <div className="admin-sidebar-footer">
+          <button 
+            className={`admin-footer-link ${tab === 'ayuda' ? 'active' : ''}`} 
+            onClick={() => handleLinkClick('ayuda')}
+            aria-label="Centro de Ayuda"
+          >
+            <HelpCircle size={20} />
+            <span>Ayuda</span>
+          </button>
+          <button 
+            className="admin-footer-link logout-btn" 
+            onClick={handleLogout}
+            aria-label="Cerrar Sesión"
+          >
+            <LogOut size={20} />
+            <span>Cerrar Sesión</span>
+          </button>
         </div>
       </div>
     </aside>

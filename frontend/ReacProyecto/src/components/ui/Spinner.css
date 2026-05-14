@@ -1,21 +1,21 @@
-/* ─── Spinner ─────────────────────────────────────────────────── */
+/* ─── Spinner Premium ────────────────────────────────────────── */
 .spinner {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  --spinner-color: var(--color-bosque-musgo, #344e41);
-  --spinner-track: rgba(52, 78, 65, 0.15);
+  --spinner-color: var(--ui-primary);
+  --spinner-track: rgba(58, 90, 64, 0.1);
 }
 
 .spinner svg {
-  animation: spinner-rotate 1.4s linear infinite;
+  animation: spinner-rotate 1s linear infinite;
 }
 
-/* Tamaños */
-.spinner--sm  { width: 16px; height: 16px; }
-.spinner--md  { width: 28px; height: 28px; }
-.spinner--lg  { width: 44px; height: 44px; }
-.spinner--xl  { width: 64px; height: 64px; }
+/* Tamaños Premium */
+.spinner--sm  { width: 20px; height: 20px; }
+.spinner--md  { width: 36px; height: 36px; }
+.spinner--lg  { width: 56px; height: 56px; }
+.spinner--xl  { width: 80px; height: 80px; }
 
 .spinner__track {
   stroke: var(--spinner-track);
@@ -23,9 +23,10 @@
 
 .spinner__arc {
   stroke: var(--spinner-color);
+  stroke-linecap: round;
   stroke-dasharray: 80;
   stroke-dashoffset: 60;
-  animation: spinner-arc 1.4s ease-in-out infinite;
+  animation: spinner-arc 1.5s ease-in-out infinite;
 }
 
 @keyframes spinner-rotate {
@@ -38,27 +39,29 @@
   100% { stroke-dasharray: 90, 200; stroke-dashoffset: -124; }
 }
 
-/* ─── Spinner Centrado (para páginas / secciones) ────────────── */
+/* ─── Spinner Centrado (para páginas / secciones) Premium ─────── */
 .spinner-center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 3rem 1rem;
+  gap: 16px;
+  padding: 4rem 2rem;
   width: 100%;
+  min-height: 200px;
 }
 
 .spinner-center__label {
-  font-size: 0.9rem;
-  color: var(--color-tierra-sombra, #283618);
-  opacity: 0.7;
-  font-family: var(--fuente-principal, 'Outfit', sans-serif);
-  letter-spacing: 0.02em;
-  animation: spinner-pulse 1.8s ease-in-out infinite;
+  font-size: 0.95rem;
+  color: var(--color-tierra-sombra);
+  font-weight: 600;
+  font-family: var(--fuente-principal);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  animation: spinner-pulse 2s ease-in-out infinite;
 }
 
 @keyframes spinner-pulse {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1;   }
+  0%, 100% { opacity: 0.4; transform: scale(0.98); }
+  50%       { opacity: 1;   transform: scale(1); }
 }

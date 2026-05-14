@@ -13,7 +13,7 @@ function MainPagesInicoVisitante() {
     password: '',
     rol: 'user',
   });
-  const [mensaje, setMensaje] = useState('');
+
   const [arboles, setArboles] = useState([]);
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
@@ -159,7 +159,7 @@ function MainPagesInicoVisitante() {
                  Crea tu cuenta
               </h3>
 
-              {mensaje && <div className="registro-exito-msg">{mensaje}</div>}
+
 
               <form onSubmit={handleSubmit}>
                 <div className="user-form-group">

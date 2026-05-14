@@ -12,8 +12,11 @@ const Navbar = () => {
     const user = userJson ? JSON.parse(userJson) : null;
 
     useEffect(() => {
-        setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
-    }, [location]);
+        const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
+        if (isAuth !== auth) {
+            setAuth(isAuth);
+        }
+    }, [location, auth]);
 
     const handleLogout = () => {
         const isDark = document.body.getAttribute('data-theme') === 'dark';

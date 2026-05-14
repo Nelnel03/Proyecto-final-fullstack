@@ -46,7 +46,7 @@ class ErrorBoundary extends React.Component {
               Ocurrió un problema inesperado al cargar esta sección.
               Hemos registrado el error para solucionarlo pronto.
             </p>
-            {process.env.NODE_ENV !== 'production' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <pre className="error-boundary__details">
                 {this.state.error.toString()}
               </pre>

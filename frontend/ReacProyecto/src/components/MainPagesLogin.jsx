@@ -396,6 +396,15 @@ function MainPagesLogin() {
 
           {!isRegistering && !isRecovering && (
             <div className="login-forgot-password" style={{ textAlign: 'right', marginBottom: '15px' }}>
+<<<<<<< HEAD
+              <button 
+                type="button" 
+                className="login-footer-link" 
+onClick={() => {
+  setIsRecovering(true);
+  clearAllErrors();
+}}
+=======
               <button
                 type="button"
                 className="login-footer-link"
@@ -403,6 +412,7 @@ function MainPagesLogin() {
                   setIsRecovering(true);
                   setError('');
                 }}
+>>>>>>> a4e21153651306ccf166512b2a97767b41bac9b5
               >
                 ¿Olvidaste tu contraseña?
               </button>

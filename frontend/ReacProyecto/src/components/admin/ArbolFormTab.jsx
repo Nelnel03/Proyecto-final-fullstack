@@ -1,3 +1,4 @@
+import React from 'react';
 import { Info, Leaf, Camera, Calendar, AlignLeft, Thermometer, ArrowUp, Zap } from 'lucide-react';
 import ImageUploadField from '../ImageUploadField';
 import LoadingButton from '../ui/LoadingButton';

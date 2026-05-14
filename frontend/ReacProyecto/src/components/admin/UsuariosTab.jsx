@@ -3,6 +3,8 @@ import { Camera, Loader2 } from 'lucide-react';
 import ImageUploadField from '../ImageUploadField';
 import services, { uploadImage } from '../../services/services';
 import Swal from 'sweetalert2';
+import { usePagination } from '../../hooks/usePagination';
+import { Pagination } from '../ui';
 import '../../styles/MainPagesInicoAdmin.css';
 
 function UsuariosTab({
@@ -70,6 +72,16 @@ function UsuariosTab({
       user.email.toLowerCase().includes(busqueda.toLowerCase())
     );
 
+  // Implementación de Paginación (8 elementos por página)
+  const {
+    currentPage,
+    currentItems,
+    totalPages,
+    paginate,
+    totalItems,
+    itemsPerPage
+  } = usePagination(usuariosFiltrados, 8);
+
   return (
     <div>
       <div className="admin-section-header admin-section-header-flex">
@@ -116,7 +128,7 @@ function UsuariosTab({
       </div>
 
       <div className="admin-arboles-lista admin-user-list">
-        {usuariosFiltrados.map(user => (
+        {currentItems.map(user => (
           <div key={user.id} className="admin-arbol-card admin-user-card" style={{ border: isBanned(user) ? '1px solid #feb2b2' : '' }}>
             <div className="admin-user-card-header">
               <div
@@ -212,6 +224,14 @@ function UsuariosTab({
           </div>
         )}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={paginate}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
+      />
 
       <div style={{ marginTop: '3rem', borderTop: '2px dashed rgba(58, 90, 64, 0.2)', paddingTop: '2rem' }}>
         {subTab === 'activos' && (

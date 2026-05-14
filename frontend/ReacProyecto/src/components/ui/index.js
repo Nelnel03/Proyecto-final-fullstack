@@ -12,6 +12,7 @@ export { default as ErrorBoundary  } from './ErrorBoundary';
 export { default as ErrorMessage   } from './ErrorMessage';
 export { default as Toast          } from './Toast';
 export { default as ToastContainer  } from './ToastContainer';
+export { default as Pagination      } from './Pagination';
 
 export {
   SkeletonBlock,

@@ -100,6 +100,7 @@ export function LoadingProvider({ children }) {
 }
 
 /** Hook principal para consumir el contexto de loading */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useLoadingContext() {
   const ctx = useContext(LoadingContext);
   if (!ctx) {

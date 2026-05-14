@@ -405,10 +405,10 @@ function MainPagesLogin() {
               <button 
                 type="button" 
                 className="login-footer-link" 
-                onClick={() => {
-                  setIsRecovering(true);
-                  setError('');
-                }}
+onClick={() => {
+  setIsRecovering(true);
+  clearAllErrors();
+}}
               >
                 ¿Olvidaste tu contraseña?
               </button>

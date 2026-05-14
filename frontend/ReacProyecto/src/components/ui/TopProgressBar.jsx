@@ -18,9 +18,11 @@ function TopProgressBar() {
 
   useEffect(() => {
     if (isActive) {
-      /* Mostrar barra e iniciar incremento progresivo */
-      setVisible(true);
-      setProgress(10);
+      // Usar setTimeout para evitar actualización de estado sincrónica en el efecto (cascading renders)
+      setTimeout(() => {
+        setVisible(true);
+        setProgress(10);
+      }, 0);
 
       timerRef.current = setInterval(() => {
         setProgress((prev) => {

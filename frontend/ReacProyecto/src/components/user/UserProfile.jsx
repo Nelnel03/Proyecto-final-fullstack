@@ -30,7 +30,7 @@ function validate(formData) {
   return errors;
 }
 
-function UserProfile({ user, onUpdateUser }) {
+function UserProfile({ user, onUpdateUser, onTabChange }) {
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",

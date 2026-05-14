@@ -3,9 +3,7 @@ import Rooting from './routes/Rooting'
 import { ThemeProvider } from './context/ThemeContext'
 import { LoadingProvider } from './context/LoadingContext'
 import { ToastProvider } from './context/ToastContext'
-import { ErrorBoundary } from './components/ui'
-import GlobalOverlay from './components/ui/GlobalOverlay'
-import TopProgressBar from './components/ui/TopProgressBar'
+import { ErrorBoundary, GlobalOverlay, TopProgressBar } from './components/ui'
 
 function App() {
   return (

@@ -11,15 +11,13 @@ import LandingPage from '../pages/LandingPage';
 import HistoryForm from '../pages/HistoryForm';
 import Mapa from '../pages/Mapa';
 
-import Nav from '../components/Nav';
-import Navbar from '../components/Navbar';
+import { Nav, Navbar, Footer } from '../components/layout';
 import PrivateRoutes from './PrivateRoutes';
 import UserDashboard from '../components/user/UserDashboardV2';
 import ModernUserDashboard from '../components/user/ModernUserDashboard';
 
 import VolunteerDashboard from '../components/volunteer/VolunteerDashboard';
-import '../styles/Layout.css';
-import Footer from '../components/Footer';
+import '../styles/layout/Layout.css';
 
 function MainLayout() {
   const location = useLocation();

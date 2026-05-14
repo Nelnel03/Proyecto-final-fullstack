@@ -15,9 +15,9 @@ import {
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
-import ImageUploadField from '../ImageUploadField';
-import '../../styles/MainPagesInicoAdmin.css';
-import '../../styles/VoluntariadoPremium.css';
+import { ImageUploadField } from '../common';
+import '../../styles/admin/MainPagesInicoAdmin.css';
+import '../../styles/admin/VoluntariadoPremium.css';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui';
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Facebook, Instagram, Phone } from 'lucide-react'
-import '../styles/Footer.css'
+import '../../styles/layout/Footer.css'
 
 function Footer() {
   return (

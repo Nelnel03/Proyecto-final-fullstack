@@ -3,24 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
 
-import '../../styles/Arboles.css';
-import '../../styles/MainPagesInicoAdmin.css';
-import '../../styles/PremiumDashboard.css';
-import '../../styles/AdminControlCenter.css';
+import '../../styles/visitante/Arboles.css';
+import '../../styles/admin/MainPagesInicoAdmin.css';
+import '../../styles/user/PremiumDashboard.css';
+import '../../styles/admin/AdminControlCenter.css';
 
 import ResumenTab from './ResumenTab';
 import ListaTab from './ListaTab';
 import BajasTab from './BajasTab';
 import UsuariosTab from './UsuariosTab';
 import VoluntariadosTab from './VoluntariadosTab';
-import AdminSidebar from './AdminSidebar';
-import AdminTopbar from './AdminTopbar';
-import DarkModeToggle from '../DarkModeToggle';
+import { AdminSidebar, AdminTopbar, Footer } from '../layout';
+import { DarkModeToggle } from '../common';
 import ArbolFormTab from './ArbolFormTab';
 import BuzonTab from './BuzonTab';
 import AyudaTab from './AyudaTab';
 import AbonosTab from './AbonosTab';
-import Footer from '../Footer';
 
 const FORM_INICIAL = {
   nombre: '',

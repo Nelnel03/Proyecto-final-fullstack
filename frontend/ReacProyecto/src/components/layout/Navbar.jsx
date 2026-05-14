@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import DarkModeToggle from './DarkModeToggle';
-import '../styles/Navbar.css';
+import { DarkModeToggle } from '../common';
+import '../../styles/layout/Navbar.css';
 
 const Navbar = () => {
     const navigate = useNavigate();

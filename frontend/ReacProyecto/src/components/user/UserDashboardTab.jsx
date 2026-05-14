@@ -8,7 +8,11 @@ import {
   Sprout, 
   Droplets, 
   Heart, 
-  Moon 
+  Moon,
+  TrendingUp,
+  Map as MapIcon,
+  Award,
+  Zap
 } from 'lucide-react';
 import { CorridorMap } from '../common';
 
@@ -19,181 +23,249 @@ const UserDashboardTab = ({
   setCurrentTab 
 }) => {
   return (
-    <>
-      {/* Hero Section */}
-      <div className="hero-profile">
-        <img 
-          src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.WOCihXnOixa4FlibByvm2QHaFj%3Fpid%3DApi&f=1&ipt=103e1e53151ec1cbeb28de530419906dfee31a9062d9a709260fc735469e76aa&ipo=images" 
-          alt="Bosque" 
-          className="hero-bg" 
-        />
-
-        <div className="hero-overlay">
-          <div className="profile-info-main">
-            <div className="profile-img-container">
+    <div className="user-dashboard-tab-premium fade-in">
+      {/* Hero Header Section */}
+      <div className="user-hero-banner mb-8">
+        <div className="hero-content-wrapper">
+          <div className="user-profile-summary">
+            <div className="user-avatar-premium">
               {user.fotoPerfil ? (
-                <img src={user.fotoPerfil} alt={user.nombre} className="profile-img-large" />
+                <img src={user.fotoPerfil} alt={user.nombre} />
               ) : (
-                <div className="profile-fallback">{user.nombre.charAt(0)}</div>
+                <div className="avatar-fallback">{user.nombre.charAt(0)}</div>
               )}
+              <div className="online-indicator"></div>
             </div>
-            <div className="profile-details">
-              <h1>{user.nombre}</h1>
-              <div className="profile-meta">
-                <span className="badge-role">{user.rol === 'voluntariado' ? 'Guardián del Bosque' : 'Ciudadano Protector'}</span>
-
-                <div className="location-meta">
-                  <MapPin size={14} />
-                  <span>La Angostura, Sector Sur</span>
-                </div>
-              </div>
+            <div className="user-text-details">
+              <h1 className="welcome-text">¡Hola, {user.nombre.split(' ')[0]}! 👋</h1>
+              <p className="welcome-subtext">Tu impacto en el corredor biológico hoy.</p>
             </div>
           </div>
-          <button className="btn-edit-profile" onClick={() => setCurrentTab('perfil')}>
-            <Edit3 size={18} />
-            <span>Editar Perfil</span>
+          <button className="ui-btn ui-btn--primary-glass" onClick={() => setCurrentTab('perfil')}>
+            <Edit3 size={18} className="mr-2" />
+            Configurar Perfil
           </button>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <span className="stat-label">Observaciones</span>
-          <div className="stat-value-container">
-            <span className="stat-value">{stats.observations}</span>
-            <span className="stat-change positive">↑ 12%</span>
+      {/* Metrics Row */}
+      <div className="user-metrics-grid mb-8">
+        {[
+          { label: 'Observaciones', value: stats.observations, icon: MapIcon, trend: '+3', color: 'var(--ui-info)' },
+          { label: 'Impacto', value: `${(stats.impactPoints / 1000).toFixed(1)}k`, icon: Zap, trend: '+12%', color: 'var(--ui-primary)' },
+          { label: 'Contribuciones', value: stats.contributions, icon: Heart, trend: 'Nuevo Rango', color: 'var(--ui-error)' },
+          { label: 'Expediciones', value: stats.expeditions, icon: Compass, trend: 'Activo', color: 'var(--ui-warning)' }
+        ].map((m, i) => (
+          <div key={i} className="metric-card-premium premium-card">
+            <div className="metric-icon" style={{ color: m.color, background: `${m.color}10` }}>
+              <m.icon size={20} />
+            </div>
+            <div className="metric-info">
+              <p className="metric-label">{m.label}</p>
+              <h3 className="metric-value">{m.value}</h3>
+              <span className="metric-trend"><TrendingUp size={12} /> {m.trend}</span>
+            </div>
           </div>
-        </div>
-        <div className="stat-card">
-          <span className="stat-label">Contribuciones</span>
-          <div className="stat-value-container">
-            <span className="stat-value">{stats.contributions}</span>
-            <span className="stat-change positive">¡Nuevo rango!</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <span className="stat-label">Puntos de Impacto</span>
-          <div className="stat-value-container">
-            <span className="stat-value">{(stats.impactPoints / 1000).toFixed(1)}k</span>
-              <div className="impact-progress-container">
-                <div className="impact-progress-bar" style={{width: '70%'}}></div>
-              </div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Main Grid */}
-      <div className="dashboard-grid">
-        {/* Left Column: Corridor View */}
-        <div className="main-section-card">
-          <div className="card-header">
-            <div className="card-title-group">
-              <h3>Mi Corredor</h3>
-              <p>Cuenca Baja de La Angostura • Monitoreo en Tiempo Real</p>
+      {/* Main Content Layout */}
+      <div className="user-dashboard-main-layout">
+        {/* Left: Map Integration */}
+        <div className="premium-card map-section-saas">
+          <div className="flex-between p-6 pb-2">
+            <div>
+              <h3 className="card-title-saas">Mi Corredor Biológico</h3>
+              <p className="text-muted text-xs">Monitoreo de especies en tiempo real</p>
             </div>
-            <div className="header-actions">
-              <button className="icon-btn"><LayoutDashboard size={20} /></button>
-              <a 
-                href="https://www.google.com/maps/@9.9875,-84.795,15z/data=!3m1!1e3" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="icon-btn"
-                title="Abrir en Google Maps"
-              >
-                <Compass size={20} />
-              </a>
-            </div>
+            <button className="ui-btn ui-btn--ghost text-xs" onClick={() => setCurrentTab('mapa')}>
+              <Compass size={16} className="mr-2" /> Pantalla Completa
+            </button>
           </div>
-          <div className="map-placeholder" style={{padding: 0, height: '480px', overflow: 'hidden'}}>
+          <div className="map-view-container">
             <CorridorMap />
           </div>
         </div>
 
-        {/* Right Column: Sidebar Sections */}
-        <div className="sidebar-grid-column">
-          <div className="habitats-card">
-            <div className="card-header">
-              <h3>Especies Populares</h3>
-              <button className="icon-btn" onClick={() => setCurrentTab('coleccion')} style={{fontSize: '0.8rem'}}>Ver Todo</button>
+        {/* Right: Species & Badges */}
+        <div className="user-sidebar-content">
+          <div className="premium-card p-6 mb-6">
+            <div className="flex-between mb-4">
+              <h3 className="card-title-saas">Especies Cercanas</h3>
+              <button className="text-link-small" onClick={() => setCurrentTab('coleccion')}>Ver Todo</button>
             </div>
-            <div className="habitats-list">
-              {arboles.length > 0 ? Array.from(new Set(arboles.map(a => a.nombre)))
-                .slice(0, 3)
-                .map(nombreUnico => {
-                  const arbol = arboles.find(a => a.nombre === nombreUnico);
-                  return (
-                    <div className="habitat-item" key={arbol.id}>
-                      <img 
-                        src={arbol.imagenUrl || "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop"} 
-                        className="habitat-img" 
-                        alt={arbol.nombre}
-                      />
-                      <div className="habitat-info">
-                        <p className="habitat-name">{arbol.nombre}</p>
-                        <p className="habitat-desc">{arbol.nombreCientifico}</p>
-                        <div className="habitat-tags">
-                            <span className="tag green">{arbol.familia || 'Nativo'}</span>
-                            <span className="tag orange">{arbol.clima || 'Tropical'}</span>
-                        </div>
-                      </div>
-                      <ChevronRight size={16} color="#cbd5e1" />
-                    </div>
-                  );
-                }) : (
-                <p style={{fontSize: '0.8rem', color: '#64748b'}}>No hay especies registradas.</p>
-              )}
+            <div className="mini-species-list">
+              {arboles.slice(0, 3).map((a, i) => (
+                <div key={i} className="mini-species-item">
+                  <div className="species-img-thumb">
+                    <img src={a.imagenUrl || 'https://via.placeholder.com/50'} alt={a.nombre} />
+                  </div>
+                  <div className="species-info">
+                    <p className="name">{a.nombre}</p>
+                    <p className="meta">{a.familia}</p>
+                  </div>
+                  <ChevronRight size={14} className="opacity-30" />
+                </div>
+              ))}
             </div>
+          </div>
+
+          <div className="premium-card p-6 bg-gradient-premium text-white border-none">
+            <div className="flex-between mb-4">
+              <h3 className="text-white font-black">Mis Logros</h3>
+              <Award size={20} className="opacity-80" />
+            </div>
+            <div className="badges-row-mini">
+              {[Sprout, Droplets, Heart, Moon].map((Icon, i) => (
+                <div key={i} className="badge-icon-pill">
+                  <Icon size={20} />
+                </div>
+              ))}
+            </div>
+            <p className="text-xs opacity-90 mt-4 font-bold">Has desbloqueado el rango "Guardián del Bosque".</p>
           </div>
         </div>
       </div>
 
-      {/* Bottom Impact Banner */}
-      <div className="impact-banner">
-        <div className="impact-text-content">
-          <h2>Impacto de Conservación</h2>
-          <div className="impact-value-big">
-            <span>{stats.observations}</span>
-            <span>hectáreas</span>
-          </div>
-          <p>
-            A través de las observaciones de {user.nombre.split(' ')[0]} y sus esfuerzos de restauración directa, 
-            {stats.observations} hectáreas de bosque seco tropical han sido protegidas y registradas con éxito.
-          </p>
-        </div>
-        <div className="impact-badges">
-          <div className="impact-badge-card">
-            <div className="badge-icon-container">
-              <Sprout size={24} />
-            </div>
-            <p className="badge-name">Plantador de Árboles</p>
-            <span className="badge-label gold">Rango Oro</span>
-          </div>
-          <div className="impact-badge-card">
-            <div className="badge-icon-container water">
-              <Droplets size={24} />
-            </div>
-            <p className="badge-name">Guardián del Agua</p>
-            <span className="badge-label">Experto</span>
-          </div>
-          <div className="impact-badge-card">
-            <div className="badge-icon-container seed">
-              <Heart size={24} />
-            </div>
-            <p className="badge-name">Fundador de Semillas</p>
-            <span className="badge-label">Legado</span>
-          </div>
-          <div className="impact-badge-card">
-            <div className="badge-icon-container night">
-              <Moon size={24} />
-            </div>
-            <p className="badge-name">Vigilante Nocturno</p>
-            <span className="badge-label">Colaborador</span>
-          </div>
-        </div>
-      </div>
-    </>
+      <style jsx="true">{`
+        .user-dashboard-tab-premium { padding: 1rem 0; }
+        
+        .user-hero-banner {
+          background: var(--glass-bg);
+          border: 1px solid var(--glass-border);
+          padding: 2rem;
+          border-radius: 24px;
+          backdrop-filter: blur(10px);
+        }
+
+        .hero-content-wrapper {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .user-profile-summary {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+        }
+
+        .user-avatar-premium {
+          position: relative;
+          width: 80px;
+          height: 80px;
+        }
+
+        .user-avatar-premium img, .avatar-fallback {
+          width: 100%;
+          height: 100%;
+          border-radius: 20px;
+          object-fit: cover;
+          border: 3px solid #fff;
+          box-shadow: var(--sombra-suave);
+        }
+
+        .avatar-fallback {
+          background: var(--ui-primary);
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          font-weight: 900;
+        }
+
+        .online-indicator {
+          position: absolute;
+          bottom: -4px;
+          right: -4px;
+          width: 18px;
+          height: 18px;
+          background: var(--ui-success);
+          border: 3px solid #fff;
+          border-radius: 50%;
+        }
+
+        .welcome-text { font-size: 2rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .welcome-subtext { font-size: 1rem; color: var(--color-tierra-sombra); opacity: 0.7; font-weight: 700; margin: 4px 0 0; }
+
+        .user-metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .metric-card-premium {
+          padding: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 1.2rem;
+        }
+
+        .metric-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .metric-label { font-size: 0.75rem; font-weight: 800; opacity: 0.5; margin-bottom: 2px; }
+        .metric-value { font-size: 1.5rem; font-weight: 900; margin: 0; }
+        .metric-trend { font-size: 0.65rem; font-weight: 800; color: var(--ui-primary); display: flex; align-items: center; gap: 4px; }
+
+        .user-dashboard-main-layout {
+          display: grid;
+          grid-template-columns: 1.8fr 1.2fr;
+          gap: 1.5rem;
+        }
+
+        .map-section-saas { overflow: hidden; padding-bottom: 0; }
+        .map-view-container { height: 400px; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        .mini-species-list { display: flex; flex-direction: column; gap: 12px; }
+        .mini-species-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px;
+          background: rgba(0,0,0,0.02);
+          border-radius: 12px;
+          transition: 0.2s;
+          cursor: pointer;
+        }
+
+        .mini-species-item:hover { background: rgba(0,0,0,0.04); }
+        .species-img-thumb { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; }
+        .species-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .species-info .name { font-size: 0.85rem; font-weight: 800; margin: 0; }
+        .species-info .meta { font-size: 0.7rem; opacity: 0.5; font-weight: 700; }
+
+        .bg-gradient-premium { background: linear-gradient(135deg, var(--ui-primary), var(--color-bosque-pino)); }
+        .badges-row-mini { display: flex; gap: 10px; margin-top: 1rem; }
+        .badge-icon-pill {
+          width: 40px;
+          height: 40px;
+          background: rgba(255,255,255,0.2);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        @media screen and (max-width: 900px) {
+          .user-dashboard-main-layout { grid-template-columns: 1fr; }
+          .welcome-text { font-size: 1.5rem; }
+        }
+      `}</style>
+    </div>
   );
 };
+
+export default UserDashboardTab;
 
 export default UserDashboardTab;

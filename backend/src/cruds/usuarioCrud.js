@@ -87,9 +87,10 @@ const usuarioCrud = {
                 nombre,
                 email,
                 password,
-                rol_id: efectivoRolId || 4,
+                rol_id: efectivoRolId || 3,
                 area,
                 telefono,
+                fotoPerfil: req.file ? req.file.path : null,
                 status: statusNormalizado,
                 debeCambiarPassword: debeCambiarPassword ? 1 : 0,
                 fechaIngreso: new Date()
@@ -139,7 +140,12 @@ const usuarioCrud = {
                 rol_id: efectivoRolId || usuario.rol_id
             };
 
-            if (fotoPerfil !== undefined) updateData.fotoPerfil = fotoPerfil;
+            if (req.file) {
+                updateData.fotoPerfil = req.file.path;
+            } else if (fotoPerfil !== undefined) {
+                updateData.fotoPerfil = fotoPerfil;
+            }
+            
             if (password && password.trim()) updateData.password = password;
 
             if (status) {
@@ -202,6 +208,28 @@ const usuarioCrud = {
             await t.rollback();
             console.error('Error en deleteUser con Transacción:', error);
             return res.status(500).json({ message: 'Error al eliminar el usuario y sus dependencias.' });
+        }
+    },
+
+    // 6. Actualizar foto de perfil (Propia)
+    updateProfilePhoto: async (req, res) => {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No se subió ninguna imagen' });
+            }
+
+            const usuario = await Usuario.findByPk(req.user.id);
+            if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+            await usuario.update({ fotoPerfil: req.file.path });
+
+            return res.status(200).json({
+                message: 'Foto de perfil actualizada correctamente',
+                fotoPerfil: req.file.path
+            });
+        } catch (error) {
+            console.error('Error en updateProfilePhoto:', error);
+            return res.status(500).json({ message: 'Error al actualizar la foto' });
         }
     }
 };

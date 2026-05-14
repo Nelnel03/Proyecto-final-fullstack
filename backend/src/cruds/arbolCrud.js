@@ -77,7 +77,7 @@ const arbolController = {
                 altura_max_m,
                 clima,
                 descripcion,
-                imagenUrl,
+                imagenUrl: req.file ? req.file.path : imagenUrl,
                 estado: estado || 'vivo',
                 fechaRegistro: fechaRegistro || new Date()
             });
@@ -96,11 +96,15 @@ const arbolController = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const updateData = req.body;
 
             const arbol = await Arbol.findByPk(id);
             if (!arbol) {
                 return res.status(404).json({ message: 'Árbol no encontrado' });
+            }
+
+            const updateData = { ...req.body };
+            if (req.file) {
+                updateData.imagenUrl = req.file.path;
             }
 
             await arbol.update(updateData);

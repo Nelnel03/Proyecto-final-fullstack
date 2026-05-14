@@ -48,6 +48,7 @@ export {
   postUsuarios,
   putUsuarios,
   deleteUsuarios,
+  postFotoPerfil,
 } from "./usuarios.service.jsx";
 
 export {

@@ -1,0 +1,40 @@
+/* ─── Mensaje de Error en Formularios ───────────────────────── */
+.form-error-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ef4444; /* Rojo de error */
+  font-size: 0.85rem;
+  margin-top: 4px;
+  animation: error-slide-down 0.2s ease-out forwards;
+  font-family: var(--fuente-principal, 'Outfit', sans-serif);
+}
+
+.form-error-icon {
+  flex-shrink: 0;
+}
+
+/* Para resaltar inputs inválidos */
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+[data-theme='dark'] .input-error {
+  background-color: rgba(239, 68, 68, 0.05) !important;
+}
+
+@keyframes error-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

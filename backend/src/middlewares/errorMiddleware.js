@@ -14,6 +14,7 @@ const errorMiddleware = {
 
     // 2. Manejador global de excepciones (500, etc)
     errorHandler: (err, req, res, next) => {
+        console.error("=== Error Capturado por Middleware Global ===", err);
         const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
         res.status(statusCode).json({

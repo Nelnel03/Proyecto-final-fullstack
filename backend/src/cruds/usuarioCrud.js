@@ -25,7 +25,7 @@ const usuarioCrud = {
                 where: condition,
                 limit,
                 offset,
-                include: [{ model: Rol, attributes: ['nombre'] }],
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }],
                 attributes: { exclude: ['password'] },
                 order: [['fechaIngreso', 'DESC']]
             });
@@ -43,7 +43,7 @@ const usuarioCrud = {
         try {
             const { id } = req.params;
             const usuario = await Usuario.findByPk(id, {
-                include: [{ model: Rol, attributes: ['nombre'] }],
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }],
                 attributes: { exclude: ['password'] }
             });
 

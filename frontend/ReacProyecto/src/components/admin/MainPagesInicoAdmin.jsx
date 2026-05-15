@@ -259,10 +259,11 @@ function MainPagesInicoAdmin() {
       try {
         const user = usuarios.find(u => u.id === id);
         await services.putUsuarios({ ...user, status: 'baneado', motivoBan: motivo }, id);
-        Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
         await cargarArboles();
+        setUserSubTab('cancelados');
+        Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
       } catch (err) {
-        Swal.fire('Error', 'No se pudo cancelar la cuenta', 'error');
+        Swal.fire('Error', err.message || 'No se pudo cancelar la cuenta', 'error');
       }
     }
   };
@@ -281,10 +282,11 @@ function MainPagesInicoAdmin() {
         const user = usuarios.find(u => u.id === id);
         const userActivo = { ...user, status: 'activo', motivoBan: null };
         await services.putUsuarios(userActivo, id);
-        Swal.fire('Reactivado', 'Usuario activado', 'success');
         await cargarArboles();
+        setUserSubTab('activos');
+        Swal.fire('Reactivado', 'Usuario activado', 'success');
       } catch (err) {
-        Swal.fire('Error', 'No se pudo reactivar la cuenta', 'error');
+        Swal.fire('Error', err.message || 'No se pudo reactivar la cuenta', 'error');
       }
     }
   };

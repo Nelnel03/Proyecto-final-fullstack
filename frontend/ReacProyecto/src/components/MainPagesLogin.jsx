@@ -325,11 +325,11 @@ function MainPagesLogin() {
                 <label>Nombre Completo</label>
                 <input
                   type="text"
+                  {...getInputProps('nombre')}
                   value={nombre}
                   onChange={(e) => { setNombre(e.target.value); errors.nombre && clearAllErrors(); }}
                   required
                   placeholder="Ej: Juan Pérez"
-                  {...getInputProps('nombre')}
                 />
                 <ErrorMessage error={errors.nombre} id="nombre-error" />
               </div>
@@ -337,6 +337,7 @@ function MainPagesLogin() {
                 <label>Número de Teléfono</label>
                 <input
                   type="tel"
+                  {...getInputProps('telefono')}
                   value={telefono}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '');
@@ -346,7 +347,6 @@ function MainPagesLogin() {
                   required
                   placeholder="88888888"
                   maxLength="8"
-                  {...getInputProps('telefono')}
                 />
                 <ErrorMessage error={errors.telefono} id="telefono-error" />
               </div>
@@ -357,11 +357,11 @@ function MainPagesLogin() {
             <label>Correo Electrónico</label>
             <input
               type="email"
+              {...getInputProps('email')}
               value={email}
               onChange={(e) => { setEmail(e.target.value); errors.email && clearAllErrors(); }}
               placeholder="tu@correo.com"
               required
-              {...getInputProps('email')}
             />
             <ErrorMessage error={errors.email} id="email-error" />
           </div>
@@ -385,12 +385,12 @@ function MainPagesLogin() {
               <label>Confirmar Contraseña</label>
               <input
                 type="password"
+                {...getInputProps('confirmPassword')}
                 value={confirmPassword}
                 onChange={(e) => { setConfirmPassword(e.target.value); errors.confirmPassword && clearAllErrors(); }}
                 required
                 placeholder="••••••••"
                 maxLength="15"
-                {...getInputProps('confirmPassword')}
               />
               <ErrorMessage error={errors.confirmPassword} id="confirmPassword-error" />
             </div>

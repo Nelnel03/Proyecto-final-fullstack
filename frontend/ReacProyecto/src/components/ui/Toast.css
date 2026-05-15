@@ -1,0 +1,179 @@
+/* Contenedor posicionado en la esquina superior derecha */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none; /* Permite clics a través del contenedor */
+  max-width: 400px;
+  width: calc(100vw - 48px);
+}
+
+/* Toast individual */
+.toast {
+  pointer-events: auto; /* Habilita clics en el toast individual */
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-caracola);
+  border-radius: var(--radius-md);
+  box-shadow: var(--sombra-profunda);
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+[data-theme='dark'] .toast {
+  background: var(--glass-bg);
+}
+
+/* Variantes de Color */
+.toast-success { border-left: 4px solid var(--ui-success); }
+.toast-error { border-left: 4px solid var(--ui-error); }
+.toast-warning { border-left: 4px solid var(--ui-warning); }
+.toast-info { border-left: 4px solid var(--ui-info); }
+
+.toast-success .toast-icon { color: var(--ui-success); }
+.toast-error .toast-icon { color: var(--ui-error); }
+.toast-warning .toast-icon { color: var(--ui-warning); }
+.toast-info .toast-icon { color: var(--ui-info); }
+
+/* Contenido */
+.toast-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.toast-content {
+  flex-grow: 1;
+}
+
+.toast-message {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-texto);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Botón de cerrar */
+.toast-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-tierra-sombra);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toast-close-btn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .toast-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Barra de progreso */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  width: 100%;
+  transform-origin: left;
+  animation: progress-shrink linear forwards;
+}
+
+[data-theme='dark'] .toast-progress {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.toast-success .toast-progress { background: var(--ui-success); opacity: 0.7; }
+.toast-error .toast-progress { background: var(--ui-error); opacity: 0.7; }
+.toast-warning .toast-progress { background: var(--ui-warning); opacity: 0.7; }
+.toast-info .toast-progress { background: var(--ui-info); opacity: 0.7; }
+
+/* Animaciones */
+.toast-enter {
+  animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toast-exit {
+  animation: fadeOutUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+    margin-top: -100%; /* Colapsar espacio */
+  }
+}
+
+@keyframes progress-shrink {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Pausar animación de la barra de progreso al hacer hover (sincronizado con JS) */
+.toast:hover .toast-progress {
+  animation-play-state: paused;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .toast-container {
+    top: 16px;
+    right: 16px;
+    width: calc(100vw - 32px);
+  }
+  
+  .toast-enter {
+    animation: slideInTop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

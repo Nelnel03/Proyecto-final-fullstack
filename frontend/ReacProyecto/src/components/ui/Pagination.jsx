@@ -16,9 +16,12 @@ const Pagination = ({
   totalPages, 
   onPageChange, 
   totalItems, 
-  itemsPerPage 
+  itemsPerPage,
+  onItemsPerPageChange,
+  itemsPerPageOptions = [5, 10, 20, 50]
 }) => {
-  if (totalPages <= 1) return null;
+  if (totalItems === 0) return null;
+
 
   // Generar el rango de páginas a mostrar (máximo 5)
   const getPageNumbers = () => {
@@ -39,14 +42,31 @@ const Pagination = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="pagination-container">
-      <div className="pagination-info">
-        Mostrando <span className="pagination-highlight">
-          {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}
-        </span> a <span className="pagination-highlight">
-          {Math.min(currentPage * itemsPerPage, totalItems)}
-        </span> de <span className="pagination-highlight">{totalItems}</span> registros
+    <div className="pagination-container fade-in">
+      <div className="pagination-info-group">
+        <div className="pagination-info">
+          Mostrando <span className="pagination-highlight">
+            {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}
+          </span> a <span className="pagination-highlight">
+            {Math.min(currentPage * itemsPerPage, totalItems)}
+          </span> de <span className="pagination-highlight">{totalItems}</span> registros
+        </div>
+
+        {onItemsPerPageChange && (
+          <div className="pagination-page-size">
+            <select 
+              value={itemsPerPage} 
+              onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+              className="ui-select-mini"
+            >
+              {itemsPerPageOptions.map(opt => (
+                <option key={opt} value={opt}>{opt} por página</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
+
 
       <nav className="pagination-nav">
         <button

@@ -13,6 +13,29 @@ const validate = (req, res, next) => {
     next();
 };
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Iniciar sesión
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login exitoso
+ *       401:
+ *         description: Credenciales inválidas
+ */
 // POST: Login
 router.post('/login', authLimiter, [
     body('email').isEmail().withMessage('Email no válido'),
@@ -20,6 +43,31 @@ router.post('/login', authLimiter, [
     validate
 ], authCrud.login);
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuario creado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ */
 // POST: Registro
 router.post('/register', authLimiter, [
     body('nombre').notEmpty().withMessage('El nombre es obligatorio'),

@@ -2,12 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = require('./config/swagger');
 require('dotenv').config();
 
 const app = express();
 
 // --- Middlewares Globales ---
 app.use(helmet()); 
+
+// --- Documentación ---
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Configuración de CORS restringida
 const allowedOrigins = [
@@ -52,6 +57,7 @@ app.use('/api/reportes-voluntariado', require('./routes/reporteVoluntariadoRoute
 app.use('/api/solicitudes', require('./routes/solicitudRoutes'));
 app.use('/api/roles', require('./routes/rolRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
+app.use('/api/ia', require('./routes/iaRoutes'));
 
 app.get('/', (req, res) => {
     res.json({

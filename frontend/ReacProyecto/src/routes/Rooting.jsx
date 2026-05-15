@@ -10,6 +10,7 @@ import ResetPassword from '../pages/ResetPassword';
 import LandingPage from '../pages/LandingPage';
 import HistoryForm from '../pages/HistoryForm';
 import Mapa from '../pages/Mapa';
+import Unauthorized from '../pages/Unauthorized';
 
 import { Nav, Navbar, Footer } from '../components/layout';
 import PrivateRoutes from './PrivateRoutes';
@@ -61,6 +62,8 @@ function MainLayout() {
           <Route path="/mapa" element={<Mapa />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
           
           {/* Redirección para la ruta antigua /user a los nuevos dashboards */}
           <Route 

@@ -574,11 +574,5 @@ function VoluntariadosTab({
   );
 }
 
-export default VoluntariadosTab;v>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default VoluntariadosTab;
+

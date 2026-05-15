@@ -268,4 +268,3 @@ const UserDashboardTab = ({
 
 export default UserDashboardTab;
 
-export default UserDashboardTab;

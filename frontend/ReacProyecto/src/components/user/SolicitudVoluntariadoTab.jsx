@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
 import { UserCheck, Clock, Send, ShieldCheck, Mail } from 'lucide-react';
-import '../../styles/UserReports.css';
+import '../../styles/user/UserReports.css';
 
 function SolicitudVoluntariadoTab({ user, onDone }) {
   const [loading, setLoading] = useState(false);

@@ -72,12 +72,17 @@ function BuzonTab({ refrescarNotificaciones }) {
   const [solicitudesVol, setSolicitudesVol] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [seccion, setSeccion] = useState('soporte');
-  const [subPostulacion, setSubPostulacion] = useState('pendientes');
+  const [subPostulacion, setSubPostulacion] = useState('pendiente');
   const [subLabor, setSubLabor] = useState('nuevas');
   const [subSoporte, setSubSoporte] = useState('usuarios');
 
-  const cargarDatos = useCallback(async () => {
-    setCargando(true);
+  // Ref estable para evitar que refrescarNotificaciones recree cargarDatos en cada render del padre
+  const refrescarRef = React.useRef(refrescarNotificaciones);
+  useEffect(() => { refrescarRef.current = refrescarNotificaciones; }, [refrescarNotificaciones]);
+
+  // background=true: refresco silencioso (sin spinner), background=false: carga inicial o manual
+  const cargarDatos = useCallback(async (background = false) => {
+    if (!background) setCargando(true);
     try {
       const [volDatos, roboDatos, sopDatos, solDatos] = await Promise.all([
         services.getReportesVoluntariado(),
@@ -92,14 +97,14 @@ function BuzonTab({ refrescarNotificaciones }) {
     } catch (err) {
       console.error('Error al cargar datos del buzón:', err);
     } finally {
-      if (refrescarNotificaciones) refrescarNotificaciones();
-      setCargando(false);
+      if (refrescarRef.current) refrescarRef.current();
+      if (!background) setCargando(false);
     }
-  }, [refrescarNotificaciones]);
+  }, []);
 
-  useEffect(() => { 
-    cargarDatos();
-    const interval = setInterval(cargarDatos, 60000); 
+  useEffect(() => {
+    cargarDatos(false);
+    const interval = setInterval(() => cargarDatos(true), 60000);
     return () => clearInterval(interval);
   }, [cargarDatos]);
 
@@ -406,8 +411,12 @@ function BuzonTab({ refrescarNotificaciones }) {
                              value={rep.estado || 'Pendiente'}
                              onClick={(e) => e.stopPropagation()}
                              onChange={(e) => {
+                               const prev = { ...rep };
                                const updated = { ...rep, estado: e.target.value, visto: true };
-                               services.putReportes(updated, rep.id).then(() => cargarDatos());
+                               setReportesSoporte(list => list.map(r => r.id === rep.id ? updated : r));
+                               services.putReportes(updated, rep.id).catch(() => {
+                                 setReportesSoporte(list => list.map(r => r.id === rep.id ? prev : r));
+                               });
                              }}
                            >
                              {ESTADOS_SOPORTE.map(est => <option key={est} value={est}>{est}</option>)}
@@ -470,15 +479,19 @@ function BuzonTab({ refrescarNotificaciones }) {
               <>
                 <div className="sub-tabs-container" style={{ gridColumn: '1/-1' }}>
                   <div className="sub-tabs-pills">
-                    {['pendientes', 'aprobada', 'rechazada'].map(est => (
-                      <button key={est} className={`sub-pill ${subPostulacion === est ? 'active' : ''}`} onClick={() => setSubPostulacion(est)}>
-                        {est.charAt(0).toUpperCase() + est.slice(1)} ({solicitudesVol.filter(s => (s.estado || '').toLowerCase() === est).length})
+                    {[
+                      { value: 'pendiente', label: 'Pendientes' },
+                      { value: 'aprobada',  label: 'Aprobadas'  },
+                      { value: 'rechazada', label: 'Rechazadas' },
+                    ].map(({ value, label }) => (
+                      <button key={value} className={`sub-pill ${subPostulacion === value ? 'active' : ''}`} onClick={() => setSubPostulacion(value)}>
+                        {label} ({solicitudesVol.filter(s => (s.estado || '').toLowerCase() === value).length})
                       </button>
                     ))}
                   </div>
                 </div>
                 {solicitudesVol
-                  .filter(sol => (sol.estado || '').toLowerCase() === subPostulacion)
+                  .filter(sol => (sol.estado || 'pendiente').toLowerCase() === subPostulacion)
                   .map((sol, idx) => (
                     <div 
                       key={sol.id} 
@@ -504,7 +517,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                       <div className="report-content-box" style={{ fontStyle: 'italic', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem' }}>
                         "{sol.mensaje}"
                       </div>
-                      {subPostulacion === 'pendientes' && (
+                      {subPostulacion === 'pendiente' && (
                         <div className="flex-center" style={{ gap: '10px' }}>
                            <button className="ui-btn ui-btn--ghost" style={{ flex: 1, color: 'var(--ui-error)' }} onClick={() => handleRechazarSolicitud(sol)}>Descartar</button>
                            <button className="ui-btn ui-btn--primary" onClick={() => handleAprobarSolicitud(sol)} style={{ flex: 1.5 }}>Aprobar Ingreso</button>

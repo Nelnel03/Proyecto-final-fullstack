@@ -11,7 +11,7 @@ import {
   Filter,
   User
 } from 'lucide-react';
-import '../../styles/ReportesTab.css';
+import '../../styles/admin/ReportesTab.css';
 
 function ReportesTab() {
   const [reportes, setReportes] = useState([]);

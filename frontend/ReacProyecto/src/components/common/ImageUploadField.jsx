@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, Loader2, X } from 'lucide-react';
-import { uploadImage } from '../services/services';
+import { uploadImage } from '../../services/services';
 import Swal from 'sweetalert2';
 
 /**

@@ -328,6 +328,7 @@ function MainPagesLogin() {
         <DarkModeToggle />
       </div>
 
+
       <div className="login-container">
         <div className="login-visual-side">
           <div className="visual-content">
@@ -346,6 +347,7 @@ function MainPagesLogin() {
                 <Leaf size={20} />
                 <span>Gestión de Especies Nativas</span>
               </div>
+
             </div>
           </div>
           <div className="visual-footer">

@@ -49,14 +49,11 @@ export function useFormErrors(initialErrors = {}) {
   const getInputProps = useCallback((field) => {
     const hasError = !!errors[field];
     return {
-      className: hasError ? 'input-error' : '',
+      className: hasError ? 'ui-input input-error' : 'ui-input',
       'aria-invalid': hasError,
       'aria-describedby': hasError ? `${field}-error` : undefined,
-      onChange: () => {
-        if (hasError) clearFieldError(field);
-      }
     };
-  }, [errors, clearFieldError]);
+  }, [errors]);
 
   return {
     errors,

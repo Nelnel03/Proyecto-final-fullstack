@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import services from '../../services/services.jsx';
-import '../../styles/UserReports.css';
+import '../../styles/user/UserReports.css';
 
 function validate(reporte) {
   const errors = {};

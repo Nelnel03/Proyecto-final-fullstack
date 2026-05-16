@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import services from '../../services/services';
-import '../../styles/MisReportesTab.css';
+import '../../styles/user/MisReportesTab.css';
 
 // Paleta de colores de estado compartida con el admin
 const STATUS_STYLES = {

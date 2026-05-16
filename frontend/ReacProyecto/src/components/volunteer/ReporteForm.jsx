@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
 import { CalendarDays, Clock, CheckCircle2, Link } from 'lucide-react';
-import '../../styles/ReporteForm.css';
+import '../../styles/user/ReporteForm.css';
 
 function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqueda }) {
   const [fase, setFase] = useState('inicio'); // 'inicio', 'revision'

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Info, Leaf, Camera, Calendar, AlignLeft, Thermometer, ArrowUp, Zap, X, Save } from 'lucide-react';
-import ImageUploadField from '../common/ImageUploadField';
+
+import { ImageUploadField } from '../common';
+
 import LoadingButton from '../ui/LoadingButton';
 import '../../styles/admin/MainPagesInicoAdmin.css';
 

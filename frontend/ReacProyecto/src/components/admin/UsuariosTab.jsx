@@ -26,8 +26,20 @@ function UsuariosTab({
   const [actualizandoAvatarId, setActualizandoAvatarId] = React.useState(null);
 
 
-  const getRol = (user) => user.Rol?.nombre || user.rol || 'usuario';
-  const isBanned = (user) => user.status === 'baneado' || user.status === 'banned';
+
+  // Normalizar campo rol para compatibilidad con ambas versiones de la API
+  const getRol = (user) => {
+    if (!user) return 'usuario';
+    if (user.rol && typeof user.rol === 'object') return user.rol.nombre?.toLowerCase() || 'usuario';
+    if (user.Rol && typeof user.Rol === 'object') return user.Rol.nombre?.toLowerCase() || 'usuario';
+    return String(user.rol || 'usuario').toLowerCase();
+  };
+
+  const isBanned = (user) => {
+    if (!user || !user.status) return false;
+    const s = String(user.status).toLowerCase();
+    return s === 'baneado' || s === 'banned';
+  };
 
 
   const handleAvatarClick = (userId) => {

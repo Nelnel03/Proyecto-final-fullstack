@@ -10,7 +10,9 @@ export { default as GlobalOverlay  } from './GlobalOverlay';
 export { default as TopProgressBar } from './TopProgressBar';
 export { default as ErrorBoundary  } from './ErrorBoundary';
 export { default as ErrorMessage   } from './ErrorMessage';
-export { default as Pagination     } from './Pagination';
+
+export { default as Pagination      } from './Pagination';
+
 
 export {
   SkeletonBlock,

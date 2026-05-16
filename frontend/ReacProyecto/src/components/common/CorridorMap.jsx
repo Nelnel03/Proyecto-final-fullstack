@@ -1,6 +1,8 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
-import '../../styles/visitante/CorridorMap.css';
+
+
+
 
 // ── Centro del mapa para el enlace a Google Maps ─────────────────────────
 const MAP_CENTER = [9.9802, -84.78575];
@@ -16,7 +18,7 @@ const CorridorMap = () => {
         {/* Imagen estática del mapa */}
         {/* NOTA: Asegúrate de guardar la imagen que enviaste en la carpeta "public" con el nombre "mapa-angostura.png" */}
         <img 
-          src="/Nueva carpeta/Captura de pantalla 2026-03-27 144246.png" 
+          src="/mapa-angostura.png"
           alt="Mapa visual de inicio y fin de La Angostura" 
           className="static-map-image" 
         />

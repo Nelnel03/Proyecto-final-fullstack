@@ -1,5 +1,7 @@
 import { Search, Settings, User, LogOut, Menu } from 'lucide-react';
-import DarkModeToggle from '../common/DarkModeToggle';
+
+import { DarkModeToggle } from '../common';
+
 
 const UserTopbar = ({ 
   currentTab, 

@@ -258,7 +258,12 @@ function MainPagesInicoAdmin() {
       try {
         const user = usuarios.find(u => u.id === id);
         await services.putUsuarios({ ...user, status: 'baneado', motivoBan: motivo }, id);
-        setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'baneado', motivoBan: motivo } : u));
+
+
+        await cargarArboles();
+        setUserSubTab('cancelados');
+
+
         Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
       } catch (err) {
         Swal.fire('Error', err.message || 'No se pudo cancelar la cuenta', 'error');

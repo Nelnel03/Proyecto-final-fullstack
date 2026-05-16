@@ -11,7 +11,7 @@ import {
   Tag,
   ChevronRight
 } from 'lucide-react';
-import '../../styles/AdminReports.css';
+import '../../styles/admin/AdminReports.css';
 
 function AdminReports() {
   const [reportes, setReportes] = useState([]);

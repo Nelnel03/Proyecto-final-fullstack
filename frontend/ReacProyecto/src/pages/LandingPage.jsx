@@ -1,5 +1,5 @@
 import React from 'react'
-import Landing from '../components/Landing.jsx'
+import Landing from '../components/visitante/Landing.jsx'
 
 function LandingPage() {
   return (

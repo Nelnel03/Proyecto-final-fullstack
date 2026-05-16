@@ -15,7 +15,7 @@ import {
   ChevronRight,
   CheckCircle2
 } from 'lucide-react';
-import '../../styles/AdminReports.css';
+import '../../styles/admin/AdminReports.css';
 
 function AdminReportesRobo() {
   const [reportes, setReportes] = useState([]);

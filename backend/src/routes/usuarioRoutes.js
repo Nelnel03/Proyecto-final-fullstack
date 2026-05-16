@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const usuarioCrud = require('../cruds/usuarioCrud');
 const usuarioValidator = require('../validators/usuarioValidator');
+const usuarioUpdateValidator = require('../validators/usuarioUpdateValidator');
 const validateResults = require('../middlewares/validateMiddleware');
 const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
 const { uploadProfile } = require('../utils/cloudinaryConfig');
@@ -30,7 +31,7 @@ router.post('/', [
 // PUT: Actualizar un usuario
 router.put('/:id', [
     uploadProfile.single('fotoPerfil'),
-    usuarioValidator,
+    usuarioUpdateValidator,
     validateResults
 ], usuarioCrud.update);
 

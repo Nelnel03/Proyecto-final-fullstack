@@ -25,11 +25,14 @@ function UsuariosTab({
   const [busqueda, setBusqueda] = React.useState('');
   const [actualizandoAvatarId, setActualizandoAvatarId] = React.useState(null);
 
+
   const getRol = (user) => user.Rol?.nombre || user.rol || 'usuario';
   const isBanned = (user) => user.status === 'baneado' || user.status === 'banned';
 
+
   const handleAvatarClick = (userId) => {
-    document.getElementById(`avatar-input-${userId}`).click();
+    const input = document.getElementById(`avatar-input-${userId}`);
+    if (input) input.click();
   };
 
   const handleAvatarChange = async (e, user) => {
@@ -61,14 +64,14 @@ function UsuariosTab({
   };
 
   const usuariosFiltrados = usuarios
-    .filter(user => getRol(user) !== 'voluntario')
+    .filter(user => isBanned(user) || getRol(user) !== 'voluntario')
     .filter(user => {
       if (subTab === 'activos') return !isBanned(user);
       return isBanned(user);
     })
     .filter(user =>
-      user.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      user.email.toLowerCase().includes(busqueda.toLowerCase())
+      user.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      user.email?.toLowerCase().includes(busqueda.toLowerCase())
     );
 
   const {

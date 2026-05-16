@@ -1,6 +1,6 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
-import '../styles/CorridorMap.css';
+import '../../styles/visitante/CorridorMap.css';
 
 // ── Centro del mapa para el enlace a Google Maps ─────────────────────────
 const MAP_CENTER = [9.9802, -84.78575];

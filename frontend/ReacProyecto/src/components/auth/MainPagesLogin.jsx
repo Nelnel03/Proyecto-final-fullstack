@@ -7,7 +7,6 @@ import { DarkModeToggle } from '../common';
 import { LoadingButton, ErrorMessage } from '../ui';
 import { useFormErrors } from '../../hooks/useFormErrors';
 
-import { useToast } from '../../context/ToastContext';
 import { 
   Mail, 
   Lock, 
@@ -328,6 +327,7 @@ function MainPagesLogin() {
         <DarkModeToggle />
       </div>
 
+
       <div className="login-container">
         <div className="login-visual-side">
           <div className="visual-content">
@@ -346,6 +346,7 @@ function MainPagesLogin() {
                 <Leaf size={20} />
                 <span>Gestión de Especies Nativas</span>
               </div>
+
             </div>
           </div>
           <div className="visual-footer">

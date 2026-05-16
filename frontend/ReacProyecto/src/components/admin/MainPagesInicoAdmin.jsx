@@ -261,7 +261,7 @@ function MainPagesInicoAdmin() {
         setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'baneado', motivoBan: motivo } : u));
         Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
       } catch (err) {
-        Swal.fire('Error', 'No se pudo cancelar la cuenta', 'error');
+        Swal.fire('Error', err.message || 'No se pudo cancelar la cuenta', 'error');
       }
     }
   };
@@ -280,10 +280,12 @@ function MainPagesInicoAdmin() {
         const user = usuarios.find(u => u.id === id);
         const userActivo = { ...user, status: 'activo', motivoBan: null };
         await services.putUsuarios(userActivo, id);
+
         setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'activo', motivoBan: null } : u));
+
         Swal.fire('Reactivado', 'Usuario activado', 'success');
       } catch (err) {
-        Swal.fire('Error', 'No se pudo reactivar la cuenta', 'error');
+        Swal.fire('Error', err.message || 'No se pudo reactivar la cuenta', 'error');
       }
     }
   };

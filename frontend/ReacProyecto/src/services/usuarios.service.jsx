@@ -34,17 +34,16 @@ export async function postUsuarios(usuario) {
 }
 
 export async function putUsuarios(usuario, id) {
-  try {
-    const respuesta = await fetch(`${BASE_URL}/usuarios/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-      body: JSON.stringify(usuario),
-    });
-    const datosUsuarios = await respuesta.json();
-    return datosUsuarios;
-  } catch (error) {
-    console.error("Error al actualizar los cambios", error);
+  const respuesta = await fetch(`${BASE_URL}/usuarios/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify(usuario),
+  });
+  const datos = await respuesta.json();
+  if (!respuesta.ok) {
+    throw new Error(datos?.message || "Error al actualizar el usuario");
   }
+  return datos;
 }
 
 export async function deleteUsuarios(id) {

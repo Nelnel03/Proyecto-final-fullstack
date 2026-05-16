@@ -7,7 +7,7 @@ import { DarkModeToggle } from '../common';
 import { LoadingButton, ErrorMessage } from '../ui';
 import { useFormErrors } from '../../hooks/useFormErrors';
 
-import { useToast } from '../../context/ToastContext';
+
 import { 
   Mail, 
   Lock, 
@@ -374,12 +374,12 @@ function MainPagesLogin() {
                     <div className="input-with-icon">
                       <User size={18} className="field-icon" />
                       <input
+                        {...getInputProps('nombre')}
                         type="text"
-                        className="ui-input"
+                        className={`ui-input ${errors.nombre ? 'input-error' : ''}`}
                         value={nombre}
                         onChange={(e) => { setNombre(e.target.value); errors.nombre && clearAllErrors(); }}
                         placeholder="Ej: Juan Pérez"
-                        {...getInputProps('nombre')}
                       />
                     </div>
                     <ErrorMessage error={errors.nombre} id="nombre-error" />
@@ -390,8 +390,9 @@ function MainPagesLogin() {
                     <div className="input-with-icon">
                       <Phone size={18} className="field-icon" />
                       <input
+                        {...getInputProps('telefono')}
                         type="tel"
-                        className="ui-input"
+                        className={`ui-input ${errors.telefono ? 'input-error' : ''}`}
                         value={telefono}
                         onChange={(e) => {
                           const val = e.target.value.replace(/\D/g, '');
@@ -400,7 +401,6 @@ function MainPagesLogin() {
                         }}
                         placeholder="88888888"
                         maxLength="8"
-                        {...getInputProps('telefono')}
                       />
                     </div>
                     <ErrorMessage error={errors.telefono} id="telefono-error" />
@@ -413,12 +413,12 @@ function MainPagesLogin() {
                 <div className="input-with-icon">
                   <Mail size={18} className="field-icon" />
                   <input
+                    {...getInputProps('email')}
                     type="email"
-                    className="ui-input"
+                    className={`ui-input ${errors.email ? 'input-error' : ''}`}
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); errors.email && clearAllErrors(); }}
                     placeholder="tu@correo.com"
-                    {...getInputProps('email')}
                   />
                 </div>
                 <ErrorMessage error={errors.email} id="email-error" />
@@ -441,10 +441,11 @@ function MainPagesLogin() {
                   <div className="input-with-icon">
                     <Lock size={18} className="field-icon" />
                     <input
+                      {...getInputProps('password')}
                       type={showPassword ? 'text' : 'password'}
-                      className="ui-input"
+                      className={`ui-input ${errors.password ? 'input-error' : ''}`}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); errors.password && clearAllErrors(); }}
                       placeholder="••••••••"
                       maxLength="15"
                     />
@@ -466,13 +467,13 @@ function MainPagesLogin() {
                   <div className="input-with-icon">
                     <Lock size={18} className="field-icon" />
                     <input
+                      {...getInputProps('confirmPassword')}
                       type={showPassword ? 'text' : 'password'}
-                      className="ui-input"
+                      className={`ui-input ${errors.confirmPassword ? 'input-error' : ''}`}
                       value={confirmPassword}
                       onChange={(e) => { setConfirmPassword(e.target.value); errors.confirmPassword && clearAllErrors(); }}
                       placeholder="••••••••"
                       maxLength="15"
-                      {...getInputProps('confirmPassword')}
                     />
                   </div>
                   <ErrorMessage error={errors.confirmPassword} id="confirmPassword-error" />

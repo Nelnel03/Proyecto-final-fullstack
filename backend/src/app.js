@@ -52,6 +52,7 @@ app.use('/api/reportes-voluntariado', require('./routes/reporteVoluntariadoRoute
 app.use('/api/solicitudes', require('./routes/solicitudRoutes'));
 app.use('/api/roles', require('./routes/rolRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
 app.get('/', (req, res) => {
     res.json({

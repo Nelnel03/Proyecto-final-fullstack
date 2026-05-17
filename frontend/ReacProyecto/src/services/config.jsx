@@ -4,7 +4,7 @@
  */
 
 /** URL base para la API */
-export const BASE_URL = "http://localhost:3000/api";
+export const BASE_URL = "http://localhost:3005/api";
 
 /**
  * Retorna el header Authorization con el JWT almacenado en sessionStorage.

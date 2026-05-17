@@ -45,6 +45,7 @@ import UserSidebar from './UserSidebar';
 import UserTopbar from './UserTopbar';
 import UserDashboardTab from './UserDashboardTab';
 
+import '../../styles/user/ModernUserDashboard.css';
 
 
 

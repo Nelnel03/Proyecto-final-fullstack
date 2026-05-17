@@ -1,5 +1,6 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
+import '../../styles/visitante/CorridorMap.css';
 
 
 

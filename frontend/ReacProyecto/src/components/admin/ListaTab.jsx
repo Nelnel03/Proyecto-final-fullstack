@@ -39,10 +39,10 @@ function ListaTab({
     }
   }, [modoEdicion]);
 
-  const arbolesFiltrados = arboles
+  const arbolesFiltrados = (arboles || []).filter(Boolean)
     .filter(a => a.estado !== 'muerto')
     .filter(a => {
-      const matchesSearch = a.nombre.toLowerCase().includes(busqueda.toLowerCase()) || 
+      const matchesSearch = (a.nombre || '').toLowerCase().includes(busqueda.toLowerCase()) || 
                           (a.tipo || '').toLowerCase().includes(busqueda.toLowerCase());
       const matchesType = !tipoFiltro || (a.tipo || '').toLowerCase() === tipoFiltro.toLowerCase();
       return matchesSearch && matchesType;
@@ -54,7 +54,8 @@ function ListaTab({
     totalPages,
     paginate,
     totalItems,
-    itemsPerPage
+    itemsPerPage,
+    changeItemsPerPage
   } = usePagination(arbolesFiltrados, 6);
 
   return (

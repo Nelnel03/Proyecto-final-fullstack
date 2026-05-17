@@ -75,16 +75,20 @@ function UsuariosTab({
     }
   };
 
-  const usuariosFiltrados = usuarios
+  const usuariosFiltrados = (usuarios || []).filter(Boolean)
     .filter(user => isBanned(user) || getRol(user) !== 'voluntario')
     .filter(user => {
       if (subTab === 'activos') return !isBanned(user);
       return isBanned(user);
     })
-    .filter(user =>
-      user.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      user.email?.toLowerCase().includes(busqueda.toLowerCase())
-    );
+    .filter(user => {
+      const nombre = user.nombre || '';
+      const email = user.email || '';
+      return nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+             email.toLowerCase().includes(busqueda.toLowerCase());
+    });
+
+  const paginationObj = usePagination(usuariosFiltrados, 8);
 
   const {
     currentPage,
@@ -93,7 +97,7 @@ function UsuariosTab({
     paginate,
     totalItems,
     itemsPerPage
-  } = usePagination(usuariosFiltrados, 8);
+  } = paginationObj;
 
   return (
     <div className="admin-tab-content-wrapper fade-in">
@@ -160,7 +164,7 @@ function UsuariosTab({
                   <img src={user.fotoPerfil} alt={user.nombre} style={{ width: '100%', height: '100%', borderRadius: '16px', objectFit: 'cover' }} />
                 ) : (
                   <div className="flex-center" style={{ width: '100%', height: '100%', background: 'var(--ui-primary)', color: '#fff', borderRadius: '16px', fontWeight: 800, fontSize: '1.5rem' }}>
-                    {user.nombre?.charAt(0).toUpperCase()}
+                    {(user.nombre || '').charAt(0).toUpperCase()}
                   </div>
                 )}
                 <div className="avatar-hover-overlay flex-center" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', borderRadius: '16px', opacity: 0, transition: '0.3s' }}>

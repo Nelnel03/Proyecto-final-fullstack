@@ -538,7 +538,9 @@ function MainPagesInicoAdmin() {
         setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...formNormalizado } : a));
         Swal.fire('Éxito', 'Especie actualizada correctamente', 'success');
       } else {
-        const nuevoArbol = await services.postArboles(formNormalizado);
+        const respuesta = await services.postArboles(formNormalizado);
+        // El backend devuelve { message, arbol } — extraemos el árbol
+        const nuevoArbol = respuesta?.arbol || respuesta;
         // ACTUALIZACIÓN LOCAL: Agregamos el nuevo elemento al inicio
         setArboles(prev => [nuevoArbol, ...prev]);
         Swal.fire('Éxito', 'Especie guardada correctamente', 'success');

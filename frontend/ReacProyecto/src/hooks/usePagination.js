@@ -40,12 +40,21 @@ export const usePagination = (data = [], initialItemsPerPage = 10) => {
   };
 
   return {
+    // New signature properties
     currentData,
     pageInfo,
     goToPage,
     nextPage,
     prevPage,
     changeItemsPerPage,
-    setCurrentPage
+    setCurrentPage,
+
+    // Expected legacy signature properties
+    currentPage,
+    currentItems: currentData,
+    totalPages,
+    paginate: goToPage,
+    totalItems: data.length,
+    itemsPerPage
   };
 };

@@ -1,47 +1,51 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 /**
- * Hook para manejar la lógica de paginación.
- * 
- * @param {Array} items - La lista completa de elementos a paginar.
- * @param {number} itemsPerPage - Cantidad de elementos por página (por defecto 10).
- * @returns {Object} Objeto con el estado y funciones de paginación.
+ * Custom hook for local data pagination.
+ * @param {Array} data - The complete array of items to paginate.
+ * @param {number} initialItemsPerPage - Default items per page.
  */
-export const usePagination = (items = [], itemsPerPage = 10) => {
+export const usePagination = (data = [], initialItemsPerPage = 10) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
 
-  // Calcular el índice del último elemento de la página actual
-  const indexOfLastItem = currentPage * itemsPerPage;
-  // Calcular el índice del primer elemento de la página actual
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  
-  // Obtener los elementos de la página actual
-  const currentItems = useMemo(() => {
-    return items.slice(indexOfFirstItem, indexOfLastItem);
-  }, [items, indexOfFirstItem, indexOfLastItem]);
+  // Reset to first page when data changes or items per page changes
+  const totalPages = useMemo(() => Math.ceil(data.length / itemsPerPage), [data.length, itemsPerPage]);
 
-  // Calcular el total de páginas
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const currentData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return data.slice(start, start + itemsPerPage);
+  }, [data, currentPage, itemsPerPage]);
 
-  // Función para cambiar de página
-  const paginate = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+  const goToPage = useCallback((page) => {
+    const pageNumber = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(pageNumber);
+  }, [totalPages]);
+
+  const nextPage = useCallback(() => goToPage(currentPage + 1), [currentPage, goToPage]);
+  const prevPage = useCallback(() => goToPage(currentPage - 1), [currentPage, goToPage]);
+
+  const changeItemsPerPage = useCallback((count) => {
+    setItemsPerPage(count);
+    setCurrentPage(1);
+  }, []);
+
+  const pageInfo = {
+    totalItems: data.length,
+    totalPages,
+    currentPage,
+    itemsPerPage,
+    startItem: (currentPage - 1) * itemsPerPage + 1,
+    endItem: Math.min(currentPage * itemsPerPage, data.length)
   };
 
-  // Resetear a la primera página cuando cambian los items (por filtros o búsquedas)
-  useMemo(() => {
-    setCurrentPage(1);
-  }, [items.length]);
-
   return {
-    currentPage,
-    setCurrentPage,
-    currentItems,
-    totalPages,
-    paginate,
-    totalItems: items.length,
-    itemsPerPage
+    currentData,
+    pageInfo,
+    goToPage,
+    nextPage,
+    prevPage,
+    changeItemsPerPage,
+    setCurrentPage
   };
 };

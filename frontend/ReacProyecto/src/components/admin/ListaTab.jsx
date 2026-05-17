@@ -299,15 +299,17 @@ function ListaTab({
                   ))}
                 </div>
 
-                <div style={{ marginTop: '3rem' }}>
+                <div style={{ marginTop: '1rem' }}>
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={paginate}
                     totalItems={totalItems}
                     itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={changeItemsPerPage}
                   />
                 </div>
+
               </>
             )}
         </div>

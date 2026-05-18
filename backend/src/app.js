@@ -9,17 +9,21 @@ const app = express();
 // --- Middlewares Globales ---
 app.use(helmet()); 
 
-// Configuración de CORS restringida
 const allowedOrigins = [
     process.env.FRONTEND_URL,
-    'http://localhost:5173', // Vite default
-    'http://localhost:3000'  // Local tests
+    'http://localhost:5173',
+    'http://localhost:3000'
 ].filter(Boolean);
+
+// En desarrollo, acepta cualquier puerto de localhost para no romperse
+// cuando Vite salta de puerto (5173 → 5174 → 5175...) por instancias abiertas
+const isLocalhostOrigin = (origin) =>
+    /^https?:\/\/localhost(:\d+)?$/.test(origin);
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Permitir peticiones sin origin (como Postman o curl) o si está en la lista
-        if (!origin || allowedOrigins.includes(origin)) {
+        const isDev = process.env.NODE_ENV !== 'production';
+        if (!origin || allowedOrigins.includes(origin) || (isDev && isLocalhostOrigin(origin))) {
             callback(null, true);
         } else {
             callback(new Error('Acceso denegado por política CORS'));
@@ -28,7 +32,7 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
-})); 
+}));
 app.use(morgan('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));

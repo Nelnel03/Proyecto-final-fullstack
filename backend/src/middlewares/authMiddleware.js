@@ -30,9 +30,11 @@ const authMiddleware = {
                 return res.status(500).json({ message: 'Error de servidor: Token no verificado.' });
             }
 
-            // Normalizamos el rol para evitar errores de mayúsculas/minúsculas
-            const userRole = req.user.rol.toLowerCase();
-            
+            const userRole = req.user.rol?.toLowerCase();
+            if (!userRole) {
+                return res.status(403).json({ message: 'Rol de usuario no definido en el token.' });
+            }
+
             if (rolesPermitidos.includes(userRole)) {
                 next();
             } else {

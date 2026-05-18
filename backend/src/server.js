@@ -1,23 +1,33 @@
+require('dotenv').config();
+const mysql = require('mysql2/promise');
 const app = require('./app');
 const { sequelize } = require('./models');
 
 const PORT = process.env.PORT || 3000;
 
+// Crea la base de datos si no existe, usando mysql2 directamente (sin Sequelize)
+// así el servidor nunca muere por base de datos ausente
+async function ensureDatabase() {
+    const conn = await mysql.createConnection({
+        host: process.env.DB_HOST || '127.0.0.1',
+        user: process.env.DB_USERNAME || 'root',
+        password: process.env.DB_PASSWORD || ''
+    });
+    const dbName = process.env.DB_DATABASE || 'reforestacion';
+    await conn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+    await conn.end();
+    console.log(`✅ Base de datos '${dbName}' lista.`);
+}
+
 async function startServer() {
     try {
-        // Verificar conexión con la base de datos
+        await ensureDatabase();
+
         await sequelize.authenticate();
         console.log('✅ Conexión a MySQL establecida correctamente.');
 
-        // Sincronizar modelos con la BD (alter:true actualiza columnas sin borrar datos)
-        // SOLO en development — desactivar en producción
         if (process.env.NODE_ENV !== 'production') {
-            // Migrate stats_tipos from old volunteer-task schema to tree-type tracking schema
-            try {
-                await sequelize.query("ALTER TABLE `stats_tipos` MODIFY `tarea_id` INT NULL DEFAULT NULL");
-                await sequelize.query("ALTER TABLE `stats_tipos` MODIFY `periodo` DATE NULL DEFAULT NULL");
-            } catch (e) { /* Table may not exist yet or already migrated — safe to ignore */ }
-            await sequelize.sync({ alter: true });
+            await sequelize.sync();
             console.log('✅ Esquema de BD sincronizado.');
         }
 
@@ -25,7 +35,7 @@ async function startServer() {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
         });
     } catch (error) {
-        console.error('❌ No se pudo conectar a la base de datos:', error);
+        console.error('❌ Error al iniciar el servidor:', error.message);
         process.exit(1);
     }
 }

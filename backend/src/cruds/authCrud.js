@@ -1,7 +1,21 @@
-const { Usuario, Rol, ResetToken } = require('../models');
+const { Usuario, Rol, ResetToken, Sesion } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
+
+const registrarSesion = async (token, userId, req) => {
+    const decoded = jwt.decode(token);
+    await Sesion.create({
+        usuario_id: userId,
+        token_hash: hashToken(token),
+        ip: req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || null,
+        user_agent: req.headers['user-agent'] || null,
+        activa: 1,
+        expiry: new Date(decoded.exp * 1000)
+    });
+};
 
 /**
  * CRUD/Controller para Autenticación
@@ -33,6 +47,8 @@ const authCrud = {
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
+
+            await registrarSesion(token, user.id, req);
 
             return res.status(201).json({
                 message: 'Registro exitoso',
@@ -78,6 +94,8 @@ const authCrud = {
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
+
+            await registrarSesion(token, user.id, req);
 
             return res.status(200).json({
                 message: 'Login exitoso',
@@ -153,7 +171,25 @@ const authCrud = {
         }
     },
 
-    // 5. Restablecimiento de contraseña con token
+    // 5. Logout — revoca la sesión activa del token actual
+    logout: async (req, res) => {
+        try {
+            const token = req.header('Authorization')?.replace('Bearer ', '');
+            if (!token) return res.status(400).json({ message: 'Token no proporcionado' });
+
+            await Sesion.update(
+                { activa: 0 },
+                { where: { token_hash: hashToken(token), activa: 1 } }
+            );
+
+            return res.status(200).json({ message: 'Sesión cerrada correctamente' });
+        } catch (error) {
+            console.error('Error en logout:', error);
+            return res.status(500).json({ message: 'Error al cerrar sesión' });
+        }
+    },
+
+    // 6. Restablecimiento de contraseña con token
     resetPassword: async (req, res) => {
         try {
             const { token, newPassword } = req.body;

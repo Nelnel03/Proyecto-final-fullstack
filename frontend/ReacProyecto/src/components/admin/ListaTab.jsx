@@ -5,17 +5,17 @@ import { SkeletonCardGrid, Pagination } from '../ui';
 import { usePagination } from '../../hooks/usePagination';
 import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle } from 'lucide-react';
 
-function ListaTab({ 
-  busqueda, 
-  setBusqueda, 
-  tipoFiltro, 
-  setTipoFiltro, 
-  tiposDisponibles, 
-  setTab, 
-  handleEliminarTipo, 
-  statsTipos, 
-  handleUpdateStatTipo, 
-  arboles, 
+function ListaTab({
+  busqueda,
+  setBusqueda,
+  tipoFiltro,
+  setTipoFiltro,
+  tiposDisponibles,
+  setTab,
+  handleEliminarTipo,
+  statsTipos,
+  handleUpdateStatTipo,
+  arboles,
   cargando,
   handleEditar,
   handleAbonarArbol,
@@ -29,7 +29,8 @@ function ListaTab({
   setModoNuevoTipo,
   setForm,
   resetForm,
-  isSubmitting = false
+  isSubmitting = false,
+  onSaveArbolImage
 }) {
   const [showAddForm, setShowAddForm] = React.useState(false);
 
@@ -130,10 +131,10 @@ function ListaTab({
 
         {showAddForm && (
            <div className="form-container-reveal" style={{ marginTop: '1rem' }}>
-             <ArbolFormTab 
+             <ArbolFormTab
                modoEdicion={modoEdicion}
-               handleSubmit={(e) => {
-                 handleSubmit(e);
+               handleSubmit={async (e) => {
+                 await handleSubmit(e);
                  setShowAddForm(false);
                }}
                form={form}
@@ -148,6 +149,7 @@ function ListaTab({
                }}
                setTab={setTab}
                isSubmitting={isSubmitting}
+               onImageUpload={modoEdicion ? onSaveArbolImage : undefined}
              />
            </div>
         )}

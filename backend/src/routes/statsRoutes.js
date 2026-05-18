@@ -5,6 +5,7 @@ const { verifyToken, checkRole } = require('../middlewares/authMiddleware');
 
 router.use(verifyToken, checkRole(['admin']));
 
+router.post('/recalcular', statsCrud.recalcular);
 router.get('/', statsCrud.getAll);
 router.get('/:id', statsCrud.getById);
 router.post('/', statsCrud.create);

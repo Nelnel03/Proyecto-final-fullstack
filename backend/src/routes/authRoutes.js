@@ -41,6 +41,9 @@ router.post('/reset-password', [
     validate
 ], authCrud.resetPassword);
 
+// POST: Logout — revoca la sesión activa del token
+router.post('/logout', verifyToken, authCrud.logout);
+
 // POST: Cambiar contraseña (requiere estar autenticado)
 router.post('/change-password', verifyToken, [
     body('newPassword').isLength({ min: 6 }).withMessage('Mínimo 6 caracteres'),

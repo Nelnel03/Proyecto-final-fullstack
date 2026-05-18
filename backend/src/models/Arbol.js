@@ -82,5 +82,15 @@ module.exports = (sequelize, DataTypes) => {
     Arbol.hasMany(models.Abono, { foreignKey: 'arbol_id' });
   };
 
+  const dispararRecalculo = (instance) => {
+    require('../services/statsService').recalcularPorTipo(instance.tipo)
+      .catch(e => console.error('[stats] afterCreate/Update Arbol:', e));
+  };
+
+  Arbol.addHook('afterCreate', dispararRecalculo);
+  Arbol.addHook('afterUpdate', (instance) => {
+    if (instance.changed('estado') || instance.changed('tipo')) dispararRecalculo(instance);
+  });
+
   return Arbol;
 };

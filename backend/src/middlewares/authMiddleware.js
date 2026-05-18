@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { Sesion } = require('../models');
 
 /**
  * Middlewares de Autenticación y Autorización
  * Enfoque Senior: Seguridad por capas
  */
 const authMiddleware = {
-    // 1. Verificar si el usuario está autenticado (Token válido)
-    verifyToken: (req, res, next) => {
+    // 1. Verificar si el usuario está autenticado (Token válido + sesión activa)
+    verifyToken: async (req, res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
@@ -15,7 +17,14 @@ const authMiddleware = {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = decoded; // Guardamos los datos del usuario en la petición
+
+            const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+            const sesion = await Sesion.findOne({ where: { token_hash: tokenHash, activa: 1 } });
+            if (!sesion) {
+                return res.status(401).json({ message: 'Sesión inválida o ya cerrada.' });
+            }
+
+            req.user = decoded;
             next();
         } catch (error) {
             return res.status(401).json({ message: 'Token no válido o expirado.' });

@@ -34,7 +34,6 @@ module.exports = (sequelize, DataTypes) => {
 
   TareaDisponible.associate = (models) => {
     TareaDisponible.hasMany(models.ReporteVoluntariado, { foreignKey: 'tarea_id' });
-    TareaDisponible.hasMany(models.StatsTipo, { foreignKey: 'tarea_id' });
   };
 
   return TareaDisponible;

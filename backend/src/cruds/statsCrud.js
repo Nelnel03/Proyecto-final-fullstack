@@ -1,4 +1,5 @@
 const { StatsTipo } = require('../models');
+const { recalcularTodo } = require('../services/statsService');
 
 const statsController = {
     getAll: async (req, res) => {
@@ -68,6 +69,17 @@ const statsController = {
         } catch (error) {
             console.error('Error en deleteStat:', error);
             return res.status(500).json({ message: 'Error al eliminar la estadística' });
+        }
+    },
+
+    recalcular: async (req, res) => {
+        try {
+            await recalcularTodo();
+            const stats = await StatsTipo.findAll({ order: [['tipo', 'ASC']] });
+            return res.status(200).json({ message: 'Estadísticas recalculadas correctamente', stats });
+        } catch (error) {
+            console.error('Error en recalcular:', error);
+            return res.status(500).json({ message: 'Error al recalcular las estadísticas' });
         }
     }
 };

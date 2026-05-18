@@ -78,5 +78,15 @@ module.exports = (sequelize, DataTypes) => {
     ReporteVoluntariado.belongsTo(models.TareaDisponible, { foreignKey: 'tarea_id' });
   };
 
+  const dispararRecalculo = () => {
+    require('../services/statsService').recalcularTodo()
+      .catch(e => console.error('[stats] afterCreate/Update ReporteVoluntariado:', e));
+  };
+
+  ReporteVoluntariado.addHook('afterCreate', dispararRecalculo);
+  ReporteVoluntariado.addHook('afterUpdate', (instance) => {
+    if (instance.changed('estado')) dispararRecalculo();
+  });
+
   return ReporteVoluntariado;
 };

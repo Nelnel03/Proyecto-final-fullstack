@@ -140,7 +140,7 @@ const usuarioCrud = {
                 telefono: telefono !== undefined ? telefono : usuario.telefono,
                 rol_id: efectivoRolId || usuario.rol_id
             };
-            if (fechaIngreso) updateData.fechaIngreso = fechaIngreso;
+            if (fechaIngreso !== undefined) updateData.fechaIngreso = fechaIngreso;
 
             if (req.file) {
                 updateData.fotoPerfil = req.file.path;

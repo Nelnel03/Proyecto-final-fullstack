@@ -194,9 +194,9 @@ function MainPagesInicoAdmin() {
 
   const handleUserSubmit = async (e) => {
     e.preventDefault();
-    const trimmedNombre = formUsuario.nombre.trim();
-    const trimmedEmail = formUsuario.email.trim();
-    const trimmedPassword = formUsuario.password.trim();
+    const trimmedNombre = (formUsuario.nombre || '').trim();
+    const trimmedEmail = (formUsuario.email || '').trim();
+    const trimmedPassword = (formUsuario.password || '').trim();
 
     if (!trimmedNombre || !trimmedEmail || (!modoEdicionUsuario && !trimmedPassword)) {
       Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
@@ -213,25 +213,34 @@ function MainPagesInicoAdmin() {
       Swal.fire('Error', 'El formato del correo es incorrecto', 'error');
       return;
     }
-    
+
     try {
       if (modoEdicionUsuario) {
-        await services.putUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail }, idEditandoUsuario);
-        setUsuarios(prev => prev.map(u => u.id === idEditandoUsuario ? { ...u, ...formUsuario, nombre: trimmedNombre, email: trimmedEmail } : u));
+        const payload = {
+          nombre: trimmedNombre,
+          email: trimmedEmail,
+          rol: formUsuario.rol,
+          fotoPerfil: formUsuario.fotoPerfil || null,
+          status: formUsuario.status || 'activo'
+        };
+        if (trimmedPassword) payload.password = trimmedPassword;
+        await services.putUsuarios(payload, idEditandoUsuario);
+        await cargarArboles();
         Swal.fire('Éxito', 'Usuario actualizado', 'success');
       } else {
         const nuevoUser = await services.postUsuarios({ ...formUsuario, nombre: trimmedNombre, email: trimmedEmail, status: 'activo' });
-        setUsuarios(prev => [...prev, nuevoUser]);
+        setUsuarios(prev => [...prev, nuevoUser?.user || nuevoUser]);
         Swal.fire('Éxito', 'Usuario creado', 'success');
       }
       resetFormUsuario();
     } catch (err) {
-      Swal.fire('Error', 'No se pudo guardar el usuario', 'error');
+      Swal.fire('Error', err?.message || 'No se pudo guardar el usuario', 'error');
     }
   };
 
   const handleEditarUsuario = (user) => {
-    setFormUsuario(user);
+    const rolNombre = typeof user.rol === 'object' ? (user.rol?.nombre || 'usuario') : (user.rol || 'usuario');
+    setFormUsuario({ ...USER_FORM_INICIAL, ...user, rol: rolNombre, password: '' });
     setModoEdicionUsuario(true);
     setIdEditandoUsuario(user.id);
     setTab('usuarios');
@@ -369,28 +378,34 @@ function MainPagesInicoAdmin() {
   const handleConvertirUsuarioAVoluntariado = async (user) => {
     const { value: formValues } = await Swal.fire({
       title: 'Convertir a Voluntario',
-      html: `<input id="swal-input1" class="swal2-input" placeholder="Área">
-             <input id="swal-input2" class="swal2-input" placeholder="Teléfono" maxlength="8">`,
-      preConfirm: () => ({ 
-        area: document.getElementById('swal-input1').value, 
-        telefono: document.getElementById('swal-input2').value 
-      })
+      html: `<input id="swal-input1" class="swal2-input" placeholder="Área de trabajo">
+             <input id="swal-input2" class="swal2-input" placeholder="Teléfono (mín. 4 dígitos)">`,
+      preConfirm: () => {
+        const area = document.getElementById('swal-input1').value.trim();
+        const telefono = document.getElementById('swal-input2').value.trim();
+        if (!area || !telefono) {
+          Swal.showValidationMessage('Área y teléfono son obligatorios');
+          return false;
+        }
+        return { area, telefono };
+      }
     });
 
-    if (formValues && formValues.area && formValues.telefono) {
+    if (formValues) {
       try {
-        await services.putUsuarios({ 
-          ...user, 
-          rol: 'voluntario', 
-          area: formValues.area, 
-          telefono: formValues.telefono, 
-          fechaIngreso: new Date().toISOString().split('T')[0] 
+        const resultado = await services.putUsuarios({
+          nombre: user.nombre,
+          rol: 'voluntario',
+          area: formValues.area,
+          telefono: formValues.telefono,
+          fechaIngreso: new Date().toISOString().split('T')[0],
+          status: user.status || 'activo'
         }, user.id);
+        await cargarArboles();
         Swal.fire('Éxito', `${user.nombre} ahora es voluntario`, 'success');
         setTab('voluntariados');
-        await cargarArboles();
       } catch (error) {
-        Swal.fire('Error', 'Conversión fallida', 'error');
+        Swal.fire('Error', error?.message || 'Conversión fallida', 'error');
       }
     }
   };
@@ -398,21 +413,31 @@ function MainPagesInicoAdmin() {
   const handleConvertirVoluntariadoAUsuario = async (vol) => {
     const { value: password } = await Swal.fire({
       title: 'Convertir a Usuario',
+      html: `<p style="font-size:0.85rem;opacity:0.7;margin-bottom:8px">Mínimo 6 caracteres</p>`,
       input: 'password',
-      inputPlaceholder: 'Contraseña nueva',
-      inputValidator: (v) => !v && 'Debes ingresar una contraseña'
+      inputPlaceholder: 'Contraseña nueva (mín. 6 caracteres)',
+      inputValidator: (v) => {
+        if (!v) return 'Debes ingresar una contraseña';
+        if (v.length < 6) return 'Mínimo 6 caracteres';
+      }
     });
 
     if (password) {
       try {
-        const updated = { ...vol, password, rol: 'user' };
-        delete updated.area; delete updated.telefono; delete updated.fechaIngreso;
-        await services.putUsuarios(updated, vol.id);
+        await services.putUsuarios({
+          nombre: vol.nombre,
+          rol: 'user',
+          password,
+          area: null,
+          telefono: null,
+          fechaIngreso: null,
+          status: vol.status || 'activo'
+        }, vol.id);
+        await cargarArboles();
         Swal.fire('Éxito', `${vol.nombre} ahora es usuario normal`, 'success');
         setTab('usuarios');
-        await cargarArboles();
       } catch (error) {
-        Swal.fire('Error', 'Conversión fallida', 'error');
+        Swal.fire('Error', error?.message || 'Conversión fallida', 'error');
       }
     }
   };

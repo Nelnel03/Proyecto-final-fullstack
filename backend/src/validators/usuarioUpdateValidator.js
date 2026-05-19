@@ -15,17 +15,15 @@ const usuarioUpdateValidator = [
 
     body('password')
         .if(body('password').exists({ checkFalsy: true }))
-        .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres')
-        .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
-        .matches(/[A-Z]/).withMessage('La contraseña debe contener al menos una mayúscula'),
+        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
 
     body('rol_id')
         .optional({ checkFalsy: true })
         .isInt().withMessage('El ID de rol debe ser un número válido'),
 
     body('telefono')
-        .optional({ checkFalsy: true })
-        .matches(/^\+?[0-9]{8,15}$/).withMessage('Formato de teléfono no válido'),
+        .optional({ checkFalsy: true, nullable: true })
+        .isLength({ min: 4, max: 20 }).withMessage('El teléfono debe tener entre 4 y 20 caracteres'),
 
     body('status')
         .optional({ checkFalsy: true })

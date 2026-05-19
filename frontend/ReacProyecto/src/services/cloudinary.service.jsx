@@ -20,15 +20,25 @@ export async function uploadImage(file) {
   const response = await fetch(`${BASE_URL}/upload`, {
     method: "POST",
     headers: {
-      // No incluir Content-Type — el browser lo pone automáticamente con el boundary correcto para FormData
       ...getAuthHeaders(),
     },
+    // credentials: 'include' asegura que cookies de sesión se acompañen
+    // en entornos con sesión basada en cookies o CORS estricto
+    credentials: "include",
     body: formData,
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al subir la imagen");
+    let serverMessage;
+    try {
+      const errorData = await response.json();
+      serverMessage = errorData.message;
+    } catch {
+      serverMessage = null;
+    }
+    throw new Error(
+      serverMessage || `Error ${response.status}: no se pudo subir la imagen`
+    );
   }
 
   const data = await response.json();

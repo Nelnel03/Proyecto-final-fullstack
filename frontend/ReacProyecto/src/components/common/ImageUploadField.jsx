@@ -38,7 +38,11 @@ function ImageUploadField({ label, value, onChange, placeholder = "Seleccionar i
       });
     } catch (error) {
       console.error(error);
-      Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+      Swal.fire(
+        'Error',
+        error.message || 'No se pudo subir la imagen',
+        'error'
+      );
     } finally {
       setSubiendo(false);
     }

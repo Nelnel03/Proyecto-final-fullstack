@@ -22,19 +22,30 @@ const uploadGeneric = multer({ storage: genericStorage });
  * Sube una imagen a Cloudinary y devuelve la URL segura.
  * Requiere autenticación JWT.
  */
-router.post('/', verifyToken, uploadGeneric.single('image'), (req, res) => {
+router.post('/', verifyToken, uploadGeneric.single('image'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'No se recibió ningún archivo' });
+      return res.status(400).json({ message: 'No se recibió ningún archivo. Asegúrese de adjuntar una imagen en el campo "image".' });
     }
+
+    const { path: filePath, filename: publicId } = req.file;
+
+    console.log('[UPLOAD OK]', { filePath, publicId });
+
     return res.status(200).json({
-      url: req.file.path,
-      secure_url: req.file.path,
-      public_id: req.file.filename
+      url: filePath,
+      secure_url: filePath,
+      public_id: publicId
     });
   } catch (error) {
-    console.error('Error en /api/upload:', error);
-    return res.status(500).json({ message: 'Error al subir la imagen' });
+    console.error('[UPLOAD ERROR]', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    return res.status(500).json({
+      message: error.message || 'Error al subir la imagen'
+    });
   }
 });
 

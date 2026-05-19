@@ -21,6 +21,7 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
     { id: 'lista', label: 'Especies', icon: List },
     { id: 'voluntariados', label: 'Gestión Equipo', icon: CheckCircle },
     { id: 'bajas', label: 'Archivo Histórico', icon: History },
+    { id: 'ayuda', label: 'Centro de Ayuda', icon: HelpCircle },
     { id: 'buzon', label: 'Buzón Global', icon: FileText },
   ];
 
@@ -64,8 +65,9 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
               key={link.id}
               className={`admin-nav-item ${tab === link.id ? 'active' : ''}`}
               onClick={() => handleLinkClick(link.id)}
-              style={{ animationDelay: `${idx * 0.1}s` }}
+              style={{ animationDelay: `${idx * 0.05}s` }}
             >
+              <div className="active-indicator-bar"></div>
               <div className="nav-icon-wrapper">
                 <link.icon size={20} strokeWidth={tab === link.id ? 2.5 : 2} />
               </div>
@@ -73,29 +75,21 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
               {tab === link.id && <ChevronRight size={14} className="active-chevron" />}
             </button>
           ))}
-        </nav>
 
-        <div className="admin-nav-label" style={{ marginTop: '2.5rem' }}>Recursos & Soporte</div>
-        <div className="admin-sidebar-footer">
+          {/* Separator and Spacing for Logout */}
+          <div className="sidebar-logout-separator"></div>
+
           <button 
-            className={`admin-footer-link ${tab === 'ayuda' ? 'active' : ''}`} 
-            onClick={() => handleLinkClick('ayuda')}
-          >
-            <div className="footer-icon-box">
-              <HelpCircle size={20} />
-            </div>
-            <span>Centro de Ayuda</span>
-          </button>
-          <button 
-            className="admin-footer-link logout-btn" 
+            className="admin-nav-item sidebar-logout-btn" 
             onClick={handleLogout}
+            style={{ animationDelay: `${(sidebarLinks.length + 1) * 0.05}s` }}
           >
-            <div className="footer-icon-box logout">
-              <LogOut size={20} />
+            <div className="nav-icon-wrapper logout">
+              <LogOut size={20} strokeWidth={2} />
             </div>
-            <span>Cerrar Sesión</span>
+            <span className="nav-label">Cerrar Sesión</span>
           </button>
-        </div>
+        </nav>
       </div>
     </aside>
   );

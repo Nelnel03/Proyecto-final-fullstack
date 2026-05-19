@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
  * @param {function} onChange Función que recibe la nueva URL.
  * @param {string} placeholder Texto de ayuda.
  */
-function ImageUploadField({ label, value, onChange, placeholder = "Seleccionar imagen", circular = false }) {
+function ImageUploadField({ label, value, onChange, placeholder = "Seleccionar imagen", circular = false, showSuccessSwal = true }) {
   const [subiendo, setSubiendo] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -27,18 +27,24 @@ function ImageUploadField({ label, value, onChange, placeholder = "Seleccionar i
     try {
       const url = await uploadImage(file);
       onChange(url);
-      Swal.fire({
-        title: '¡Subida!',
-        text: 'Imagen lista',
-        icon: 'success',
-        timer: 1000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      });
+      if (showSuccessSwal) {
+        Swal.fire({
+          title: '¡Subida!',
+          text: 'Imagen lista',
+          icon: 'success',
+          timer: 1000,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
+      }
     } catch (error) {
       console.error(error);
-      Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+      Swal.fire(
+        'Error',
+        error.message || 'No se pudo subir la imagen',
+        'error'
+      );
     } finally {
       setSubiendo(false);
     }

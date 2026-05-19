@@ -1,4 +1,4 @@
-const { SolicitudVoluntariado, Usuario } = require('../models');
+const { SolicitudVoluntariado, Usuario, sequelize } = require('../models');
 
 /**
  * Controller para la gestión de Solicitudes de Voluntariado
@@ -108,7 +108,63 @@ const solicitudController = {
         }
     },
 
-    // 5. Eliminar solicitud
+    // 5. Aprobar solicitud: marca estado='aprobada' y cambia rol del usuario a voluntario (rol_id=2)
+    aprobar: async (req, res) => {
+        const t = await sequelize.transaction();
+        try {
+            const { id } = req.params;
+
+            // Obtener usuario_id de la solicitud con SQL directo
+            const [solicitud] = await sequelize.query(
+                'SELECT id, usuario_id FROM solicitudes_voluntariado WHERE id = :id LIMIT 1',
+                { replacements: { id }, type: sequelize.QueryTypes.SELECT, transaction: t }
+            );
+
+            if (!solicitud) {
+                await t.rollback();
+                return res.status(404).json({ message: `Solicitud ${id} no encontrada` });
+            }
+
+            const usuarioId = solicitud.usuario_id;
+            console.log(`[aprobar] solicitud_id=${id} usuario_id=${usuarioId}`);
+
+            // 1. Marcar solicitud como aprobada
+            await sequelize.query(
+                "UPDATE solicitudes_voluntariado SET estado = 'aprobada' WHERE id = :id",
+                { replacements: { id }, transaction: t }
+            );
+
+            // 2. Resolver el id del rol 'voluntario' dinámicamente y actualizar al usuario
+            const [voluntarioRol] = await sequelize.query(
+                "SELECT id FROM roles WHERE nombre = 'voluntario' LIMIT 1",
+                { type: sequelize.QueryTypes.SELECT, transaction: t }
+            );
+            if (!voluntarioRol) {
+                await t.rollback();
+                return res.status(500).json({ message: 'Rol voluntario no encontrado en la base de datos' });
+            }
+            await sequelize.query(
+                'UPDATE usuarios SET rol_id = :rolId WHERE id = :usuarioId',
+                { replacements: { rolId: voluntarioRol.id, usuarioId }, transaction: t }
+            );
+
+            await t.commit();
+            console.log(`[aprobar] COMMIT OK — usuario ${usuarioId} ahora es voluntario (rol_id=${voluntarioRol.id})`);
+
+            return res.status(200).json({
+                message: 'Solicitud aprobada y rol actualizado a voluntario',
+                solicitud_id: Number(id),
+                usuario_id: usuarioId,
+                nuevo_rol_id: voluntarioRol.id
+            });
+        } catch (error) {
+            await t.rollback();
+            console.error('[aprobar] ERROR:', error.message);
+            return res.status(500).json({ message: error.message || 'Error al aprobar la solicitud' });
+        }
+    },
+
+    // 6. Eliminar solicitud
     delete: async (req, res) => {
         try {
             const { id } = req.params;

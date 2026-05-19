@@ -32,25 +32,214 @@ const ResumenTab = ({
   usuarios, 
   arboles, 
   setTab, 
-  setUserSubTab 
+  setUserSubTab,
+  cargando = false
 }) => {
   // --- DATA PROCESSING FOR CHARTS ---
   
-  // 1. Growth Data (Mocked but based on real data for trends)
-  const growthData = useMemo(() => [
-    { name: 'Ene', value: 400 },
-    { name: 'Feb', value: 300 },
-    { name: 'Mar', value: 600 },
-    { name: 'Abr', value: 800 },
-    { name: 'May', value: arboles.length > 0 ? arboles.length * 10 : 500 },
-  ], [arboles]);
+  // 1. Growth Data: Dynamic month calculation based on real tree/user registration records
+  const growthData = useMemo(() => {
+    const months = [];
+    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    // Get the last 6 months (inclusive of current month)
+    const today = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      months.push({
+        year: d.getFullYear(),
+        month: d.getMonth(),
+        name: `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
+        arboles: 0,
+        usuarios: 0
+      });
+    }
 
-  // 2. Tree Health Distribution
-  const healthData = useMemo(() => [
-    { name: 'Vivos', value: arboles.filter(a => a.estado === 'vivo').length, color: '#10b981' },
-    { name: 'Muertos', value: arboles.filter(a => a.estado === 'muerto').length, color: '#ef4444' },
-    { name: 'En Tratamiento', value: arboles.filter(a => a.estado === 'enfermo').length, color: '#f59e0b' },
-  ].filter(d => d.value > 0), [arboles]);
+    const getYearMonth = (dateInput) => {
+      if (!dateInput) return null;
+      let d = new Date(dateInput);
+      if (isNaN(d.getTime())) return null;
+      return { year: d.getFullYear(), month: d.getMonth() };
+    };
+
+    // Count real trees registered per month
+    arboles.forEach(arbol => {
+      const dateInfo = getYearMonth(arbol.fechaRegistro) || getYearMonth(arbol.createdAt) || getYearMonth(arbol.created_at);
+      if (dateInfo) {
+        const match = months.find(m => m.year === dateInfo.year && m.month === dateInfo.month);
+        if (match) {
+          match.arboles += 1;
+        }
+      }
+    });
+
+    // Count real users registered per month
+    usuarios.forEach(user => {
+      const dateInfo = getYearMonth(user.fechaIngreso) || getYearMonth(user.createdAt) || getYearMonth(user.created_at);
+      if (dateInfo) {
+        const match = months.find(m => m.year === dateInfo.year && m.month === dateInfo.month);
+        if (match) {
+          match.usuarios += 1;
+        }
+      }
+    });
+
+    return months.map(m => ({
+      name: m.name,
+      value: m.arboles + m.usuarios,
+      'Árboles': m.arboles,
+      'Usuarios': m.usuarios
+    }));
+  }, [arboles, usuarios]);
+
+  // 2. Tree Health Distribution: Real distribution with exact dynamic percentages
+  const healthData = useMemo(() => {
+    const vivos = arboles.filter(a => a.estado === 'vivo').length;
+    const muertos = arboles.filter(a => a.estado === 'muerto').length;
+    const enTratamiento = arboles.filter(a => a.estado === 'enfermo').length;
+    const total = vivos + muertos + enTratamiento;
+
+    return [
+      { 
+        name: 'Vivos', 
+        value: vivos, 
+        percentage: total > 0 ? ((vivos / total) * 100).toFixed(1) : '0.0', 
+        color: '#10b981' 
+      },
+      { 
+        name: 'En Riesgo', 
+        value: enTratamiento, 
+        percentage: total > 0 ? ((enTratamiento / total) * 100).toFixed(1) : '0.0', 
+        color: '#f59e0b' 
+      },
+      { 
+        name: 'Inactivos', 
+        value: muertos, 
+        percentage: total > 0 ? ((muertos / total) * 100).toFixed(1) : '0.0', 
+        color: '#ef4444' 
+      },
+    ].filter(d => d.value > 0);
+  }, [arboles]);
+
+  // --- PREMIUM SKELETON LOADING STATE ---
+  if (cargando) {
+    return (
+      <div className="admin-tab-content-wrapper fade-in">
+        {/* Header Section */}
+        <div className="dashboard-header-premium mb-8">
+          <div className="flex-between align-start">
+            <div>
+              <div className="skeleton premium-shimmer" style={{ width: '250px', height: '40px', borderRadius: '8px', marginBottom: '12px' }}></div>
+              <div className="skeleton premium-shimmer" style={{ width: '400px', height: '20px', borderRadius: '4px' }}></div>
+            </div>
+            <div className="skeleton premium-shimmer" style={{ width: '150px', height: '36px', borderRadius: '50px' }}></div>
+          </div>
+        </div>
+
+        {/* Primary Stats Grid */}
+        <div className="stats-grid-saas mb-8">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="saas-stat-card premium-card skeleton premium-shimmer" style={{ minHeight: '150px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)' }}></div>
+                <div style={{ width: '60%', height: '14px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}></div>
+                <div style={{ width: '40%', height: '24px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts Section */}
+        <div className="dashboard-main-grid mb-8">
+          <div className="premium-card chart-container p-6 skeleton premium-shimmer" style={{ height: '380px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <div style={{ width: '200px', height: '24px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}></div>
+              <div style={{ width: '100px', height: '24px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}></div>
+            </div>
+            <div style={{ width: '100%', height: '260px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)' }}></div>
+          </div>
+
+          <div className="premium-card chart-container p-6 skeleton premium-shimmer" style={{ height: '380px' }}>
+            <div style={{ width: '180px', height: '24px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', marginBottom: '32px' }}></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '180px' }}>
+              <div style={{ width: '140px', height: '140px', borderRadius: '50%', border: '15px solid rgba(255,255,255,0.03)' }}></div>
+            </div>
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '16px' }}>
+              <div style={{ width: '60px', height: '12px', borderRadius: '2px', background: 'rgba(255,255,255,0.05)' }}></div>
+              <div style={{ width: '60px', height: '12px', borderRadius: '2px', background: 'rgba(255,255,255,0.05)' }}></div>
+              <div style={{ width: '60px', height: '12px', borderRadius: '2px', background: 'rgba(255,255,255,0.05)' }}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Grid */}
+        <div className="dashboard-footer-grid">
+          <div className="premium-card p-6 skeleton premium-shimmer" style={{ height: '300px' }}></div>
+          <div className="quick-actions-saas" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="premium-card p-6 skeleton premium-shimmer" style={{ height: '140px' }}></div>
+            <div className="premium-card p-6 skeleton premium-shimmer" style={{ height: '140px' }}></div>
+          </div>
+        </div>
+
+        <style jsx="true">{`
+          .stats-grid-saas {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+          }
+          .dashboard-main-grid {
+            display: grid;
+            grid-template-columns: 7fr 3fr;
+            gap: 24px;
+            margin-bottom: 32px;
+          }
+          .dashboard-footer-grid {
+            display: grid;
+            grid-template-columns: 7fr 3fr;
+            gap: 24px;
+          }
+          .premium-shimmer {
+            position: relative;
+            overflow: hidden;
+          }
+          .premium-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+              90deg,
+              rgba(255,255,255,0) 0%,
+              rgba(255,255,255,0.04) 20%,
+              rgba(255,255,255,0.08) 60%,
+              rgba(255,255,255,0) 100%
+            );
+            animation: premium-shimmer-anim 1.8s infinite;
+          }
+          @keyframes premium-shimmer-anim {
+            100% { transform: translateX(100%); }
+          }
+          [data-theme='light'] .premium-shimmer::after {
+            background: linear-gradient(
+              90deg,
+              rgba(47,79,63,0) 0%,
+              rgba(47,79,63,0.03) 20%,
+              rgba(47,79,63,0.06) 60%,
+              rgba(47,79,63,0) 100%
+            );
+          }
+          @media screen and (max-width: 1024px) {
+            .stats-grid-saas { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-main-grid, .dashboard-footer-grid { grid-template-columns: 1fr; }
+          }
+          @media screen and (max-width: 600px) {
+            .stats-grid-saas { grid-template-columns: 1fr; }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   const stats = [
     {
@@ -59,6 +248,7 @@ const ResumenTab = ({
       trend: '+12%',
       icon: Users,
       color: 'var(--ui-success)',
+      bgColor: 'rgba(16, 185, 129, 0.1)',
       onClick: () => { setTab('usuarios'); setUserSubTab('activos'); }
     },
     {
@@ -67,6 +257,7 @@ const ResumenTab = ({
       trend: '+5.4%',
       icon: Trees,
       color: 'var(--ui-info)',
+      bgColor: 'rgba(59, 130, 246, 0.1)',
       onClick: () => setTab('lista')
     },
     {
@@ -75,6 +266,7 @@ const ResumenTab = ({
       trend: '-2%',
       icon: UserMinus,
       color: 'var(--ui-warning)',
+      bgColor: 'rgba(245, 158, 11, 0.1)',
       onClick: () => { setTab('usuarios'); setUserSubTab('cancelados'); }
     },
     {
@@ -83,6 +275,7 @@ const ResumenTab = ({
       trend: '+1',
       icon: AlertCircle,
       color: 'var(--ui-error)',
+      bgColor: 'rgba(239, 68, 68, 0.1)',
       onClick: () => setTab('bajas')
     }
   ];
@@ -95,7 +288,7 @@ const ResumenTab = ({
       <div className="dashboard-header-premium mb-8">
         <div className="flex-between align-start">
           <div>
-            <h2 className="text-gradient font-black" style={{ fontSize: '2.5rem', letterSpacing: '-1.5px' }}>
+            <h2 className="text-gradient font-black" style={{ fontSize: '2.5rem', letterSpacing: '-1.5px', marginBottom: '8px' }}>
               Dashboard Principal
             </h2>
             <p className="text-muted font-bold" style={{ fontSize: '1.1rem' }}>
@@ -118,12 +311,12 @@ const ResumenTab = ({
             onClick={stat.onClick}
             style={{ animationDelay: `${idx * 0.1}s` }}
           >
-            <div className="stat-card-inner">
-              <div className="stat-icon-wrapper" style={{ color: stat.color }}>
-                <stat.icon size={24} />
-              </div>
-              <div className="stat-content">
-                <p className="stat-label-saas">{stat.label}</p>
+            <div className="stat-icon-wrapper" style={{ color: stat.color, backgroundColor: stat.bgColor }}>
+              <stat.icon size={24} />
+            </div>
+            <div className="stat-content">
+              <p className="stat-label-saas">{stat.label}</p>
+              <div className="stat-value-container">
                 <h3 className="stat-value-saas">{stat.value}</h3>
                 <span className={`stat-trend ${stat.trend.startsWith('+') ? 'positive' : 'negative'}`}>
                   <TrendingUp size={12} /> {stat.trend}
@@ -151,7 +344,7 @@ const ResumenTab = ({
                     <stop offset="95%" stopColor="var(--ui-primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, opacity: 0.5}} />
                 <YAxis hide />
                 <Tooltip 
@@ -190,9 +383,11 @@ const ResumenTab = ({
           <div className="pie-legend">
             {healthData.map((item, i) => (
               <div key={i} className="legend-item">
-                <span className="dot" style={{ background: item.color }}></span>
-                <span className="name">{item.name}</span>
-                <span className="val">{item.value}</span>
+                <div className="legend-header">
+                  <span className="dot" style={{ background: item.color }}></span>
+                  <span className="name">{item.name}</span>
+                </div>
+                <span className="val">{item.value} <small style={{ fontSize: '0.75rem', opacity: 0.6, marginLeft: '4px' }}>({item.percentage}%)</small></span>
               </div>
             ))}
           </div>
@@ -253,15 +448,17 @@ const ResumenTab = ({
 
       <style jsx="true">{`
         .dashboard-header-premium {
-          border-bottom: 1px solid rgba(0,0,0,0.05);
+          border-bottom: 1px solid var(--glass-border);
           padding-bottom: 1.5rem;
+          margin-bottom: 32px;
         }
         
         .system-status-pill {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #fff;
+          background: var(--color-caracola);
+          color: var(--color-texto);
           padding: 8px 16px;
           border-radius: 50px;
           font-size: 0.85rem;
@@ -271,96 +468,138 @@ const ResumenTab = ({
 
         .stats-grid-saas {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1.5rem;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 24px;
+          margin-bottom: 32px;
         }
 
         .saas-stat-card {
-          padding: 1.5rem;
-          transition: transform 0.2s;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: space-between;
+          min-height: 150px;
+          border-radius: var(--radius-md);
+          background: var(--color-caracola);
+          border: 1px solid var(--glass-border);
+          box-shadow: var(--sombra-suave);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           cursor: pointer;
         }
 
         .saas-stat-card:hover {
           transform: translateY(-5px);
-        }
-
-        .stat-card-inner {
-          display: flex;
-          align-items: center;
-          gap: 1.2rem;
+          box-shadow: var(--sombra-profunda);
+          border-color: var(--ui-primary);
         }
 
         .stat-icon-wrapper {
-          width: 50px;
-          height: 50px;
-          background: rgba(0,0,0,0.03);
+          width: 48px;
+          height: 48px;
           border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
+          margin-bottom: 16px;
         }
 
-        .stat-label-saas {
-          font-size: 0.8rem;
-          font-weight: 800;
-          color: var(--color-tierra-sombra);
-          opacity: 0.6;
-          margin-bottom: 2px;
-        }
-
-        .stat-value-saas {
-          font-size: 1.8rem;
-          font-weight: 900;
-          margin: 0;
-          letter-spacing: -1px;
-        }
-
-        .stat-trend {
-          font-size: 0.7rem;
-          font-weight: 800;
+        .stat-content {
+          width: 100%;
           display: flex;
-          align-items: center;
+          flex-direction: column;
           gap: 4px;
         }
 
-        .stat-trend.positive { color: var(--ui-success); }
-        .stat-trend.negative { color: var(--ui-error); }
+        .stat-label-saas {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--color-texto);
+          opacity: 0.6;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .stat-value-container {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .stat-value-saas {
+          font-size: 2rem;
+          font-weight: 800;
+          color: var(--color-texto);
+          margin: 0;
+          letter-spacing: -0.03em;
+        }
+
+        .stat-trend {
+          font-size: 0.75rem;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          border-radius: 6px;
+        }
+
+        .stat-trend.positive {
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--ui-success);
+        }
+        .stat-trend.negative {
+          background: rgba(239, 68, 68, 0.1);
+          color: var(--ui-error);
+        }
 
         .dashboard-main-grid {
           display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 1.5rem;
+          grid-template-columns: 7fr 3fr;
+          gap: 24px;
+          margin-bottom: 32px;
         }
 
         .card-title-saas {
           font-size: 1.1rem;
           font-weight: 900;
           margin: 0;
+          color: var(--color-texto);
         }
 
         .pie-legend {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          margin-top: 1rem;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          margin-top: 20px;
+          border-top: 1px dashed var(--glass-border);
+          padding-top: 16px;
         }
 
         .legend-item {
           display: flex;
+          flex-direction: column;
           align-items: center;
-          gap: 10px;
-          font-size: 0.85rem;
+          gap: 6px;
+          font-size: 0.8rem;
+        }
+
+        .legend-item .legend-header {
+          display: flex;
+          align-items: center;
+          gap: 6px;
         }
 
         .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .legend-item .name { flex: 1; font-weight: 600; opacity: 0.7; }
-        .legend-item .val { font-weight: 800; }
+        .legend-item .name { font-weight: 600; opacity: 0.7; color: var(--color-texto); }
+        .legend-item .val { font-weight: 800; font-size: 1.1rem; color: var(--color-texto); }
 
         .dashboard-footer-grid {
           display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
-          gap: 1.5rem;
+          grid-template-columns: 7fr 3fr;
+          gap: 24px;
         }
 
         .saas-activity-list {
@@ -374,14 +613,15 @@ const ResumenTab = ({
           align-items: center;
           gap: 12px;
           padding: 12px;
-          background: rgba(0,0,0,0.02);
+          background: rgba(255,255,255,0.03);
           border-radius: 12px;
+          border: 1px solid var(--glass-border);
         }
 
         .activity-icon-saas {
-          width: 32px;
-          height: 32px;
-          background: #fff;
+          width: 36px;
+          height: 36px;
+          background: rgba(58, 90, 64, 0.1);
           border-radius: 8px;
           display: flex;
           align-items: center;
@@ -389,8 +629,8 @@ const ResumenTab = ({
           color: var(--ui-primary);
         }
 
-        .activity-text { font-size: 0.85rem; margin: 0; }
-        .activity-time { font-size: 0.7rem; opacity: 0.5; font-weight: 700; }
+        .activity-text { font-size: 0.85rem; margin: 0; color: var(--color-texto); }
+        .activity-time { font-size: 0.7rem; opacity: 0.5; font-weight: 700; color: var(--color-texto); }
 
         .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; }
         .bg-success { background: var(--ui-success); }
@@ -413,28 +653,40 @@ const ResumenTab = ({
         }
 
         .quick-link-item {
-          background: rgba(0,0,0,0.02);
-          border: 1px solid rgba(0,0,0,0.05);
-          padding: 12px;
+          background: rgba(255,255,255,0.02);
+          border: 1px solid var(--glass-border);
+          padding: 16px;
           border-radius: 12px;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 8px;
           cursor: pointer;
-          transition: 0.2s;
+          transition: all 0.2s ease;
+          color: var(--color-texto);
         }
 
         .quick-link-item:hover {
-          background: var(--ui-primary-bg);
-          color: var(--ui-primary);
+          background: var(--ui-primary);
+          color: #fff;
           border-color: var(--ui-primary);
+          transform: translateY(-2px);
         }
 
         .quick-link-item span { font-size: 0.75rem; font-weight: 800; }
 
         @media screen and (max-width: 1024px) {
+          .stats-grid-saas {
+            grid-template-columns: repeat(2, 1fr);
+          }
           .dashboard-main-grid, .dashboard-footer-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+        }
+
+        @media screen and (max-width: 600px) {
+          .stats-grid-saas {
             grid-template-columns: 1fr;
           }
         }

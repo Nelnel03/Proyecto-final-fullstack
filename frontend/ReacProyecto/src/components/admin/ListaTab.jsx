@@ -3,19 +3,19 @@ import '../../styles/admin/MainPagesInicoAdmin.css';
 import ArbolFormTab from './ArbolFormTab';
 import { SkeletonCardGrid, Pagination } from '../ui';
 import { usePagination } from '../../hooks/usePagination';
-import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle } from 'lucide-react';
+import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle, Skull } from 'lucide-react';
 
-function ListaTab({ 
-  busqueda, 
-  setBusqueda, 
-  tipoFiltro, 
-  setTipoFiltro, 
-  tiposDisponibles, 
-  setTab, 
-  handleEliminarTipo, 
-  statsTipos, 
-  handleUpdateStatTipo, 
-  arboles, 
+function ListaTab({
+  busqueda,
+  setBusqueda,
+  tipoFiltro,
+  setTipoFiltro,
+  tiposDisponibles,
+  setTab,
+  handleEliminarTipo,
+  statsTipos,
+  handleUpdateStatTipo,
+  arboles,
   cargando,
   handleEditar,
   handleAbonarArbol,
@@ -29,7 +29,8 @@ function ListaTab({
   setModoNuevoTipo,
   setForm,
   resetForm,
-  isSubmitting = false
+  isSubmitting = false,
+  onSaveArbolImage
 }) {
   const [showAddForm, setShowAddForm] = React.useState(false);
 
@@ -130,11 +131,15 @@ function ListaTab({
 
         {showAddForm && (
            <div className="form-container-reveal" style={{ marginTop: '1rem' }}>
-             <ArbolFormTab 
+             <ArbolFormTab
                modoEdicion={modoEdicion}
-               handleSubmit={(e) => {
-                 handleSubmit(e);
-                 setShowAddForm(false);
+               handleSubmit={async (e) => {
+                 // Awaitar correctamente para no cerrar el form antes de que termine
+                 const exitoso = await handleSubmit(e);
+                 // Solo cerramos el formulario si el guardado fue exitoso
+                 if (exitoso) {
+                   setShowAddForm(false);
+                 }
                }}
                form={form}
                handleChange={handleChange}
@@ -148,6 +153,7 @@ function ListaTab({
                }}
                setTab={setTab}
                isSubmitting={isSubmitting}
+               onImageUpload={modoEdicion ? onSaveArbolImage : undefined}
              />
            </div>
         )}
@@ -290,9 +296,9 @@ function ListaTab({
                           <button
                             className="ui-btn ui-btn--danger"
                             onClick={() => handleEliminar(arbol)}
-                            style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '8px' }}
+                            style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                           >
-                            Eliminar del Catálogo
+                            <Skull size={14} /> Dar de Baja
                           </button>
                         </div>
                       </div>

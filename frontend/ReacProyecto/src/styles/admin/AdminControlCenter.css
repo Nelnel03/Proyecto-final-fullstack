@@ -46,15 +46,67 @@
   background-color: var(--color-arena);
   font-family: var(--fuente-principal);
   color: var(--color-texto);
+
+  /* --- SIDEBAR THEME VARIABLES (Light Theme Default) --- */
+  --sidebar-bg: #fdfcf7;
+  --sidebar-bg-image: linear-gradient(180deg, #ffffff, var(--color-crema-organico));
+  --sidebar-color: var(--color-tierra-sombra);
+  --sidebar-border: rgba(40, 54, 24, 0.08);
+  --sidebar-shadow: rgba(40, 54, 24, 0.04);
+  --sidebar-logo-bg: var(--color-bosque-helecho);
+  --sidebar-logo-border: rgba(40, 54, 24, 0.1);
+  --sidebar-label-color: rgba(40, 54, 24, 0.45);
+  --sidebar-item-color: rgba(40, 54, 24, 0.7);
+  --sidebar-item-icon-bg: rgba(40, 54, 24, 0.05);
+  --sidebar-item-icon-hover-bg: rgba(58, 90, 64, 0.14);
+  --sidebar-item-hover-bg: rgba(58, 90, 64, 0.08);
+  --sidebar-item-hover-color: var(--color-tierra-sombra);
+  --sidebar-item-active-bg: var(--color-bosque-helecho);
+  --sidebar-item-active-color: #ffffff;
+  --sidebar-item-active-shadow: rgba(58, 90, 64, 0.2);
+  --sidebar-scrollbar-thumb: rgba(40, 54, 24, 0.12);
+  --sidebar-scrollbar-thumb-hover: rgba(40, 54, 24, 0.25);
+  --sidebar-divider: rgba(40, 54, 24, 0.08);
+  --sidebar-logout-color: rgba(220, 38, 38, 0.8);
+  --sidebar-logout-bg: rgba(220, 38, 38, 0.05);
+  --sidebar-logout-hover-bg: rgba(220, 38, 38, 0.12);
+  --sidebar-logout-hover-color: #dc2626;
+}
+
+[data-theme='dark'] .admin-layout {
+  /* --- SIDEBAR THEME VARIABLES (Dark Theme) --- */
+  --sidebar-bg: #0f141c;
+  --sidebar-bg-image: linear-gradient(180deg, #121824, #0a0e17);
+  --sidebar-color: #f0f6fc;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-shadow: rgba(0, 0, 0, 0.3);
+  --sidebar-logo-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-logo-border: rgba(255, 255, 255, 0.15);
+  --sidebar-label-color: rgba(255, 255, 255, 0.35);
+  --sidebar-item-color: rgba(255, 255, 255, 0.65);
+  --sidebar-item-icon-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-item-icon-hover-bg: rgba(255, 255, 255, 0.15);
+  --sidebar-item-hover-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-item-hover-color: #ffffff;
+  --sidebar-item-active-bg: #ffffff;
+  --sidebar-item-active-color: #121824;
+  --sidebar-item-active-shadow: rgba(0, 0, 0, 0.25);
+  --sidebar-scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --sidebar-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
+  --sidebar-divider: rgba(255, 255, 255, 0.08);
+  --sidebar-logout-color: rgba(255, 142, 142, 0.7);
+  --sidebar-logout-bg: rgba(239, 68, 68, 0.05);
+  --sidebar-logout-hover-bg: rgba(239, 68, 68, 0.12);
+  --sidebar-logout-hover-color: #ff8e8e;
 }
 
 /* --- SIDEBAR PREMIUM --- */
 .admin-sidebar {
   width: 280px;
-  background: var(--color-bosque-musgo);
-  background-image: linear-gradient(180deg, var(--color-bosque-musgo), var(--color-tierra-sombra));
-  color: #fff;
-  padding: 2.5rem 1.2rem;
+  background: var(--sidebar-bg);
+  background-image: var(--sidebar-bg-image);
+  color: var(--sidebar-color);
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -62,8 +114,9 @@
   left: 0;
   top: 0;
   z-index: 1000;
-  box-shadow: 4px 0 30px rgba(0,0,0,0.15);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 4px 0 30px var(--sidebar-shadow);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease, background-image 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
   overflow: hidden;
 }
 
@@ -81,7 +134,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   padding: 0 0.8rem;
   position: relative;
   z-index: 2;
@@ -109,33 +162,37 @@
 .admin-logo-icon {
   width: 100%;
   height: 100%;
-  background: rgba(255,255,255,0.1);
+  background: var(--sidebar-logo-bg);
   backdrop-filter: blur(8px);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid var(--sidebar-logo-border);
   position: relative;
   z-index: 2;
   box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .admin-logo-text h2 {
   font-size: 1.6rem;
   font-weight: 900;
   margin: 0;
-  color: #fff;
+  color: var(--sidebar-color);
   letter-spacing: -0.04em;
   line-height: 1;
+  transition: color 0.4s ease;
 }
 
 .admin-logo-text span {
   font-size: 0.65rem;
-  opacity: 0.5;
+  color: var(--sidebar-color);
+  opacity: 0.6;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-weight: 900;
+  transition: color 0.4s ease, opacity 0.4s ease;
 }
 
 .admin-nav-label {
@@ -143,17 +200,18 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-weight: 900;
-  color: rgba(255,255,255,0.3);
+  color: var(--sidebar-label-color);
   margin-bottom: 1.2rem;
   padding-left: 1rem;
   display: flex;
   align-items: center;
+  transition: color 0.4s ease;
 }
 
 .admin-nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   flex-grow: 1;
   position: relative;
   z-index: 2;
@@ -163,11 +221,11 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border-radius: 16px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease, color 0.4s ease;
+  color: var(--sidebar-item-color);
   font-weight: 700;
   font-size: 0.9rem;
   border: none;
@@ -175,7 +233,7 @@
   width: 100%;
   text-align: left;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   animation: slideIn 0.5s ease-out forwards;
   opacity: 0;
 }
@@ -192,29 +250,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  background: rgba(255,255,255,0.05);
+  transition: all 0.3s ease, background-color 0.4s ease;
+  background: var(--sidebar-item-icon-bg);
+  color: inherit;
 }
 
 .admin-nav-item:hover {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  transform: scale(1.02);
+  background: var(--sidebar-item-hover-bg);
+  color: var(--sidebar-item-hover-color);
+  transform: translateY(-1px);
 }
 
 .admin-nav-item:hover .nav-icon-wrapper {
-  background: rgba(255,255,255,0.15);
-  transform: rotate(5deg);
+  background: var(--sidebar-item-icon-hover-bg);
 }
 
 .admin-nav-item.active {
-  background: #fff;
-  color: var(--color-bosque-musgo);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  background: var(--sidebar-item-active-bg);
+  color: var(--sidebar-item-active-color);
+  box-shadow: var(--sidebar-item-active-shadow);
 }
 
 .admin-nav-item.active .nav-icon-wrapper {
-  background: var(--color-bosque-musgo);
+  background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -227,18 +285,19 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid var(--sidebar-divider);
   position: relative;
   z-index: 2;
+  transition: border-color 0.4s ease;
 }
 
 .admin-footer-link {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -264,6 +323,7 @@
 .admin-footer-link:hover {
   color: #fff;
   background: rgba(255,255,255,0.08);
+  transform: translateY(-1px);
 }
 
 .admin-footer-link.logout-btn {
@@ -376,6 +436,29 @@
 .admin-notification-btn:hover {
   background: rgba(0,0,0,0.05);
   color: var(--ui-primary);
+}
+
+.admin-topbar-logout-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-tierra-sombra);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-topbar-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--ui-error);
+}
+
+[data-theme='dark'] .admin-topbar-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .notification-badge {
@@ -847,7 +930,8 @@
 .admin-content-view {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
+  padding: 32px 40px;
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -1391,4 +1475,126 @@ html, body {
   .admin-topbar-left h1 {
     font-size: 1rem !important;
   }
+}
+
+/* Layout, Spacing, and Responsive Utility Classes */
+.p-6 {
+  padding: 24px !important;
+}
+
+.mb-8 {
+  margin-bottom: 32px !important;
+}
+
+.mb-6 {
+  margin-bottom: 24px !important;
+}
+
+.mb-4 {
+  margin-bottom: 16px !important;
+}
+
+.mb-2 {
+  margin-bottom: 8px !important;
+}
+
+.align-start {
+  align-items: flex-start !important;
+}
+
+.align-center {
+  align-items: center !important;
+}
+
+.align-end {
+  align-items: flex-end !important;
+}
+
+.flex-between {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Sidebar Active Navigation Indicator Bar */
+.active-indicator-bar {
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 4px;
+  height: 24px;
+  background-color: var(--ui-primary);
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  z-index: 10;
+}
+
+.admin-nav-item.active .active-indicator-bar {
+  transform: translateY(-50%) scaleY(1);
+  opacity: 1;
+}
+
+/* Sidebar Logout Styling & Separator */
+.sidebar-logout-separator {
+  height: 1px;
+  background: var(--sidebar-divider);
+  margin: 20px 16px 12px;
+  opacity: 0.8;
+}
+
+.admin-nav-item.sidebar-logout-btn {
+  color: var(--sidebar-logout-color) !important;
+  margin-top: 4px;
+  transition: all 0.3s ease;
+}
+
+.admin-nav-item.sidebar-logout-btn .nav-icon-wrapper.logout {
+  background: var(--sidebar-logout-bg);
+  color: var(--sidebar-logout-color);
+  transition: all 0.3s ease;
+}
+
+.admin-nav-item.sidebar-logout-btn:hover {
+  background: var(--sidebar-logout-hover-bg) !important;
+  color: var(--sidebar-logout-hover-color) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+}
+
+.admin-nav-item.sidebar-logout-btn:hover .nav-icon-wrapper.logout {
+  background: var(--sidebar-logout-hover-bg);
+  color: var(--sidebar-logout-hover-color);
+  transform: scale(1.05);
+}
+
+/* Scrollbar Customization for Sidebar Content */
+.admin-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
+}
+
+/* Custom Scrollbar Styling (Webkit) */
+.admin-sidebar-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.admin-sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar-content::-webkit-scrollbar-thumb {
+  background: var(--sidebar-scrollbar-thumb);
+  border-radius: 10px;
+}
+
+.admin-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: var(--sidebar-scrollbar-thumb-hover);
 }

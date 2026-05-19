@@ -8,21 +8,11 @@ function DarkModeToggle() {
   return (
     <button 
       onClick={toggleTheme}
-      style={{
-        background: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        color: isDark ? '#fbbf24' : '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0 8px',
-        marginRight: '8px',
-        transition: 'color 0.3s'
-      }}
-      title="Alternar Tema"
+      className="dark-mode-toggle-btn"
+      title={isDark ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+      aria-label="Alternar Tema"
     >
-      {isDark ? <Sun size={24} /> : <Moon size={24} />}
+      {isDark ? <Sun size={20} /> : <Moon size={20} />}
     </button>
   );
 }

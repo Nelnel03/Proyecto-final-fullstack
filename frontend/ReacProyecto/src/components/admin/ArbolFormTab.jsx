@@ -6,18 +6,19 @@ import { ImageUploadField } from '../common';
 import LoadingButton from '../ui/LoadingButton';
 import '../../styles/admin/MainPagesInicoAdmin.css';
 
-function ArbolFormTab({ 
-  modoEdicion, 
-  handleSubmit, 
-  form, 
-  handleChange, 
-  modoNuevoTipo, 
-  tiposDisponibles, 
-  setModoNuevoTipo, 
-  setForm, 
-  resetForm, 
+function ArbolFormTab({
+  modoEdicion,
+  handleSubmit,
+  form,
+  handleChange,
+  modoNuevoTipo,
+  tiposDisponibles,
+  setModoNuevoTipo,
+  setForm,
+  resetForm,
   setTab,
-  isSubmitting = false
+  isSubmitting = false,
+  onImageUpload
 }) {
   React.useEffect(() => {
     if (tiposDisponibles.length === 0 && !modoNuevoTipo && !modoEdicion) {
@@ -214,10 +215,14 @@ function ArbolFormTab({
                 </div>
 
                 <div className="ui-field" style={{ gridColumn: '1 / -1' }}>
-                  <ImageUploadField 
-                    label="Imagen del Ejemplar" 
-                    value={form.imagenUrl} 
-                    onChange={(url) => setForm({...form, imagenUrl: url})} 
+                  <ImageUploadField
+                    label="Imagen del Ejemplar"
+                    value={form.imagenUrl}
+                    onChange={(url) => {
+                      setForm(prev => ({ ...prev, imagenUrl: url }));
+                      if (onImageUpload) onImageUpload(url);
+                    }}
+                    showSuccessSwal={!onImageUpload}
                   />
                 </div>
 

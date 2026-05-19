@@ -211,7 +211,7 @@ const authCrud = {
                 return res.status(400).json({ message: 'El enlace de recuperación ha expirado.' });
             }
 
-            const user = resetToken.Usuario;
+            const user = resetToken.usuario || resetToken.Usuario;
             await user.update({ password: newPassword });
             await resetToken.update({ usado: 1 });
 

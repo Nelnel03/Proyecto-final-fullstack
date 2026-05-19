@@ -52,7 +52,11 @@ function VolunteerDashboard() {
     const userData = sessionStorage.getItem('user');
     if (userData) {
       const parsed = JSON.parse(userData);
-      if (parsed.rol !== 'voluntario') { navigate('/login'); return; }
+      if (parsed.rol !== 'voluntario') {
+        if (parsed.rol === 'admin') navigate('/admin', { replace: true });
+        else navigate('/dashboard-user', { replace: true });
+        return;
+      }
       setUser(parsed);
       cargarLogs(parsed.id);
     } else {

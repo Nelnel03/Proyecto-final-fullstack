@@ -19,6 +19,23 @@ async function ensureDatabase() {
     console.log(`✅ Base de datos '${dbName}' lista.`);
 }
 
+async function runMigrations() {
+    const migrations = [
+        "ALTER TABLE arboles ADD COLUMN fechaMuerto DATE NULL"
+    ];
+    for (const sql of migrations) {
+        try {
+            await sequelize.query(sql);
+        } catch (e) {
+            // ER_DUP_FIELDNAME = columna ya existe, se ignora
+            if (e.original?.code !== 'ER_DUP_FIELDNAME') {
+                console.warn('⚠️  Migración omitida:', e.original?.sqlMessage || e.message);
+            }
+        }
+    }
+    console.log('✅ Migraciones aplicadas.');
+}
+
 async function startServer() {
     try {
         await ensureDatabase();
@@ -30,6 +47,8 @@ async function startServer() {
             await sequelize.sync();
             console.log('✅ Esquema de BD sincronizado.');
         }
+
+        await runMigrations();
 
         app.listen(PORT, () => {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);

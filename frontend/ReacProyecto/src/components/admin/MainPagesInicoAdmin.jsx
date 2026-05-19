@@ -504,6 +504,16 @@ function MainPagesInicoAdmin() {
     }
   };
 
+  const handleSaveArbolImage = async (url) => {
+    if (!modoEdicion || !idEditando) return;
+    try {
+      await services.putArboles({ nombre: form.nombre, tipo: form.tipo, imagenUrl: url }, idEditando);
+      setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, imagenUrl: url } : a));
+    } catch (e) {
+      console.error('No se pudo guardar la imagen del árbol:', e);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'tipoSelector') {
@@ -543,9 +553,11 @@ function MainPagesInicoAdmin() {
 
     setIsSubmitting(true);
     try {
-      const formNormalizado = { 
-        ...form, 
-        tipo: form.tipo ? form.tipo.toLowerCase().trim() : '' 
+      // Excluir campos de asociaciones (Abonos) que vienen de la API y que Sequelize rechaza
+      const { Abonos, ...formSinAsociaciones } = form;
+      const formNormalizado = {
+        ...formSinAsociaciones,
+        tipo: form.tipo ? form.tipo.toLowerCase().trim() : ''
       };
 
       if (modoEdicion) {
@@ -610,25 +622,27 @@ function MainPagesInicoAdmin() {
   };
 
   const handleEliminar = async (arbol) => {
-    const result = await Swal.fire({ 
-      title: `¿Eliminar "${arbol.nombre}"?`, 
-      text: "Esta acción no se puede deshacer.",
+    const result = await Swal.fire({
+      title: `¿Dar de baja "${arbol.nombre}"?`,
+      text: "El árbol se moverá al historial de bajas. Puede restaurarlo desde allí.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#344e41',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, dar de baja',
       cancelButtonText: 'Cancelar'
     });
 
     if (result.isConfirmed) {
-      try { 
-        await services.deleteArboles(arbol.id); 
-        // ACTUALIZACIÓN OPTIMISTA/LOCAL: Removemos el elemento del estado
-        setArboles(prev => prev.filter(a => a.id !== arbol.id));
-        Swal.fire('Eliminado', 'El registro ha sido borrado.', 'success');
-      } catch (err) { 
-        Swal.fire('Error', 'No se pudo eliminar el registro.', 'error'); 
+      try {
+        await services.deleteArboles(arbol.id);
+        const fechaMuerto = new Date().toISOString().split('T')[0];
+        setArboles(prev => prev.map(a =>
+          a.id === arbol.id ? { ...a, estado: 'muerto', fechaMuerto } : a
+        ));
+        Swal.fire('Dado de Baja', 'El árbol ha sido movido al historial de bajas.', 'success');
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo dar de baja el árbol.', 'error');
       }
     }
   };
@@ -702,7 +716,7 @@ function MainPagesInicoAdmin() {
                 cargando={cargando}
               />
             )}
-            {tab === 'lista' && <ListaTab busqueda={busqueda} setBusqueda={setBusqueda} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} tiposDisponibles={tiposDisponibles} setTab={setTab} handleEliminarTipo={handleEliminarTipo} statsTipos={statsTipos} handleUpdateStatTipo={handleUpdateStatTipo} arboles={arboles} cargando={cargando} handleEditar={handleEditar} handleAbonarArbol={handleAbonarArbol} handleEliminar={handleEliminar} handleLimpiarHistorialAbono={handleLimpiarHistorialAbono} modoEdicion={modoEdicion} handleSubmit={handleSubmit} form={form} handleChange={handleChange} modoNuevoTipo={modoNuevoTipo} setModoNuevoTipo={setModoNuevoTipo} setForm={setForm} resetForm={resetForm} isSubmitting={isSubmitting} />}
+            {tab === 'lista' && <ListaTab busqueda={busqueda} setBusqueda={setBusqueda} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} tiposDisponibles={tiposDisponibles} setTab={setTab} handleEliminarTipo={handleEliminarTipo} statsTipos={statsTipos} handleUpdateStatTipo={handleUpdateStatTipo} arboles={arboles} cargando={cargando} handleEditar={handleEditar} handleAbonarArbol={handleAbonarArbol} handleEliminar={handleEliminar} handleLimpiarHistorialAbono={handleLimpiarHistorialAbono} modoEdicion={modoEdicion} handleSubmit={handleSubmit} form={form} handleChange={handleChange} modoNuevoTipo={modoNuevoTipo} setModoNuevoTipo={setModoNuevoTipo} setForm={setForm} resetForm={resetForm} isSubmitting={isSubmitting} onSaveArbolImage={handleSaveArbolImage} />}
             {tab === 'bajas' && <BajasTab arboles={arboles} handleEditar={handleEditar} />}
             {tab === 'usuarios' && <UsuariosTab refrescarUsuarios={cargarArboles} modoEdicionUsuario={modoEdicionUsuario} handleUserSubmit={handleUserSubmit} formUsuario={formUsuario} setFormUsuario={setFormUsuario} resetFormUsuario={resetFormUsuario} usuarios={usuarios} handleEditarUsuario={handleEditarUsuario} handleBanUsuario={handleBanUsuario} handleActivarUsuario={handleActivarUsuario} handleConvertirUsuarioAVoluntariado={handleConvertirUsuarioAVoluntariado} subTab={userSubTab} setSubTab={setUserSubTab} />}
             {tab === 'voluntariados' && <VoluntariadosTab refrescarVoluntarios={cargarArboles} refrescarNotificaciones={cargarArboles} modoEdicionVoluntariado={modoEdicionVoluntariado} handleVoluntariadoSubmit={handleVoluntariadoSubmit} formVoluntariado={formVoluntariado} setFormVoluntariado={setFormVoluntariado} resetFormVoluntariado={resetFormVoluntariado} voluntariados={voluntariados} handleEditarVoluntariado={handleEditarVoluntariado} handleEliminarVoluntariado={handleEliminarVoluntariado} handleConvertirVoluntariadoAUsuario={handleConvertirVoluntariadoAUsuario} />}

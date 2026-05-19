@@ -1,7 +1,8 @@
 
 
-import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../services/config.jsx';
 import InicioVisitantes from '../pages/InicioVisitantes';
 import InicioUser from '../pages/InicioUser';
 import InicioAdmin from '../pages/InicioAdmin';
@@ -20,9 +21,56 @@ import ModernUserDashboard from '../components/user/ModernUserDashboard';
 import VolunteerDashboard from '../components/volunteer/VolunteerDashboard';
 import '../styles/layout/Layout.css';
 
+const rolToDashboard = (rol) => {
+  if (rol === 'admin') return '/admin';
+  if (rol === 'voluntario') return '/dashboard-voluntario';
+  return '/dashboard-user';
+};
+
 function MainLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
+
+  // Sincroniza el rol del usuario con la DB cada vez que carga la app o cambia de ruta.
+  // Esto garantiza que si el admin cambió el rol, el usuario sea redirigido al panel correcto.
+  useEffect(() => {
+    const syncRole = async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${BASE_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          sessionStorage.clear();
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        if (!res.ok) return;
+
+        const freshUser = await res.json();
+        const stored = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+        // Si el rol cambió, actualizar sessionStorage y redirigir al panel correcto
+        if (stored.rol !== freshUser.rol) {
+          sessionStorage.setItem('user', JSON.stringify({ ...stored, ...freshUser }));
+          navigate(rolToDashboard(freshUser.rol), { replace: true });
+        } else {
+          // Aunque no cambió el rol, mantener el objeto fresco (foto, nombre, etc.)
+          sessionStorage.setItem('user', JSON.stringify({ ...stored, ...freshUser }));
+        }
+      } catch (_) {
+        // Error de red — no interrumpir la navegación
+      }
+    };
+
+    if (isAuth) syncRole();
+  }, [location.pathname]);
+
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isPremiumRoute = 
     location.pathname.startsWith('/user') || 

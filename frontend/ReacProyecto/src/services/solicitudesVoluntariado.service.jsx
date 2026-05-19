@@ -28,6 +28,18 @@ export const postSolicitudVoluntariado = async (solicitud) => {
   }
 };
 
+export const aprobarSolicitudVoluntariado = async (id) => {
+  const response = await fetch(`${BASE_URL}/solicitudes/${id}/aprobar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.message || "Error al aprobar la solicitud");
+  }
+  return data;
+};
+
 export const putSolicitudVoluntariado = async (solicitud, id) => {
   try {
     const response = await fetch(`${BASE_URL}/solicitudes/${id}`, {

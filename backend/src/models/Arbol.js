@@ -71,6 +71,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSON,
       allowNull: true,
       defaultValue: []
+    },
+    fechaMuerto: {
+      type: DataTypes.DATEONLY,
+      allowNull: true
     }
   }, {
     timestamps: true,

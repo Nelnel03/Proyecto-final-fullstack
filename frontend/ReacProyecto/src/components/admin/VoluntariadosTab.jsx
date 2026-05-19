@@ -256,7 +256,7 @@ function VoluntariadosTab({
   const totalHoras = logs.filter(l => l.estado === 'aprobado').reduce((acc, curr) => acc + (parseFloat(curr.horas) || 0), 0);
   const totalPendientes = logs.filter(l => l.estado === 'enviado' || l.estado === 'solicitado').length;
 
-  const voluntariadosFiltrados = (voluntariados || []).filter(Boolean).filter(vol => vol.rol === 'voluntario');
+  const voluntariadosFiltrados = (voluntariados || []).filter(Boolean).filter(vol => vol.rol?.nombre === 'voluntario');
   const {
     currentPage: pageVol,
     currentItems: currentVol,

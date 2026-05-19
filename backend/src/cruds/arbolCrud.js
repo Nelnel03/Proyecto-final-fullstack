@@ -107,6 +107,14 @@ const arbolController = {
                 updateData.imagenUrl = req.file.path;
             }
 
+            if (updateData.estado === 'muerto') {
+                if (!updateData.fechaMuerto) {
+                    updateData.fechaMuerto = new Date().toISOString().split('T')[0];
+                }
+            } else {
+                updateData.fechaMuerto = null;
+            }
+
             await arbol.update(updateData);
 
             return res.status(200).json({
@@ -119,7 +127,7 @@ const arbolController = {
         }
     },
 
-    // 5. Eliminar un registro
+    // 5. Dar de baja (marca como muerto en lugar de eliminar físicamente)
     delete: async (req, res) => {
         try {
             const { id } = req.params;
@@ -129,11 +137,18 @@ const arbolController = {
                 return res.status(404).json({ message: 'Árbol no encontrado' });
             }
 
-            await arbol.destroy();
-            return res.status(200).json({ message: 'Registro de árbol eliminado correctamente' });
+            await arbol.update({
+                estado: 'muerto',
+                fechaMuerto: new Date().toISOString().split('T')[0]
+            });
+
+            return res.status(200).json({
+                message: 'Árbol dado de baja correctamente',
+                arbol
+            });
         } catch (error) {
-            console.error('Error en deleteTree:', error);
-            return res.status(500).json({ message: 'Error al eliminar el árbol' });
+            console.error('Error en darDeBajaTree:', error);
+            return res.status(500).json({ message: 'Error al dar de baja el árbol' });
         }
     }
 };

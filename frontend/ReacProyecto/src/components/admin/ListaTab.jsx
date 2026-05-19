@@ -3,7 +3,7 @@ import '../../styles/admin/MainPagesInicoAdmin.css';
 import ArbolFormTab from './ArbolFormTab';
 import { SkeletonCardGrid, Pagination } from '../ui';
 import { usePagination } from '../../hooks/usePagination';
-import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle } from 'lucide-react';
+import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle, Skull } from 'lucide-react';
 
 function ListaTab({
   busqueda,
@@ -292,9 +292,9 @@ function ListaTab({
                           <button
                             className="ui-btn ui-btn--danger"
                             onClick={() => handleEliminar(arbol)}
-                            style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '8px' }}
+                            style={{ gridColumn: 'span 2', fontSize: '0.8rem', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                           >
-                            Eliminar del Catálogo
+                            <Skull size={14} /> Dar de Baja
                           </button>
                         </div>
                       </div>

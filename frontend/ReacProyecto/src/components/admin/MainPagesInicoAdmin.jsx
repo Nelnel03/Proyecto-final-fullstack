@@ -546,8 +546,15 @@ function MainPagesInicoAdmin() {
 
       if (modoEdicion) {
         await services.putArboles(formNormalizado, idEditando);
-        // ACTUALIZACIÓN LOCAL: Modificamos el elemento en el estado
-        setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...formNormalizado } : a));
+        const datosActualizados = { ...formNormalizado };
+        if (datosActualizados.estado === 'muerto') {
+          if (!datosActualizados.fechaMuerto) {
+            datosActualizados.fechaMuerto = new Date().toISOString().split('T')[0];
+          }
+        } else {
+          datosActualizados.fechaMuerto = null;
+        }
+        setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...datosActualizados } : a));
         Swal.fire('Éxito', 'Especie actualizada correctamente', 'success');
       } else {
         const respuesta = await services.postArboles(formNormalizado);
@@ -577,25 +584,27 @@ function MainPagesInicoAdmin() {
   };
 
   const handleEliminar = async (arbol) => {
-    const result = await Swal.fire({ 
-      title: `¿Eliminar "${arbol.nombre}"?`, 
-      text: "Esta acción no se puede deshacer.",
+    const result = await Swal.fire({
+      title: `¿Dar de baja "${arbol.nombre}"?`,
+      text: "El árbol se moverá al historial de bajas. Puede restaurarlo desde allí.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#344e41',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, dar de baja',
       cancelButtonText: 'Cancelar'
     });
 
     if (result.isConfirmed) {
-      try { 
-        await services.deleteArboles(arbol.id); 
-        // ACTUALIZACIÓN OPTIMISTA/LOCAL: Removemos el elemento del estado
-        setArboles(prev => prev.filter(a => a.id !== arbol.id));
-        Swal.fire('Eliminado', 'El registro ha sido borrado.', 'success');
-      } catch (err) { 
-        Swal.fire('Error', 'No se pudo eliminar el registro.', 'error'); 
+      try {
+        await services.deleteArboles(arbol.id);
+        const fechaMuerto = new Date().toISOString().split('T')[0];
+        setArboles(prev => prev.map(a =>
+          a.id === arbol.id ? { ...a, estado: 'muerto', fechaMuerto } : a
+        ));
+        Swal.fire('Dado de Baja', 'El árbol ha sido movido al historial de bajas.', 'success');
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo dar de baja el árbol.', 'error');
       }
     }
   };

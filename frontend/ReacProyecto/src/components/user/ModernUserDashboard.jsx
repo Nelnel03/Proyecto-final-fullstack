@@ -82,7 +82,9 @@ function ModernUserDashboard() {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       if (parsedUser.rol !== 'user' && parsedUser.rol !== 'usuario') {
-        navigate('/login');
+        if (parsedUser.rol === 'voluntario') navigate('/dashboard-voluntario', { replace: true });
+        else if (parsedUser.rol === 'admin') navigate('/admin', { replace: true });
+        else navigate('/login', { replace: true });
         return;
       }
       setUser(parsedUser);

@@ -165,15 +165,30 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 12px;
   font-size: 0.95rem;
   color: var(--color-texto);
+  caret-color: var(--ui-primary);
   transition: all 0.3s ease;
   outline: none;
   width: 100%;
 }
 
+.ui-input::placeholder {
+  color: var(--color-tierra-sombra);
+  opacity: 0.5;
+}
+
+.ui-input:-webkit-autofill,
+.ui-input:-webkit-autofill:hover, 
+.ui-input:-webkit-autofill:focus, 
+.ui-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--color-caracola) inset !important;
+  -webkit-text-fill-color: var(--color-texto) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .ui-input:focus {
   border-color: var(--ui-primary);
   box-shadow: 0 0 0 4px rgba(58, 90, 64, 0.1);
-  background: #fff;
+  background: var(--color-caracola);
 }
 
 .ui-label {
@@ -311,3 +326,52 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ui-primary); }
+
+/* Dark/Light Theme Toggle Button Premium Redesign */
+.dark-mode-toggle-btn {
+  background: rgba(47, 79, 63, 0.12);
+  border: 1px solid rgba(47, 79, 63, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #2F4F3F;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode-toggle-btn:hover {
+  background: rgba(47, 79, 63, 0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(47, 79, 63, 0.15);
+}
+
+.dark-mode-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.dark-mode-toggle-btn svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode-toggle-btn:hover svg {
+  transform: rotate(15deg) scale(1.05);
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'] .dark-mode-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #F3EFD9;
+}
+
+[data-theme='dark'] .dark-mode-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}

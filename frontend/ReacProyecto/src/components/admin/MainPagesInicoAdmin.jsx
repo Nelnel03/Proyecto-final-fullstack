@@ -533,8 +533,24 @@ function MainPagesInicoAdmin() {
     e.preventDefault();
     if (!form.nombre.trim() || !form.tipo) {
       Swal.fire('Atención', 'Nombre y Tipo son obligatorios', 'warning');
-      return;
+      return false;
     }
+
+    // 1. Confirmación antes de guardar
+    const confirmResult = await Swal.fire({
+      title: '¿Deseas guardar los cambios realizados?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3a5a40',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmResult.isConfirmed) {
+      return false; // Usuario canceló → no cerrar formulario
+    }
+
     setIsSubmitting(true);
     try {
       // Excluir campos de asociaciones (Abonos) que vienen de la API y que Sequelize rechaza
@@ -545,31 +561,53 @@ function MainPagesInicoAdmin() {
       };
 
       if (modoEdicion) {
-        await services.putArboles(formNormalizado, idEditando);
-        const datosActualizados = { ...formNormalizado };
-        if (datosActualizados.estado === 'muerto') {
-          if (!datosActualizados.fechaMuerto) {
-            datosActualizados.fechaMuerto = new Date().toISOString().split('T')[0];
-          }
-        } else {
-          datosActualizados.fechaMuerto = null;
-        }
-        setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...datosActualizados } : a));
-        Swal.fire('Éxito', 'Especie actualizada correctamente', 'success');
+        const respuesta = await services.putArboles(formNormalizado, idEditando);
+        if (respuesta && respuesta.error) throw new Error(respuesta.error);
+        setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, ...formNormalizado } : a));
       } else {
         const respuesta = await services.postArboles(formNormalizado);
-        // El backend devuelve { message, arbol } — extraemos el árbol
+        if (respuesta && respuesta.error) throw new Error(respuesta.error);
         const nuevoArbol = respuesta?.arbol || respuesta;
-        // ACTUALIZACIÓN LOCAL: Agregamos el nuevo elemento al inicio
         setArboles(prev => [nuevoArbol, ...prev]);
-        Swal.fire('Éxito', 'Especie guardada correctamente', 'success');
       }
-      
-      resetForm(); 
-      setTab('lista'); 
-      // Ya no es necesario llamar a cargarArboles() para ver el cambio
-    } catch (err) { 
-      Swal.fire('Error', 'No se pudo guardar la especie.', 'error'); 
+
+      // 2. Éxito real
+      Swal.fire({
+        title: '¡Cambios guardados!',
+        text: 'La especie fue guardada correctamente.',
+        icon: 'success',
+        confirmButtonColor: '#3a5a40',
+        timer: 2500,
+        showConfirmButton: false
+      });
+      resetForm();
+      setTab('lista');
+      return true; // Éxito → ListaTab cerrará el formulario
+
+    } catch (err) {
+      console.error('Error al guardar especie:', err);
+      // Si el backend devolvió 2xx pero la respuesta falló al parsearse, igual fue éxito
+      const status = err?.response?.status ?? err?.status;
+      const esExitoReal = status >= 200 && status < 300;
+
+      if (esExitoReal) {
+        Swal.fire({
+          title: '¡Cambios guardados!',
+          text: 'La especie fue guardada correctamente.',
+          icon: 'success',
+          confirmButtonColor: '#3a5a40',
+          timer: 2500,
+          showConfirmButton: false
+        });
+        resetForm();
+        setTab('lista');
+        return true;
+      }
+
+      // Error real del servidor
+      Swal.fire('Error', err?.customMessage || 'No se pudo guardar la especie. Verifica tu conexión.', 'error');
+      return false;
+
     } finally {
       setIsSubmitting(false);
     }
@@ -664,6 +702,7 @@ function MainPagesInicoAdmin() {
           setTab={setTab}
           isMobile={isMobile}
           onOpenSidebar={() => setSidebarOpen(true)}
+          handleLogout={handleLogout}
         />
 
         <section className="admin-content-view">
@@ -674,6 +713,7 @@ function MainPagesInicoAdmin() {
                 arboles={arboles} 
                 setTab={setTab} 
                 setUserSubTab={setUserSubTab} 
+                cargando={cargando}
               />
             )}
             {tab === 'lista' && <ListaTab busqueda={busqueda} setBusqueda={setBusqueda} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} tiposDisponibles={tiposDisponibles} setTab={setTab} handleEliminarTipo={handleEliminarTipo} statsTipos={statsTipos} handleUpdateStatTipo={handleUpdateStatTipo} arboles={arboles} cargando={cargando} handleEditar={handleEditar} handleAbonarArbol={handleAbonarArbol} handleEliminar={handleEliminar} handleLimpiarHistorialAbono={handleLimpiarHistorialAbono} modoEdicion={modoEdicion} handleSubmit={handleSubmit} form={form} handleChange={handleChange} modoNuevoTipo={modoNuevoTipo} setModoNuevoTipo={setModoNuevoTipo} setForm={setForm} resetForm={resetForm} isSubmitting={isSubmitting} onSaveArbolImage={handleSaveArbolImage} />}

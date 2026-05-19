@@ -134,8 +134,12 @@ function ListaTab({
              <ArbolFormTab
                modoEdicion={modoEdicion}
                handleSubmit={async (e) => {
-                 await handleSubmit(e);
-                 setShowAddForm(false);
+                 // Awaitar correctamente para no cerrar el form antes de que termine
+                 const exitoso = await handleSubmit(e);
+                 // Solo cerramos el formulario si el guardado fue exitoso
+                 if (exitoso) {
+                   setShowAddForm(false);
+                 }
                }}
                form={form}
                handleChange={handleChange}

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Users, Bell, Menu, ShieldCheck, Search, ChevronDown } from 'lucide-react';
+import { Users, Bell, Menu, ShieldCheck, Search, ChevronDown, LogOut } from 'lucide-react';
 import { DarkModeToggle } from '../common';
 
-const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar }) => {
+const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar, handleLogout }) => {
   return (
     <header className="admin-topbar">
       <div className="admin-topbar-left">
@@ -14,7 +14,7 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar }) =
         <div className="admin-topbar-search">
            <Search size={18} className="search-icon" />
            <input type="text" placeholder="Buscar en BioMon..." className="topbar-search-input" />
-        </div>
+         </div>
       </div>
       
       <div className="admin-topbar-right">
@@ -24,6 +24,7 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar }) =
            <button 
              className="admin-notification-btn" 
              onClick={() => setTab('buzon')}
+             title="Ver Buzón de Notificaciones"
            >
              <Bell size={20} />
              {totalNotificaciones > 0 && (
@@ -31,6 +32,15 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar }) =
                  {totalNotificaciones > 99 ? '99+' : totalNotificaciones}
                </span>
              )}
+           </button>
+           <div className="action-divider"></div>
+           <button 
+             className="admin-topbar-logout-btn" 
+             onClick={handleLogout}
+             title="Cerrar Sesión"
+             aria-label="Cerrar Sesión"
+           >
+             <LogOut size={20} />
            </button>
         </div>
 

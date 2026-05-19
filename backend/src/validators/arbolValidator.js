@@ -11,7 +11,7 @@ const arbolValidator = [
         .escape(),
     
     body('nombreCientifico')
-        .optional()
+        .optional({ nullable: true })
         .trim()
         .isLength({ max: 150 }).withMessage('El nombre científico es demasiado largo')
         .escape(),
@@ -21,15 +21,15 @@ const arbolValidator = [
         .notEmpty().withMessage('El tipo de árbol es obligatorio'),
 
     body('progreso')
-        .optional()
+        .optional({ nullable: true })
         .isInt({ min: 0, max: 100 }).withMessage('El progreso debe estar entre 0 y 100'),
 
     body('altura_min_m')
-        .optional()
+        .optional({ nullable: true })
         .isFloat({ min: 0 }).withMessage('La altura mínima debe ser un número positivo'),
 
     body('altura_max_m')
-        .optional()
+        .optional({ nullable: true })
         .isFloat({ min: 0 }).withMessage('La altura máxima debe ser un número positivo')
         .custom((value, { req }) => {
             if (value && req.body.altura_min_m && parseFloat(value) < parseFloat(req.body.altura_min_m)) {
@@ -39,7 +39,7 @@ const arbolValidator = [
         }),
 
     body('estado')
-        .optional()
+        .optional({ nullable: true })
         .isIn(['vivo', 'muerto', 'enfermo']).withMessage('Estado no válido')
 ];
 

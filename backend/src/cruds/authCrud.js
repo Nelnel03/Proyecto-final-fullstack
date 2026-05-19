@@ -88,7 +88,6 @@ const authCrud = {
                 return res.status(401).json({ message: 'Credenciales inválidas' });
             }
 
-            // Generar Token con el rol incluido
             const token = jwt.sign(
                 { id: user.id, email: user.email, rol: user.rol.nombre, rol_id: user.rol_id },
                 process.env.JWT_SECRET,
@@ -189,7 +188,37 @@ const authCrud = {
         }
     },
 
-    // 6. Restablecimiento de contraseña con token
+    // 6. Perfil del usuario autenticado (rol efectivo siempre fresco desde DB)
+    me: async (req, res) => {
+        try {
+            const user = await Usuario.findByPk(req.user.id, {
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }],
+                attributes: { exclude: ['password'] }
+            });
+
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            return res.status(200).json({
+                id: user.id,
+                nombre: user.nombre,
+                email: user.email,
+                telefono: user.telefono,
+                rol: user.rol.nombre,
+                rol_id: user.rol_id,
+                status: user.status,
+                motivoBan: user.motivoBan,
+                debeCambiarPassword: user.debeCambiarPassword,
+                fotoPerfil: user.fotoPerfil
+            });
+        } catch (error) {
+            console.error('Error en me:', error);
+            return res.status(500).json({ message: 'Error en el servidor' });
+        }
+    },
+
+    // 7. Restablecimiento de contraseña con token
     resetPassword: async (req, res) => {
         try {
             const { token, newPassword } = req.body;

@@ -13,7 +13,7 @@ export async function getVoluntariados() {
     if (!respuestaServidor.ok) return [];
     const data = await respuestaServidor.json();
     const items = Array.isArray(data) ? data : (data.items || []);
-    return items.filter(u => u.Rol?.nombre === 'voluntario');
+    return items.filter(u => u.rol?.nombre === 'voluntario');
   } catch (error) {
     console.error("Error al obtener los voluntariados", error);
     return [];

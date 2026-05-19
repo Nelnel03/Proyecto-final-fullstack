@@ -25,78 +25,57 @@ function SolicitudesTab({ onUpdate }) {
 
   const handleAprobar = async (solicitud) => {
     const nombreUsuario = solicitud.Usuario?.nombre || solicitud.userName || 'Usuario';
-    const { value: area } = await Swal.fire({
-      title: 'Validar Incorporación',
-      html: `<p>Asigna un área de trabajo para <b>${nombreUsuario}</b>:</p>`,
-      input: 'select',
-      inputOptions: {
-        'Reforestación': 'Reforestación',
-        'Mantenimiento': 'Mantenimiento',
-        'Vivero': 'Vivero',
-        'Educación': 'Educación',
-        'General': 'General'
-      },
-      inputPlaceholder: 'Selecciona un área...',
+    const userId = solicitud.usuario_id || solicitud.userId;
+
+    const confirm = await Swal.fire({
+      title: 'Aprobar Solicitud',
+      html: `<p>¿Confirmas la incorporación de <b>${nombreUsuario}</b> al equipo de voluntarios?</p>`,
+      icon: 'question',
       showCancelButton: true,
       confirmButtonColor: 'var(--ui-primary)',
       cancelButtonColor: 'var(--ui-error)',
-      confirmButtonText: 'Aprobar Voluntario',
-      inputValidator: (value) => !value && 'Debes seleccionar un área'
-    });
-
-    if (area) {
-      try {
-        const userId = solicitud.usuario_id || solicitud.userId;
-        const todosUsuarios = await services.getUsuarios();
-        const elUsuario = todosUsuarios.find(u => u.id === userId);
-
-        if (!elUsuario) {
-            Swal.fire('Error', 'No se encontró el registro original del usuario.', 'error');
-            return;
-        }
-
-        const usuarioActualizado = {
-          ...elUsuario,
-          rol: 'voluntario',
-          area: area,
-          fechaIngreso: new Date().toISOString().split('T')[0],
-          telefono: elUsuario.telefono || 'Sin especificar'
-        };
-        await services.putUsuarios(usuarioActualizado, userId);
-        await services.deleteSolicitudVoluntariado(solicitud.id);
-
-        Swal.fire({
-          title: '¡Felicidades!',
-          text: `${nombreUsuario} ha sido incorporado al equipo de voluntarios.`,
-          icon: 'success',
-          confirmButtonColor: 'var(--ui-primary)'
-        });
-        
-        cargarSolicitudes();
-        if (onUpdate) onUpdate();
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo procesar la solicitud en este momento.', 'error');
-      }
-    }
-  };
-
-  const handleRechazar = async (id, nombre) => {
-    const confirm = await Swal.fire({
-      title: '¿Rechazar Solicitud?',
-      text: `Se descartará la postulación de ${nombre}. Esta acción no se puede deshacer.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--ui-error)',
-      cancelButtonColor: 'var(--ui-primary)',
-      confirmButtonText: 'Sí, descartar',
+      confirmButtonText: 'Sí, aprobar',
       cancelButtonText: 'Cancelar'
     });
 
     if (confirm.isConfirmed) {
       try {
-        await services.deleteSolicitudVoluntariado(id);
-        Swal.fire('Acción Realizada', 'La solicitud ha sido retirada.', 'info');
+        await services.aprobarSolicitudVoluntariado(solicitud.id);
+
+        Swal.fire({
+          title: '¡Solicitud Aprobada!',
+          text: `${nombreUsuario} ha sido incorporado al equipo de voluntarios.`,
+          icon: 'success',
+          confirmButtonColor: 'var(--ui-primary)'
+        });
+
         cargarSolicitudes();
+        if (onUpdate) onUpdate();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'No se pudo procesar la solicitud.', 'error');
+      }
+    }
+  };
+
+  const handleRechazar = async (solicitud) => {
+    const nombreUsuario = solicitud.Usuario?.nombre || solicitud.userName || 'Usuario';
+    const confirm = await Swal.fire({
+      title: '¿Rechazar Solicitud?',
+      text: `Se rechazará la postulación de ${nombreUsuario}.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--ui-error)',
+      cancelButtonColor: 'var(--ui-primary)',
+      confirmButtonText: 'Sí, rechazar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await services.putSolicitudVoluntariado({ estado: 'rechazada' }, solicitud.id);
+        Swal.fire('Solicitud Rechazada', 'La postulación ha sido rechazada.', 'info');
+        cargarSolicitudes();
+        if (onUpdate) onUpdate();
       } catch (error) {
         Swal.fire('Error', 'No se pudo completar la operación.', 'error');
       }
@@ -192,7 +171,7 @@ function SolicitudesTab({ onUpdate }) {
                 <button 
                   className="ui-btn ui-btn--ghost" 
                   style={{ flex: 0.5, padding: '10px', color: 'var(--ui-error)' }}
-                  onClick={() => handleRechazar(sol.id, sol.Usuario?.nombre || sol.userName)}
+                  onClick={() => handleRechazar(sol)}
                 >
                   <UserX size={16} />
                 </button>

@@ -114,7 +114,7 @@ const usuarioCrud = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const { nombre, area, telefono, status, rol_id, rol, motivoBan, fotoPerfil, password } = req.body;
+            const { nombre, area, telefono, status, rol_id, rol, motivoBan, fotoPerfil, password, fechaIngreso } = req.body;
 
             const usuario = await Usuario.findByPk(id);
             if (!usuario) {
@@ -124,11 +124,12 @@ const usuarioCrud = {
             // Normalizar status al formato del backend
             const statusMap = { active: 'activo', activo: 'activo', banned: 'baneado', baneado: 'baneado', inactive: 'inactivo', inactivo: 'inactivo' };
 
-            // Resolver rol_id si se pasa nombre de rol (normalizar 'user' → 'usuario')
+            // Resolver rol_id: acepta rol como string ('voluntario') u objeto ({ nombre: 'voluntario' })
             const rolNormMap = { user: 'usuario', usuario: 'usuario', voluntario: 'voluntario', admin: 'admin' };
-            const rolNorm = rol ? (rolNormMap[rol] || rol) : null;
+            const rolName = typeof rol === 'string' ? rol : (rol?.nombre || null);
+            const rolNorm = rolName ? (rolNormMap[rolName] || rolName) : null;
             let efectivoRolId = rol_id;
-            if (!efectivoRolId && rolNorm) {
+            if (rolNorm) {
                 const rolObj = await Rol.findOne({ where: { nombre: rolNorm } });
                 if (rolObj) efectivoRolId = rolObj.id;
             }
@@ -139,6 +140,7 @@ const usuarioCrud = {
                 telefono: telefono !== undefined ? telefono : usuario.telefono,
                 rol_id: efectivoRolId || usuario.rol_id
             };
+            if (fechaIngreso) updateData.fechaIngreso = fechaIngreso;
 
             if (req.file) {
                 updateData.fotoPerfil = req.file.path;

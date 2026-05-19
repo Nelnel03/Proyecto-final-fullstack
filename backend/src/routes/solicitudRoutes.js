@@ -14,6 +14,9 @@ router.get('/:id', checkRole(['admin', 'voluntario', 'usuario']), solicitudCrud.
 // POST: Crear nueva solicitud (cualquier usuario autenticado)
 router.post('/', checkRole(['admin', 'voluntario', 'usuario']), solicitudCrud.create);
 
+// POST: Aprobar solicitud — actualiza estado Y cambia rol del usuario a voluntario (Solo Admin)
+router.post('/:id/aprobar', checkRole(['admin']), solicitudCrud.aprobar);
+
 // PUT: Actualizar estado (Solo Admin)
 router.put('/:id', checkRole(['admin']), solicitudCrud.update);
 

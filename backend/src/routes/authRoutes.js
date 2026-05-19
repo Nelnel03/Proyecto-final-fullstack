@@ -41,6 +41,9 @@ router.post('/reset-password', [
     validate
 ], authCrud.resetPassword);
 
+// GET: Perfil del usuario autenticado (rol fresco desde DB)
+router.get('/me', verifyToken, authCrud.me);
+
 // POST: Logout — revoca la sesión activa del token
 router.post('/logout', verifyToken, authCrud.logout);
 

@@ -47,10 +47,27 @@
   display: flex;
   flex-direction: column;
   padding: 2rem 1.5rem;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: background-color 0.3s, border-color 0.3s;
+  z-index: 1000;
+}
+
+.modern-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb {
+  background: #1f8f5f;
+  border-radius: 10px;
+}
+
+.modern-sidebar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .sidebar-logo {
@@ -190,7 +207,7 @@
   flex-grow: 1;
   padding: 2rem;
   max-width: 1400px;
-  margin: 0; 
+  margin-left: 260px; 
   width: calc(100% - 260px);
 }
 

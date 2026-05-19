@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import services from '../../services/services';
-import '../../styles/visitante/Arboles.css';
-import '../../styles/user/PremiumDashboard.css';
+import '../../styles/Arboles.css';
+import '../../styles/PremiumDashboard.css';
 
 // ── Modal con toda la información del árbol ──────────────────────────────────
 function ArbolModal({ arbol, onClose }) {
@@ -27,6 +27,7 @@ function ArbolModal({ arbol, onClose }) {
 
         ) : (
           <div className="modal-img-placeholder">
+           
           </div>
         )}
 

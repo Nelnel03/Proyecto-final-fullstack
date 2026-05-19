@@ -1,0 +1,275 @@
+.visitante-container {
+  font-family: var(--fuente-principal);
+  min-height: 100vh;
+
+  background-color: var(--color-arena);
+  color: var(--color-texto);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+
+}
+
+.visitante-header {
+  text-align: center;
+  margin-bottom: 0;
+  background: linear-gradient(135deg, var(--color-bosque-musgo), var(--color-tierra-sombra));
+  width: 100%;
+
+  padding: 4rem 20px 5rem;
+
+  animation: fadeInDown 0.8s ease-out;
+  box-shadow: 0 4px 15px rgba(58, 90, 64, 0.15);
+  box-sizing: border-box;
+}
+
+.visitante-header h1 {
+  font-family: var(--fuente-acento);
+  font-size: 3.5rem;
+  color: var(--color-caracola);
+  margin-bottom: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.visitante-header p {
+  font-size: 1.3rem;
+  color: var(--color-caracola);
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.visitante-content {
+  width: 95%;
+  max-width: 1100px;
+  background: var(--color-caracola);
+  border-radius: 20px;
+  padding: 30px 20px;
+  box-shadow: var(--sombra-profunda);
+  border: 1px solid var(--color-ocre-silvestre);
+  animation: fadeInUp 0.8s ease-out;
+  margin-top: -30px;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  margin-bottom: 40px;
+}
+
+.visitante-intro h2 {
+  font-family: var(--fuente-acento);
+  font-size: 2.2rem;
+  color: var(--color-mar-profundo);
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.visitante-intro p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #44614d;
+  margin-bottom: 2rem;
+}
+
+.intro-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+}
+
+.intro-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.feature-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+/* Micro-animaciones para modernidad */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.visitante-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background-color: transparent;
+}
+
+.visitante-loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #44614d;
+}
+
+.visitante-separator-line {
+  border-top: 1px solid rgba(46, 107, 70, 0.15);
+  margin: 2.5rem 0;
+}
+
+.visitante-register-wrapper {
+  margin: 0 auto;
+  box-shadow: none;
+  border: 1px solid #eee;
+}
+
+.visitante-register-title {
+  text-align: center;
+  color: #0b532d;
+  margin-bottom: 1.5rem;
+}
+
+[data-theme='dark'] .visitante-content {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+[data-theme='dark'] .visitante-intro h2 {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .visitante-intro p,
+[data-theme='dark'] .feature {
+  color: #94a3b8;
+}
+
+[data-theme='dark'] .intro-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+[data-theme='dark'] .visitante-separator-line {
+  border-color: rgba(255,255,255,0.1);
+}
+
+[data-theme='dark'] .visitante-register-title {
+  color: #34d399;
+}
+
+[data-theme='dark'] .visitante-register-wrapper {
+  border-color: #334155;
+}
+
+/* Responsive adjustments for mobile */
+@media screen and (max-width: 768px) {
+  /* ... (no changes needed here, keeping for context) */
+  /* Contenedor principal — sin padding, sin overflow */
+  .visitante-container {
+    padding: 0;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Header — tamaños reducidos para pantalla pequeña */
+  .visitante-header {
+    padding: 2rem 1rem 2.5rem;
+    border-radius: 0 0 16px 16px;
+  }
+  .visitante-header h1 {
+    font-size: 1.8rem;
+    letter-spacing: 0;
+    word-break: break-word;
+  }
+  .visitante-header p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  .visitante-logo {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 0.7rem;
+  }
+
+  /* Tarjeta de contenido principal */
+  .visitante-content {
+    width: 92%;
+    padding: 18px 14px;
+    margin-top: -12px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+  }
+
+  /* Intro */
+  .visitante-intro h2 {
+    font-size: 1.35rem;
+    letter-spacing: 0;
+    margin-bottom: 12px;
+  }
+  .visitante-intro p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+  .intro-badge {
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .intro-features {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .feature {
+    font-size: 0.8rem;
+  }
+
+  /* Formulario de registro */
+  .user-register-form-wrapper {
+    width: 100%;
+    padding: 16px 14px;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+  .visitante-separator-line {
+    margin: 1.5rem 0;
+  }
+}
+

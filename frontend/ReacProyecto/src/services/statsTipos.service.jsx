@@ -13,7 +13,7 @@ export async function getStatsTipos() {
     if (!respuesta.ok) return [];
     const datos = await respuesta.json();
     return Array.isArray(datos) ? datos : [];
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener stats de tipos", error);
     return [];
   }
@@ -28,7 +28,7 @@ export async function postStatsTipos(stat) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear stat de tipo", error);
   }
 }
@@ -42,7 +42,7 @@ export async function putStatsTipos(stat, id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar stat de tipo", error);
   }
 }
@@ -55,7 +55,7 @@ export async function deleteStatsTipos(id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar stat de tipo", error);
   }
 }

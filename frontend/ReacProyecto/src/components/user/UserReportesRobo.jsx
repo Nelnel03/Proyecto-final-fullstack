@@ -32,31 +32,8 @@ function UserReportesRobo({ user, onDone }) {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const [misReportes, setMisReportes] = useState([]);
-
   const [estadoEnvio, setEstadoEnvio] = useState({ tipo: "", texto: "" });
   const [loading, setLoading] = useState(false);
-  const [cargandoHistorial, setCargandoHistorial] = useState(true);
-
-  useEffect(() => {
-    cargarMisReportes();
-  }, [user?.id]);
-
-  const cargarMisReportes = async () => {
-    if (!user?.id) return;
-    setCargandoHistorial(true);
-    try {
-      const todos = await services.getReportesRobados();
-      // Filtrar por el ID del usuario actual
-      const filtrados = (todos || []).filter(r => r.usuario_id === user.id || r.userId === user.id);
-      setMisReportes(filtrados.reverse()); // Los más recientes primero
-    } catch (error) {
-      console.error("Error al cargar historial de robos:", error);
-    } finally {
-      setCargandoHistorial(false);
-    }
-  };
-
   const handleChange = (e) => {
     const updated = { ...reporte, [e.target.name]: e.target.value };
     setReporte(updated);
@@ -103,7 +80,7 @@ function UserReportesRobo({ user, onDone }) {
       setTouched({});
 
 
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       setEstadoEnvio({ tipo: "error", texto: "Hubo un error al enviar el reporte." });
     } finally {

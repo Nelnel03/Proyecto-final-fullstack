@@ -32,7 +32,7 @@ function MainPagesInicoUser() {
     try {
       const datos = await services.getArboles();
       setArboles(datos || []);
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar árboles:', err);
     } finally {
       setCargando(false);

@@ -69,6 +69,7 @@ function MainLayout() {
     };
 
     if (isAuth) syncRole();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   const isAdminRoute = location.pathname.startsWith('/admin');

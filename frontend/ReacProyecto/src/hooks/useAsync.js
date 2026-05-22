@@ -47,7 +47,7 @@ export function useAsync(asyncFn, { minDelay = 300, onSuccess, onError } = {}) {
           onSuccess?.(result);
         }
         return result;
-      } catch (err) {
+      } catch (err) { console.error(err);
         const elapsed = Date.now() - startTime.current;
         if (elapsed < minDelay) {
           await new Promise((r) => setTimeout(r, minDelay - elapsed));

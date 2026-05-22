@@ -6,7 +6,6 @@ import '../../styles/user/UserReports.css';
 
 function SolicitudVoluntariadoTab({ user, onDone }) {
   const [loading, setLoading] = useState(false);
-  const [estaSolicitando, setEstaSolicitando] = useState(false);
   const [solicitudEnviada, setSolicitudEnviada] = useState(null);
   const [mensaje, setMensaje] = useState('');
   const [diasRestantes, setDiasRestantes] = useState(0);
@@ -46,7 +45,7 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
           setSolicitudEnviada({ ...miSolicitud, estado: estadoDisplay });
         }
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error("Error al verificar solicitudes:", err);
     }
   };
@@ -77,7 +76,7 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
         icon: 'success',
         confirmButtonColor: '#064e3b'
       });
-    } catch (err) {
+    } catch (err) { console.error(err);
       Swal.fire('Error', 'No se pudo enviar la solicitud. Intenta de nuevo más tarde.', 'error');
     } finally {
       setLoading(false);

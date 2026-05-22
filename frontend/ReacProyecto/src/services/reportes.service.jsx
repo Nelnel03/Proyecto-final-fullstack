@@ -14,7 +14,7 @@ export async function getReportes() {
     const datos = await respuesta.json();
     const todos = Array.isArray(datos) ? datos : [];
     return todos.filter(r => r.tipo !== 'robo');
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener reportes", error);
     return [];
   }
@@ -29,7 +29,7 @@ export async function postReportes(reporte) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear reporte", error);
   }
 }
@@ -42,7 +42,7 @@ export async function putReportes(reporte, id) {
       body: JSON.stringify(reporte),
     });
     return await respuesta.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar reporte", error);
   }
 }
@@ -55,7 +55,7 @@ export async function deleteReportes(id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar el reporte", error);
   }
 }

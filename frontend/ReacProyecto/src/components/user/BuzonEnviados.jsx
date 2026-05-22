@@ -57,7 +57,7 @@ function BuzonEnviados({ user }) {
         // Filtrar solo los del usuario actual
         setReportes((todos || []).filter((r) => r.usuario_id === user?.id || r.userId === user?.id));
         setReportesRobo((robos || []).filter((r) => r.usuario_id === user?.id || r.userId === user?.id));
-      } catch (err) {
+      } catch (err) { console.error(err);
         console.error("Error al cargar buzón:", err);
       } finally {
         setCargando(false);

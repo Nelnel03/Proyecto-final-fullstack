@@ -73,7 +73,7 @@ function VolunteerDashboard() {
         .sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
       setLogs(mis);
       if (mis.length > 0) setSelectedLog(mis[0]);
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar logs:', err);
     } finally {
       setLoading(false);
@@ -114,7 +114,7 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
-  const rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
+  const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
@@ -475,7 +475,7 @@ function VolunteerDashboard() {
                       });
                       Swal.fire('¡Enviado!', 'Tu mensaje ha sido enviado.', 'success');
                       document.getElementById('soporte-msg').value = '';
-                    } catch (e) {
+                    } catch (e) { console.error(e);
                       Swal.fire('Error', 'No se pudo enviar.', 'error');
                     }
                   }}

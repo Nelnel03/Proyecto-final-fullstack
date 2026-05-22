@@ -55,7 +55,7 @@ function MisReportesTab({ user }) {
       setActividades((todasActividades || []).filter(a => a.voluntario_id === user.id || a.voluntarioId === user.id).reverse());
       setSolicitudesVol((todasSolicitudes || []).filter(s => s.usuario_id === user.id || s.userId === user.id).reverse());
       setUltimaActualizacion(new Date());
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar mis reportes:', err);
     } finally {
       setCargando(false);

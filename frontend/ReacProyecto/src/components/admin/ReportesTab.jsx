@@ -27,7 +27,7 @@ function ReportesTab() {
       const datos = await services.getReportesVoluntariado();
       const sorted = (datos || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       setReportes(sorted);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error('Error al cargar reportes:', error);
     } finally {
       setCargando(false);

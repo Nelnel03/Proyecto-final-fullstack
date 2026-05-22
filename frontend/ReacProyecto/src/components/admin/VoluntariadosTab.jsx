@@ -43,7 +43,6 @@ function VoluntariadosTab({
 }) {
   const [subTab, setSubTab] = useState('lista');
   const [logs, setLogs] = useState([]);
-  const [loadingLogs, setLoadingLogs] = useState(false);
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [actualizandoAvatarId, setActualizandoAvatarId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -71,22 +70,20 @@ function VoluntariadosTab({
     try {
       const data = await services.getTareasDisponibles();
       setTareasDisponibles(data);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error('Error al cargar tareas disponibles:', error);
     }
   };
 
   const cargarLogs = async () => {
-    setLoadingLogs(true);
     try {
       const data = await services.getReportesVoluntariado();
       const sorted = (data || []).sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
       setLogs(sorted);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error('Error al cargar logs:', error);
     } finally {
-      setLoadingLogs(false);
-    }
+      }
   };
 
   const handleAvatarClick = (volId) => {
@@ -112,7 +109,7 @@ function VoluntariadosTab({
         toast: true,
         position: 'top-end'
       });
-    } catch (error) {
+    } catch (error) { console.error(error);
       Swal.fire('Error', 'No se pudo actualizar la foto', 'error');
     } finally {
       setActualizandoAvatarId(null);
@@ -143,7 +140,7 @@ function VoluntariadosTab({
         Swal.fire('Registrada', 'Nueva tarea creada exitosamente.', 'success');
       }
       resetFormTarea();
-    } catch (error) {
+    } catch (error) { console.error(error);
       Swal.fire('Error', 'No se pudo guardar la tarea.', 'error');
     }
   };
@@ -183,7 +180,7 @@ function VoluntariadosTab({
             setLogs(logs.map(l => l.id === log.id ? reporteRechazado : l));
             if (refrescarNotificaciones) refrescarNotificaciones();
             Swal.fire('Rechazado', 'El reporte ha sido rechazado.', 'success');
-          } catch (error) {
+          } catch (error) { console.error(error);
             Swal.fire('Error', 'No se pudo rechazar el reporte.', 'error');
           }
         }
@@ -211,7 +208,7 @@ function VoluntariadosTab({
         setLogs(logs.map(l => l.id === log.id ? reporteActualizado : l));
         if (refrescarNotificaciones) refrescarNotificaciones();
         Swal.fire({ icon: 'success', title: '¡Aprobado!', text: `Se validaron ${horasFinales}h`, timer: 2000, showConfirmButton: false });
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo actualizar.', 'error');
       }
     }

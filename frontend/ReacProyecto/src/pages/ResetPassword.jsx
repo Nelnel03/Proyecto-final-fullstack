@@ -90,7 +90,7 @@ function ResetPassword() {
       setSuccess('Tu contraseña ha sido actualizada correctamente.');
       setTimeout(() => navigate('/login'), 3000);
 
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error(err);
       setError('Hubo un problema al actualizar la contraseña. Intenta de nuevo.');
     } finally {

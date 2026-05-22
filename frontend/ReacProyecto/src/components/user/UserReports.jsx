@@ -66,7 +66,7 @@ function UserReports({ user, onDone }) {
       setReporte({ asunto: "", mensaje: "" }); 
       if (onDone) setTimeout(onDone, 1500);
 
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       setEstadoEnvio({ tipo: "error", texto: "Hubo un error al enviar el reporte." });
     } finally {

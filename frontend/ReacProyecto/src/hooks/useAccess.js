@@ -16,7 +16,7 @@ export const Can = ({ perform, children, fallback = null }) => {
   
   try {
     user = userStr ? JSON.parse(userStr) : null;
-  } catch (e) {
+  } catch (e) { console.error(e);
     user = null;
   }
 
@@ -36,7 +36,7 @@ export const useAccess = () => {
   
   try {
     user = userStr ? JSON.parse(userStr) : null;
-  } catch (e) {
+  } catch (e) { console.error(e);
     user = null;
   }
 

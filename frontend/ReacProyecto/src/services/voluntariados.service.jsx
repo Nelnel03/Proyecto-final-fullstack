@@ -14,7 +14,7 @@ export async function getVoluntariados() {
     const data = await respuestaServidor.json();
     const items = Array.isArray(data) ? data : (data.items || []);
     return items.filter(u => u.rol?.nombre === 'voluntario');
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener los voluntariados", error);
     return [];
   }
@@ -29,7 +29,7 @@ export async function postVoluntariados(voluntariado) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear el voluntariado", error);
   }
 }
@@ -43,7 +43,7 @@ export async function putVoluntariados(voluntariado, id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar el voluntariado", error);
   }
 }
@@ -56,7 +56,7 @@ export async function deleteVoluntariados(id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar el voluntariado", error);
   }
 }

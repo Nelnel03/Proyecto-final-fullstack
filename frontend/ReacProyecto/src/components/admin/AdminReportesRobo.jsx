@@ -30,7 +30,7 @@ function AdminReportesRobo() {
     try {
       const datos = await services.getReportesRobados();
       setReportes(datos || []);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error("Error al cargar reportes de robos:", error);
     } finally {
       setCargando(false);
@@ -58,7 +58,7 @@ function AdminReportesRobo() {
           icon: 'success',
           confirmButtonColor: 'var(--ui-primary)'
         });
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo completar la operación.', 'error');
       }
     }
@@ -76,7 +76,7 @@ function AdminReportesRobo() {
         timer: 1500,
         showConfirmButton: false
       });
-    } catch (error) {
+    } catch (error) { console.error(error);
       Swal.fire('Error', 'No se pudo actualizar el estado.', 'error');
     }
   };

@@ -13,7 +13,7 @@ export async function getUsuarios() {
     if (!respuesta.ok) return [];
     const data = await respuesta.json();
     return Array.isArray(data) ? data : (data.items || []);
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener los usuarios", error);
     return [];
   }
@@ -28,7 +28,7 @@ export async function postUsuarios(usuario) {
     });
     const datosUsuarios = await respuesta.json();
     return datosUsuarios;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear el usuario", error);
   }
 }
@@ -54,7 +54,7 @@ export async function deleteUsuarios(id) {
     });
     const datosUsuarios = await respuesta.json();
     return datosUsuarios;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar el registro", error);
   }
 }
@@ -74,7 +74,7 @@ export async function postFotoPerfil(file) {
     
     const data = await respuesta.json();
     return data;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error en postFotoPerfil", error);
     throw error;
   }

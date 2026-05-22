@@ -8,20 +8,14 @@ import {
   FileText,
   HelpCircle,
   LogOut,
-  X
+  X,
+  Compass,
+  ChevronRight
 } from 'lucide-react';
 import logoImg from '../../assets/logo_no_bg.png';
 
 const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, isOpen, onClose, isMobile }) => {
   const sidebarLinks = [
-<<<<<<< HEAD
-    { id: 'resumen', label: 'Panel de Control', icon: LayoutDashboard },
-    { id: 'usuarios', label: 'Gestión de Usuarios', icon: Users },
-    { id: 'lista', label: 'Catálogo de Especies', icon: List },
-    { id: 'bajas', label: 'Historial de Bajas', icon: History },
-    { id: 'voluntariados', label: 'Registro de Voluntariados', icon: CheckCircle },
-    { id: 'buzon', label: 'Buzón / Reportes', icon: FileText },
-=======
     { id: 'resumen', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'usuarios', label: 'Comunidad', icon: Users },
     { id: 'lista', label: 'Especies', icon: List },
@@ -29,8 +23,14 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
     { id: 'bajas', label: 'Archivo Histórico', icon: History },
     { id: 'ayuda', label: 'Centro de Ayuda', icon: HelpCircle },
     { id: 'buzon', label: 'Buzón Global', icon: FileText },
->>>>>>> e3c854b5c73ee5b1201b3260e81cf39cfe5dc91e
   ];
+
+  const handleLinkClick = (linkId) => {
+    setTab(linkId);
+    if (resetForm) resetForm();
+    if (resetFormUsuario) resetFormUsuario();
+    if (isMobile && onClose) onClose();
+  };
 
   return (
     <aside className={`admin-sidebar ${isMobile ? (isOpen ? 'mobile-open' : 'mobile-hidden') : ''}`}>
@@ -50,30 +50,6 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
         )}
       </div>
 
-<<<<<<< HEAD
-      <nav className="admin-nav">
-        {sidebarLinks.map(link => (
-          <button 
-            key={link.id}
-            className={`admin-nav-item ${tab === link.id ? 'active' : ''}`}
-            onClick={() => { setTab(link.id); resetForm(); resetFormUsuario(); }}
-          >
-            <link.icon size={18} />
-            <span className="nav-label">{link.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      <div className="admin-sidebar-footer">
-        <div className={`admin-footer-link ${tab === 'ayuda' ? 'active-text' : ''}`} onClick={() => setTab('ayuda')}>
-          <HelpCircle size={16} />
-          <span>Centro de Ayuda</span>
-        </div>
-        <div className="admin-footer-link" onClick={handleLogout}>
-          <LogOut size={16} />
-          <span>Cerrar Sesión</span>
-        </div>
-=======
       <div className="admin-sidebar-content">
         <div className="admin-nav-label">
            <Compass size={12} style={{ marginRight: '6px' }} />
@@ -110,7 +86,6 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
             <span className="nav-label">Cerrar Sesión</span>
           </button>
         </nav>
->>>>>>> e3c854b5c73ee5b1201b3260e81cf39cfe5dc91e
       </div>
     </aside>
   );

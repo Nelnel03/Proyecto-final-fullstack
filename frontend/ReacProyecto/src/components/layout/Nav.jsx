@@ -6,18 +6,20 @@ import logoImg from '../../assets/logo_no_bg.png';
 
 function Nav() {
    const location = useLocation();
-   const navigate = useNavigate();
    const [auth, setAuth] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
+
+  // Sincronizar el estado de autenticación cuando cambie la ruta
+  useEffect(() => {
+    const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
+    if (auth !== isAuth) {
+      setAuth(isAuth);
+    }
+  }, [location, auth]);
 
    // No renderizar Nav en la landing page, ya que Landing.jsx tiene su propia cabecera
    if (location.pathname === '/') {
      return null;
    }
-
-  // Sincronizar el estado de autenticación cuando cambie la ruta
-  useEffect(() => {
-    setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
-  }, [location]);
 
   // Ocultamos el Nav global SÓLO para el admin, ya que usuario y visitante sí lo usan.
   const isAdminRoute = location.pathname.startsWith('/admin');

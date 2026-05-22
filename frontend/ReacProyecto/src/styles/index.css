@@ -1,5 +1,52 @@
 @import "tailwindcss";
-@config "../tailwind.config.js";
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-sand: var(--color-sand);
+  --color-surface: var(--color-surface);
+  --color-accent: var(--color-accent);
+  --color-olive: var(--color-olive);
+  --color-earth: var(--color-earth);
+  --color-moss: var(--color-moss);
+
+  /* Premium Volunteer Theme Mappings */
+  --color-premium-mint-light: var(--premium-mint-light);
+  --color-premium-border: var(--premium-border);
+  --color-premium-white: var(--premium-white);
+  --color-premium-text-main: var(--premium-text-main);
+  --color-premium-text-muted: var(--premium-text-muted);
+  --color-premium-sidebar-bg: var(--premium-sidebar-bg);
+  --color-premium-sidebar-active: var(--premium-sidebar-active);
+
+  /* Material Design 3 Tokens for Scientific UI */
+  --color-background: var(--color-background);
+  --color-on-background: var(--color-on-background);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-on-surface: var(--color-on-surface);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-error-container: var(--color-error-container);
+  --color-on-error-container: var(--color-on-error-container);
+
+  --font-sans: 'Inter', 'Manrope', 'sans-serif';
+
+  --animate-wave-slow: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+  --animate-wave-medium: wave 15s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -2s infinite;
+  --animate-wave-fast: wave 12s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -4s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes wave {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
 
 @layer base {
   :root {
@@ -11,6 +58,39 @@
     --color-olive: #3A6351;
     --color-earth: #4a3f35;
     --color-moss: #8a9a5b;
+
+    /* Legacy design system aliases for backward compatibility */
+    --color-arena: var(--color-sand);
+    --color-caracola: var(--color-surface);
+    --color-texto: var(--color-primary);
+    --color-bosque-musgo: var(--color-primary);
+    --color-tierra-sombra: var(--color-earth);
+    --color-bosque-helecho: var(--color-olive);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --ui-primary: var(--color-primary);
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+    /* Premium Volunteer System variables */
+    --premium-mint-light: #f0fdf4;
+    --premium-border: #e2e8f0;
+    --premium-white: #ffffff;
+    --premium-text-main: #1a2e1a;
+    --premium-text-muted: #666666;
+    --premium-sidebar-bg: #283618;
+    --premium-sidebar-active: #344e41;
+
+    /* MD3 Tokens - Light */
+    --color-background: #f8fafc;
+    --color-on-background: #0f172a;
+    --color-surface-container: #ffffff;
+    --color-surface-container-low: #f1f5f9;
+    --color-on-surface: #1e293b;
+    --color-primary-container: #dcfce7;
+    --color-on-primary-container: #14532d;
+    --color-error-container: #fee2e2;
+    --color-on-error-container: #991b1b;
   }
 
   [data-theme='dark'] {
@@ -22,6 +102,39 @@
     --color-olive: #4ade80;
     --color-earth: #111827;
     --color-moss: #0284c7;
+
+    /* Legacy design system dark mode aliases */
+    --color-arena: var(--color-sand);
+    --color-caracola: var(--color-surface);
+    --color-texto: var(--color-primary);
+    --color-bosque-musgo: var(--color-primary);
+    --color-tierra-sombra: #94a3b8;
+    --color-bosque-helecho: var(--color-accent);
+    --glass-bg: rgba(10, 15, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --ui-primary: var(--color-accent);
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    /* Premium Volunteer System dark variables */
+    --premium-mint-light: #0f172a;
+    --premium-border: #334155;
+    --premium-white: #1e293b;
+    --premium-text-main: #f8fafc;
+    --premium-text-muted: #94a3b8;
+    --premium-sidebar-bg: #1a2e1a;
+    --premium-sidebar-active: #2d3b2d;
+
+    /* MD3 Tokens - Dark */
+    --color-background: #0f172a;
+    --color-on-background: #f8fafc;
+    --color-surface-container: #1e293b;
+    --color-surface-container-low: #334155;
+    --color-on-surface: #f1f5f9;
+    --color-primary-container: #064e3b;
+    --color-on-primary-container: #a7f3d0;
+    --color-error-container: #7f1d1d;
+    --color-on-error-container: #fecaca;
   }
   
   html {

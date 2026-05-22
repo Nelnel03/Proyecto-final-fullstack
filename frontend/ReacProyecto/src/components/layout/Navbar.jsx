@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DarkModeToggle from '../common/DarkModeToggle';
 import '../../styles/Navbar.css';
 import { Trees } from 'lucide-react';
-import logoImg from '../../assets/logo_no_bg.png';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [auth, setAuth] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
+    const [auth, setAuth] = useState(() => sessionStorage.getItem('isAuthenticated') === 'true');
     const userJson = sessionStorage.getItem('user');
     const user = userJson ? JSON.parse(userJson) : null;
-
-    useEffect(() => {
-        setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
-    }, [location]);
 
     const handleLogout = () => {
         const isDark = document.body.getAttribute('data-theme') === 'dark';

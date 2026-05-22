@@ -114,10 +114,7 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
-<<<<<<< HEAD
   const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
-=======
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
@@ -179,9 +176,6 @@ function VolunteerDashboard() {
         </nav>
 
         <div className="p-4 px-3 border-t border-premium-border">
-          <button onClick={() => currentTab === 'logs' && cargarLogs(user.id)} className="w-full py-3 rounded-xl bg-surface-container-low text-on-surface font-bold text-sm hover:bg-premium-border transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2 border-none">
-            <Download size={16} /> Exportar Reporte
-          </button>
           <div className="flex items-center gap-3 py-3 px-4 text-on-error-container bg-error-container/20 text-sm font-bold cursor-pointer rounded-xl transition-all hover:bg-error-container" onClick={handleLogout}>
             <LogOut size={16} /> <span>Cerrar Sesión</span>
           </div>
@@ -552,13 +546,8 @@ function VolunteerDashboard() {
                       });
                       Swal.fire('Transmisión Exitosa', 'El coordinador ha recibido su mensaje.', 'success');
                       document.getElementById('soporte-msg').value = '';
-<<<<<<< HEAD
                     } catch (e) { console.error(e);
                       Swal.fire('Error', 'No se pudo enviar.', 'error');
-=======
-                    } catch {
-                      Swal.fire('Fallo de Red', 'No se pudo transmitir el mensaje.', 'error');
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
                     }
                   }}
                 >

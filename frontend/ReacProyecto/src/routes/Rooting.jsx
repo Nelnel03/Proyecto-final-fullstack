@@ -69,12 +69,8 @@ function MainLayout() {
     };
 
     if (isAuth) syncRole();
-<<<<<<< HEAD
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
-=======
   }, [location.pathname, isAuth, navigate]);
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
 
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isPremiumRoute = 

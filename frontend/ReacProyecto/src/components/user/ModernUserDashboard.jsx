@@ -44,6 +44,7 @@ import SolicitudVoluntariadoTab from './SolicitudVoluntariadoTab';
 import UserSidebar from './UserSidebar';
 import UserTopbar from './UserTopbar';
 import UserDashboardTab from './UserDashboardTab';
+import ChatBot from './ChatBot';
 
 import '../../styles/user/ModernUserDashboard.css';
 
@@ -247,6 +248,9 @@ function ModernUserDashboard() {
       />
 
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
+
+      {/* Floating ChatBot */}
+      <ChatBot user={user} />
 
       {/* Main Content */}
       <main className="modern-main-content">

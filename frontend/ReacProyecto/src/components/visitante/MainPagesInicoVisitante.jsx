@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
 import ArbolesSection from './ArbolesSection';
-import '../../styles/visitante/MainPagesInicoVisitante.css';
-import '../../styles/user/MainPagesInicoUser.css';
+import '../../styles/MainPagesInicoVisitante.css';
+import '../../styles/MainPagesInicoUser.css';
+import logoImg from '../../assets/logo_no_bg.png';
 
 function MainPagesInicoVisitante() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ function MainPagesInicoVisitante() {
     password: '',
     rol: 'user',
   });
-
+  const [mensaje, setMensaje] = useState('');
   const [arboles, setArboles] = useState([]);
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
@@ -109,7 +110,7 @@ function MainPagesInicoVisitante() {
   return (
     <div className="visitante-container">
       <header className="visitante-header">
-        <img src="/src/assets/logo.png" alt="Logo" className="visitante-logo" />
+        <img src={logoImg} alt="Logo" className="visitante-logo" />
         <h1>BIOMON ADI</h1>
         <p>Monitoreo de árboles, especies y estado de vida</p>
       </header>
@@ -159,7 +160,7 @@ function MainPagesInicoVisitante() {
                  Crea tu cuenta
               </h3>
 
-
+              {mensaje && <div className="registro-exito-msg">{mensaje}</div>}
 
               <form onSubmit={handleSubmit}>
                 <div className="user-form-group">

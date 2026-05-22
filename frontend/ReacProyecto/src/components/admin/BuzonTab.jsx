@@ -24,7 +24,6 @@ import {
   MoreHorizontal,
   Loader2
 } from 'lucide-react';
-import '../../styles/admin/BuzonTab.css';
 
 const ESTADOS_SOPORTE = ['Pendiente', 'En Proceso', 'Leído', 'Solucionado'];
 const ESTADOS_ROBO    = ['Pendiente', 'En Investigación', 'Resuelto'];

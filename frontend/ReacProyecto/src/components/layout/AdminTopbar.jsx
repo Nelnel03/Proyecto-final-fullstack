@@ -18,7 +18,7 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar, han
       </div>
       
       <div className="admin-topbar-right">
-        <div className="admin-topbar-actions">
+        <div className="admin-topbar-icons">
            <DarkModeToggle />
            <div className="action-divider"></div>
            <button 
@@ -28,9 +28,9 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar, han
            >
              <Bell size={20} />
              {totalNotificaciones > 0 && (
-               <span className="notification-badge animate-pulse">
-                 {totalNotificaciones > 99 ? '99+' : totalNotificaciones}
-               </span>
+                <span className="admin-notification-badge">
+                  {totalNotificaciones}
+                </span>
              )}
            </button>
            <div className="action-divider"></div>
@@ -44,17 +44,14 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar, han
            </button>
         </div>
 
-        <div className="admin-profile-pill">
-          <div className="profile-info">
-            <span className="profile-name">Administrador</span>
-            {!isMobile && <span className="profile-role">Master Access</span>}
+        {!isMobile && (
+          <div className="admin-profile-pill">
+            <span>Panel Administrativo</span>
+            <div className="admin-avatar-placeholder">
+              <Users size={16} />
+            </div>
           </div>
-          <div className="profile-avatar">
-            <div className="avatar-glow"></div>
-            <Users size={16} color="#fff" />
-          </div>
-          <ChevronDown size={14} className="profile-chevron" />
-        </div>
+        )}
       </div>
     </header>
   );

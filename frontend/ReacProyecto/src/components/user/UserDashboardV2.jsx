@@ -14,7 +14,7 @@ function UserDashboard() {
   const [arboles, setArboles] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [currentTab, setCurrentTab] = useState('coleccion');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const cargarArboles = async () => {

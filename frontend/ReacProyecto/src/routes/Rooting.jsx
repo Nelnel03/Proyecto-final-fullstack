@@ -63,13 +63,13 @@ function MainLayout() {
           // Aunque no cambió el rol, mantener el objeto fresco (foto, nombre, etc.)
           sessionStorage.setItem('user', JSON.stringify({ ...stored, ...freshUser }));
         }
-      } catch (_) {
+      } catch (error) {
         // Error de red — no interrumpir la navegación
       }
     };
 
     if (isAuth) syncRole();
-  }, [location.pathname]);
+  }, [location.pathname, isAuth, navigate]);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isPremiumRoute = 
@@ -77,10 +77,6 @@ function MainLayout() {
     location.pathname.startsWith('/admin') || 
     location.pathname.startsWith('/dashboard-user') || 
     location.pathname.startsWith('/dashboard-voluntario');
-
-  const isUserDashboard = 
-    location.pathname.startsWith('/user') || 
-    location.pathname.startsWith('/dashboard-user');
 
   const isAuthRoute = location.pathname === '/login' || location.pathname === '/reset-password';
 
@@ -97,8 +93,8 @@ function MainLayout() {
       */}
       {!isAuthRoute && 
        !isAdminRoute && 
+       !location.pathname.startsWith('/dashboard-user') &&
        !location.pathname.startsWith('/dashboard-voluntario') && 
-       !location.pathname.startsWith('/dashboard-user') && 
        (isPremiumRoute ? <Navbar /> : <Nav />)}
 
       <div className={`main-content-layout ${isPremiumRoute ? '' : isAuthRoute ? '' : 'visitor-layout'}`}>
@@ -156,7 +152,7 @@ function MainLayout() {
           />
         </Routes>
       </div>
-      {location.pathname !== '/mapa' && location.pathname !== '/dashboard-voluntario' && !isAdminRoute && <Footer />}
+      {location.pathname !== '/mapa' && !isAdminRoute && !location.pathname.startsWith('/dashboard-user') && !location.pathname.startsWith('/dashboard-voluntario') && <Footer />}
 
 
     </div>

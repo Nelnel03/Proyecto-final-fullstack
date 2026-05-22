@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { DarkModeToggle } from '../common';
-import '../../styles/layout/Nav.css';
+import DarkModeToggle from '../common/DarkModeToggle';
+import '../../styles/Nav.css';
+import logoImg from '../../assets/logo_no_bg.png';
 
 function Nav() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [auth, setAuth] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
+   const location = useLocation();
+   const [auth, setAuth] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
 
   // Sincronizar el estado de autenticación cuando cambie la ruta
   useEffect(() => {
     const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
-    if (isAuth !== auth) {
+    if (auth !== isAuth) {
       setAuth(isAuth);
     }
   }, [location, auth]);
+
+   // No renderizar Nav en la landing page, ya que Landing.jsx tiene su propia cabecera
+   if (location.pathname === '/') {
+     return null;
+   }
 
   // Ocultamos el Nav global SÓLO para el admin, ya que usuario y visitante sí lo usan.
   const isAdminRoute = location.pathname.startsWith('/admin');
@@ -28,7 +33,7 @@ function Nav() {
       <div className="visitor-nav-container">
         <NavLink to={auth ? (sessionStorage.getItem('user') && JSON.parse(sessionStorage.getItem('user')).rol === 'admin' ? '/admin' : '/user') : '/'} className="visitor-logo">
           <div className="visitor-logo-icon">
-            <img src="/src/assets/logo.png" alt="Logo" className="visitor-logo-img" />
+            <img src={logoImg} alt="Logo" className="visitor-logo-img" />
           </div>
           <span className="visitor-logo-text">BioMon ADI</span>
         </NavLink>
@@ -74,7 +79,7 @@ function Nav() {
                   sessionStorage.removeItem('isAuthenticated');
                   sessionStorage.removeItem('user');
                   setAuth(false);
-                  navigate('/');
+                  window.location.href = '/';
                 }}
                 className="visitor-login-btn visitor-btn-logout"
               >

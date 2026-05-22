@@ -1,95 +1,182 @@
-:root {
-  /* --- PALETA DE COLORES "BOSQUE CÁLIDO" (Premium Version) --- */
-  --color-bosque-musgo: #344e41;    /* Deep Forest */
-  --color-bosque-helecho: #3a5a40;  /* Fern Green */
-  --color-crema-organico: #fefae0;  /* Warm Cream */
-  --color-tierra-sombra: #283618;   /* Earth Shadow */
-  --color-ocre-silvestre: #a3b18a;  /* Sage Green */
+@import "tailwindcss";
 
-  /* Vibrant Accents */
-  --color-fauna-lapa: #FF9E00;      /* Scarlet Macaw Orange */
-  --color-fauna-flor: #E71D36;      /* Heliconia Red */
-  --color-fauna-marino: #118AB2;    /* Morpho Blue */
-  --color-fauna-rana: #70E000;      /* Poison Dart Green */
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-sand: var(--color-sand);
+  --color-surface: var(--color-surface);
+  --color-accent: var(--color-accent);
+  --color-olive: var(--color-olive);
+  --color-earth: var(--color-earth);
+  --color-moss: var(--color-moss);
 
-  /* Semantic UI Colors */
-  --ui-primary: var(--color-bosque-helecho);
-  --ui-secondary: var(--color-ocre-silvestre);
-  --ui-success: #10b981;
-  --ui-error: #ef4444;
-  --ui-warning: #f59e0b;
-  --ui-info: #3b82f6;
+  /* Premium Volunteer Theme Mappings */
+  --color-premium-mint-light: var(--premium-mint-light);
+  --color-premium-border: var(--premium-border);
+  --color-premium-white: var(--premium-white);
+  --color-premium-text-main: var(--premium-text-main);
+  --color-premium-text-muted: var(--premium-text-muted);
+  --color-premium-sidebar-bg: var(--premium-sidebar-bg);
+  --color-premium-sidebar-active: var(--premium-sidebar-active);
 
-  /* Glassmorphism Tokens */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-blur: 12px;
+  /* Material Design 3 Tokens for Scientific UI */
+  --color-background: var(--color-background);
+  --color-on-background: var(--color-on-background);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-on-surface: var(--color-on-surface);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-error-container: var(--color-error-container);
+  --color-on-error-container: var(--color-on-error-container);
 
-  /* Shadows & Depth */
-  --sombra-flat: 0 1px 3px rgba(0,0,0,0.1);
-  --sombra-suave: 0 8px 30px rgba(45, 106, 79, 0.08);
-  --sombra-profunda: 0 20px 50px rgba(8, 28, 21, 0.15);
-  --sombra-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --font-sans: 'Inter', 'Manrope', 'sans-serif';
 
-  /* Typography */
-  --fuente-principal: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-  --fuente-acento: 'Outfit', sans-serif;
-  --tracking-tight: -0.02em;
-  --tracking-wide: 0.05em;
+  --animate-wave-slow: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+  --animate-wave-medium: wave 15s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -2s infinite;
+  --animate-wave-fast: wave 12s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -4s infinite;
+  --animate-float: float 6s ease-in-out infinite;
 
-  /* Layout & Spacing */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-full: 9999px;
-  --space-unit: 8px;
+  @keyframes wave {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
-  /* Legacy Mapping */
-  --color-mar-profundo: var(--color-bosque-musgo);
-  --color-mar-turquesa: var(--color-bosque-helecho);
-  --color-arena: var(--color-crema-organico);
-  --color-palmera: var(--color-fauna-rana);
-  --color-sol: var(--color-fauna-lapa);
-  --color-caracola: #ffffff;
-  --color-coral: var(--color-fauna-flor);
-  --color-texto: var(--color-tierra-sombra);
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
 }
 
-[data-theme='dark'] {
-  --color-arena: #0a0c10;
-  --color-caracola: #12171d;
-  --color-texto: #f0f6fc;
-  --color-tierra-sombra: #8b949e;
-  --color-crema-organico: #0a0c10;
-  --color-ocre-silvestre: #1c2128;
-  --color-palmera: #059669;
+@layer base {
+  :root {
+    --color-primary: #0A3323;
+    --color-secondary: #D3968C;
+    --color-sand: #F0F4F8;
+    --color-surface: #ffffff;
+    --color-accent: #5C9EAD;
+    --color-olive: #3A6351;
+    --color-earth: #4a3f35;
+    --color-moss: #8a9a5b;
+
+    /* Legacy design system aliases for backward compatibility */
+    --color-arena: var(--color-sand);
+    --color-caracola: var(--color-surface);
+    --color-texto: var(--color-primary);
+    --color-bosque-musgo: var(--color-primary);
+    --color-tierra-sombra: var(--color-earth);
+    --color-bosque-helecho: var(--color-olive);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --ui-primary: var(--color-primary);
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+    /* Premium Volunteer System variables */
+    --premium-mint-light: #f0fdf4;
+    --premium-border: #e2e8f0;
+    --premium-white: #ffffff;
+    --premium-text-main: #1a2e1a;
+    --premium-text-muted: #666666;
+    --premium-sidebar-bg: #283618;
+    --premium-sidebar-active: #344e41;
+
+    /* MD3 Tokens - Light */
+    --color-background: #f8fafc;
+    --color-on-background: #0f172a;
+    --color-surface-container: #ffffff;
+    --color-surface-container-low: #f1f5f9;
+    --color-on-surface: #1e293b;
+    --color-primary-container: #dcfce7;
+    --color-on-primary-container: #14532d;
+    --color-error-container: #fee2e2;
+    --color-on-error-container: #991b1b;
+  }
+
+  [data-theme='dark'] {
+    --color-primary: #e5e7eb;
+    --color-secondary: #00f0ff;
+    --color-sand: #05080a;
+    --color-surface: #0a0f14;
+    --color-accent: #20c997;
+    --color-olive: #4ade80;
+    --color-earth: #111827;
+    --color-moss: #0284c7;
+
+    /* Legacy design system dark mode aliases */
+    --color-arena: var(--color-sand);
+    --color-caracola: var(--color-surface);
+    --color-texto: var(--color-primary);
+    --color-bosque-musgo: var(--color-primary);
+    --color-tierra-sombra: #94a3b8;
+    --color-bosque-helecho: var(--color-accent);
+    --glass-bg: rgba(10, 15, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --ui-primary: var(--color-accent);
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    /* Premium Volunteer System dark variables */
+    --premium-mint-light: #0f172a;
+    --premium-border: #334155;
+    --premium-white: #1e293b;
+    --premium-text-main: #f8fafc;
+    --premium-text-muted: #94a3b8;
+    --premium-sidebar-bg: #1a2e1a;
+    --premium-sidebar-active: #2d3b2d;
+
+    /* MD3 Tokens - Dark */
+    --color-background: #0f172a;
+    --color-on-background: #f8fafc;
+    --color-surface-container: #1e293b;
+    --color-surface-container-low: #334155;
+    --color-on-surface: #f1f5f9;
+    --color-primary-container: #064e3b;
+    --color-on-primary-container: #a7f3d0;
+    --color-error-container: #7f1d1d;
+    --color-on-error-container: #fecaca;
+  }
   
-  --glass-bg: rgba(18, 23, 29, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  html {
+    scroll-behavior: smooth;
+  }
   
-  --sombra-suave: 0 8px 30px rgba(0, 0, 0, 0.5);
-  --sombra-profunda: 0 20px 60px rgba(0, 0, 0, 0.8);
+  body {
+    @apply bg-sand text-primary font-sans antialiased overflow-x-hidden;
+  }
 }
 
-/* Base Styles */
-* { box-sizing: border-box; }
-body {
-  font-family: var(--fuente-principal);
-  background-color: var(--color-arena);
-  color: var(--color-texto);
-  margin: 0; padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background-color 0.4s ease, color 0.4s ease;
-  -webkit-font-smoothing: antialiased;
+@layer components {
+  .wave-container {
+    @apply absolute bottom-0 left-0 w-full h-[400px] overflow-hidden pointer-events-none z-[1];
+  }
+
+  .wave {
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1600 200" xmlns="http://www.w3.org/2000/svg"><path d="M0,100 C200,150 400,50 600,100 C800,150 1000,50 1200,100 C1400,150 1600,50 1600,100 V200 H0 Z" fill="rgba(253, 249, 239, 0.4)"/></svg>');
+    @apply absolute w-[200%] h-full bottom-0 bg-[length:50%_100%];
+  }
+
+  .wave-water {
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1600 200" xmlns="http://www.w3.org/2000/svg"><path d="M0,80 C250,130 500,30 750,80 C1000,130 1250,30 1500,80 V200 H0 Z" fill="rgba(171, 208, 175, 0.3)"/></svg>');
+    @apply absolute w-[200%] h-full bottom-[-20px] bg-[length:50%_100%];
+  }
+
+  .card-glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/30;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--fuente-acento);
-  letter-spacing: var(--tracking-tight);
-  margin-bottom: 0.5em;
-  line-height: 1.2;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
+::-webkit-scrollbar-track {
+  @apply bg-sand;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
 
 /* PREMIUM UI COMPONENTS */
 
@@ -375,3 +462,4 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(255, 255, 255, 0.14);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
+

@@ -123,21 +123,48 @@
 .visual-features {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: var(--color-bosque-helecho);
-  font-weight: 700;
+  gap: 14px;
+  color: var(--color-bosque-musgo);
+  font-weight: 600;
   font-size: 1rem;
-  padding: 12px 18px;
-  background: rgba(255,255,255,0.4);
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.6);
+  padding: 12px 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--sombra-suave);
   width: fit-content;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-item:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--sombra-profunda);
+  border-color: var(--ui-primary);
+}
+
+.feature-item svg {
+  color: var(--color-bosque-helecho);
+  filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover svg {
+  transform: rotate(10deg) scale(1.15);
+}
+
+.forgot-password-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+  margin-bottom: 8px;
 }
 
 .visual-footer {

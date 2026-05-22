@@ -4,14 +4,15 @@ import {
     Video, FileText, Headphones, Trophy, Star, ChevronRight,
     MessageSquare, Target, Award, Brain, Users, Activity, CheckCircle
 } from 'lucide-react';
-import '../../styles/history/History.css';
+import '../../styles/History.css';
 
-const History = () => {
+const History = ({ user }) => {
 
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeNode, setActiveNode] = useState(1);
 
 
+    const [activeFilter, setActiveFilter] = useState('Todos');
     const [selectedTopic, setSelectedTopic] = useState(null);
 
     // 1. Barra de progreso de navegación
@@ -43,7 +44,7 @@ const History = () => {
         { id: 5, type: 'Video', title: 'Avistamiento de Aves (Tutorial)', icon: <Video size={20} />, color: '#1a73e8' },
     ];
 
-
+    const filteredResources = activeFilter === 'Todos' ? resources : resources.filter(r => r.type.includes(activeFilter));
 
     // Datos para explorar (Hover Cards)
     const exploreTopics = [
@@ -52,6 +53,7 @@ const History = () => {
         { title: 'Protección', icon: <ShieldCheck size={32} />, color: '#1a73e8' },
         { title: 'Educación', icon: <BookOpen size={32} />, color: '#9b5de5' },
         { title: 'Voluntariado', icon: <Users size={32} />, color: '#e63946' },
+        { title: 'Historia', icon: <HeartHandshake size={32} />, color: '#8ac926' },
     ];
 
 

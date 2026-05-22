@@ -1,6 +1,7 @@
 import React from 'react'
 import { Facebook, Instagram, Phone } from 'lucide-react'
-import '../../styles/layout/Footer.css'
+import logoImg from '../../assets/logo_no_bg.png'
+import '../../styles/Footer.css'
 
 function Footer() {
   return (
@@ -8,9 +9,30 @@ function Footer() {
         {/* Decoración sutil de fondo */}
         <div className="footer-decor"></div>
         
+        {/* Hojas verdes cayendo */}
+        <div className="falling-leaves-container">
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+            <div className="leaf-green"></div>
+        </div>
+        
         <div className="footer-container">
             <div className="footer-logo-section">
-                <img src="/src/assets/logo.png" alt="Logo" className="footer-logo-img" />
+                <div className="footer-logo-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img 
+                        src={logoImg} 
+                        alt="Logo BioMon" 
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12))' }} 
+                        className="transition-transform duration-500 hover:scale-110"
+                    />
+                </div>
                 <div className="footer-brand">
                     <h3 className="footer-title">BioMon ADI</h3>
                     <p className="footer-subtitle">BIOMON ADI | LA ANGOSTURA</p>
@@ -21,7 +43,7 @@ function Footer() {
                 Preservando la rica biodiversidad de Puntarenas. Nuestra flora y fauna son el corazón de La Angostura. ¡Sé parte del cambio hoy mismo!
             </p>
 
-            <div className="footer-contact-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#c6f6d5', marginBottom: '1.5rem', fontSize: '1rem', fontWeight: '500' }}>
+            <div className="footer-contact-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--color-ocre-silvestre)', marginBottom: '1.5rem', fontSize: '1rem', fontWeight: '500' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Phone size={20} />
                     <span>Teléfono: +506 2257 9060</span>

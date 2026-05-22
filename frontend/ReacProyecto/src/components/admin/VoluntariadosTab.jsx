@@ -24,7 +24,6 @@ import Swal from 'sweetalert2';
 import services from '../../services/services';
 import { ImageUploadField } from '../common';
 import '../../styles/admin/MainPagesInicoAdmin.css';
-import '../../styles/admin/VoluntariadoPremium.css';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui';
 
@@ -43,6 +42,10 @@ function VoluntariadosTab({
 }) {
   const [subTab, setSubTab] = useState('lista');
   const [logs, setLogs] = useState([]);
+<<<<<<< HEAD
+=======
+  const [selectedLogs, setSelectedLogs] = useState([]);
+>>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [actualizandoAvatarId, setActualizandoAvatarId] = useState(null);
   const [showForm, setShowForm] = useState(false);

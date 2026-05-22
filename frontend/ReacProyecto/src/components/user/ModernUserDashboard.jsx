@@ -68,7 +68,7 @@ function ModernUserDashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -183,7 +183,7 @@ function ModernUserDashboard() {
           </div>
         );
 
-      case 'coleccion':
+      case 'coleccion': {
         const displayArboles = filteredArboles;
 
         return (
@@ -210,6 +210,7 @@ function ModernUserDashboard() {
 
           </div>
         );
+      }
 
       case 'mis_reportes':
         return <MisReportesTab user={user} />;

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import services from "../../services/services.jsx";
 import "../../styles/user/UserReports.css";
-import "../../styles/admin/BuzonEnviados.css";
 
 
 // Formatea una fecha ISO a formato legible en español

@@ -1,18 +1,18 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  Users, 
-  List, 
-  History, 
-  CheckCircle, 
-  FileText, 
-  HelpCircle, 
+import {
+  LayoutDashboard,
+  Users,
+  List,
+  History,
+  CheckCircle,
+  FileText,
+  HelpCircle,
   LogOut,
   X,
-  ChevronRight,
-  ShieldCheck,
-  Compass
+  Compass,
+  ChevronRight
 } from 'lucide-react';
+import logoImg from '../../assets/logo_no_bg.png';
 
 const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, isOpen, onClose, isMobile }) => {
   const sidebarLinks = [
@@ -25,31 +25,27 @@ const AdminSidebar = ({ tab, setTab, resetForm, resetFormUsuario, handleLogout, 
     { id: 'buzon', label: 'Buzón Global', icon: FileText },
   ];
 
-  const handleLinkClick = (id) => {
-    setTab(id);
-    resetForm();
-    resetFormUsuario();
-    if (isMobile) onClose();
+  const handleLinkClick = (linkId) => {
+    setTab(linkId);
+    if (resetForm) resetForm();
+    if (resetFormUsuario) resetFormUsuario();
+    if (isMobile && onClose) onClose();
   };
 
   return (
     <aside className={`admin-sidebar ${isMobile ? (isOpen ? 'mobile-open' : 'mobile-hidden') : ''}`}>
-      <div className="admin-sidebar-glass-effect"></div>
-      
+
       <div className="admin-logo-section">
-        <div className="admin-logo-container">
-          <div className="admin-logo-glow"></div>
-          <div className="admin-logo-icon">
-            <ShieldCheck size={26} color="#fff" strokeWidth={2.5} />
-          </div>
+        <div className="admin-logo-icon">
+          <img src={logoImg} alt="Logo BioMon" className="admin-logo-img" />
         </div>
         <div className="admin-logo-text">
-          <h2 className="logo-font">BioMon</h2>
-          <span className="logo-subtitle">ADMIN CENTER</span>
+          <h2>BioMon ADI</h2>
+          <span>Plano de Control Administrativo</span>
         </div>
         {isMobile && (
-          <button className="admin-sidebar-close-btn" onClick={onClose} aria-label="Cerrar menú">
-            <X size={22} />
+          <button className="admin-sidebar-close-btn" onClick={onClose}>
+            <X size={18} />
           </button>
         )}
       </div>

@@ -429,18 +429,7 @@ function MainPagesLogin() {
 
               {!isRecovering && (
                 <div className="form-group-premium">
-                  <div className="flex-between">
-                    <label className="ui-label">Contraseña</label>
-                    {!isRegistering && (
-                      <button 
-                        type="button" 
-                        className="text-link-small" 
-                        onClick={() => { setIsRecovering(true); clearAllErrors(); }}
-                      >
-                        ¿Olvidaste tu clave?
-                      </button>
-                    )}
-                  </div>
+                  <label className="ui-label">Contraseña</label>
                   <div className="input-with-icon">
                     <Lock size={18} className="field-icon" />
                     <input
@@ -460,6 +449,17 @@ function MainPagesLogin() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
+                  {!isRegistering && (
+                    <div className="forgot-password-wrapper">
+                      <button 
+                        type="button" 
+                        className="text-link-small" 
+                        onClick={() => { setIsRecovering(true); clearAllErrors(); }}
+                      >
+                        ¿Olvidaste tu clave?
+                      </button>
+                    </div>
+                  )}
                   <ErrorMessage error={errors.password} id="password-error" />
                 </div>
               )}

@@ -34,7 +34,10 @@ function UserReportesRobo({ user, onDone }) {
 
   const [estadoEnvio, setEstadoEnvio] = useState({ tipo: "", texto: "" });
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const handleChange = (e) => {
     const updated = { ...reporte, [e.target.name]: e.target.value };
     setReporte(updated);
@@ -81,7 +84,7 @@ function UserReportesRobo({ user, onDone }) {
       setTouched({});
 
 
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       setEstadoEnvio({ tipo: "error", texto: "Hubo un error al enviar el reporte." });
     } finally {

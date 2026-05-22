@@ -12,7 +12,7 @@ function SolicitudesTab({ onUpdate }) {
     try {
       const datos = await services.getSolicitudesVoluntariado();
       setSolicitudes(datos.filter(s => s.estado === 'pendiente'));
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
     } finally {
       setCargando(false);
@@ -51,7 +51,7 @@ function SolicitudesTab({ onUpdate }) {
 
         cargarSolicitudes();
         if (onUpdate) onUpdate();
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', error.message || 'No se pudo procesar la solicitud.', 'error');
       }
     }
@@ -76,7 +76,7 @@ function SolicitudesTab({ onUpdate }) {
         Swal.fire('Solicitud Rechazada', 'La postulación ha sido rechazada.', 'info');
         cargarSolicitudes();
         if (onUpdate) onUpdate();
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo completar la operación.', 'error');
       }
     }

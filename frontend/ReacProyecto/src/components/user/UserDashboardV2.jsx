@@ -15,14 +15,18 @@ function UserDashboard() {
   const [cargando, setCargando] = useState(true);
   const [currentTab, setCurrentTab] = useState('coleccion');
   const [searchParams] = useSearchParams();
+<<<<<<< HEAD
+const navigate = useNavigate();
+=======
   const navigate = useNavigate();
+>>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
 
   const cargarArboles = async () => {
     setCargando(true);
     try {
       const datos = await services.getArboles();
       setArboles(datos || []);
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar árboles:', err);
     } finally {
       setCargando(false);

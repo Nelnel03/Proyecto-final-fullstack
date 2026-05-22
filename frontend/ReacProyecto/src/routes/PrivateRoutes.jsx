@@ -26,7 +26,7 @@ const PrivateRoutes = ({
     if (userStr) {
       user = JSON.parse(userStr);
     }
-  } catch (e) {
+  } catch (e) { console.error(e);
     console.error("Error parsing user from sessionStorage", e);
   }
 
@@ -49,4 +49,4 @@ const PrivateRoutes = ({
   return children;
 };
 
-export default PrivateRoutes;
+export default PrivateRoutes;

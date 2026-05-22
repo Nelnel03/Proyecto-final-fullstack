@@ -26,7 +26,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
     try {
       const data = await services.getTareasDisponibles();
       setTareas(data);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error("Error al cargar tareas:", error);
     } finally {
       setLoadingTareas(false);
@@ -65,7 +65,11 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
         await services.postReporteVoluntariado(nuevoReporte);
         Swal.fire('¡Enviada!', 'Tu solicitud está pendiente de aprobación por el administrador.', 'success');
         if (onReportSubmitted) onReportSubmitted();
+<<<<<<< HEAD
+      } catch (error) { console.error(error);
+=======
       } catch {
+>>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
         Swal.fire('Error', 'No se pudo enviar la solicitud.', 'error');
       } finally {
         setEnviando(false);
@@ -106,7 +110,11 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
       }
       Swal.fire('¡Éxito!', 'Tu evidencia ha sido enviada al administrador para su validación final.', 'success');
       if (onReportSubmitted) onReportSubmitted();
+<<<<<<< HEAD
+    } catch (error) { console.error(error);
+=======
     } catch {
+>>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
       Swal.fire('Error', 'No se pudo enviar el reporte.', 'error');
     } finally {
       setEnviando(false);

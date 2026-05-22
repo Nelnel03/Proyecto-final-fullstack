@@ -11,7 +11,7 @@ export async function getTareasDisponibles() {
     if (!respuesta.ok) return [];
     const datos = await respuesta.json();
     return Array.isArray(datos) ? datos : [];
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener las tareas disponibles", error);
     return [];
   }
@@ -29,7 +29,7 @@ export async function postTareaDisponible(tarea) {
       throw new Error(err.message || "No se pudo crear la tarea.");
     }
     return await respuesta.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al enviar la tarea disponible", error);
     throw error;
   }
@@ -44,7 +44,7 @@ export async function putTareaDisponible(tarea, id) {
     });
     if (!respuesta.ok) throw new Error("No se pudo actualizar la tarea.");
     return await respuesta.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar la tarea disponible", error);
     throw error;
   }
@@ -58,7 +58,7 @@ export async function deleteTareaDisponible(id) {
     });
     if (!respuesta.ok) throw new Error("No se pudo eliminar la tarea.");
     return true;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar la tarea disponible", error);
     throw error;
   }

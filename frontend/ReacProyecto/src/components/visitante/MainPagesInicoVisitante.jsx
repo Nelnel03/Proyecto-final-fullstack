@@ -28,7 +28,7 @@ function MainPagesInicoVisitante() {
     try {
       const datos = await services.getArboles();
       setArboles(datos || []);
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar árboles:', err);
     } finally {
       setCargando(false);
@@ -101,7 +101,7 @@ function MainPagesInicoVisitante() {
       });
 
       setTimeout(() => navigate('/login'), 2000);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error('Error al registrar el usuario', error);
       Swal.fire('Error', 'No se pudo completar el registro. Intente de nuevo.', 'error');
     }

@@ -61,7 +61,6 @@ const ABONO_FORM_INICIAL = {
 };
 
 function MainPagesInicoAdmin() {
-  const [adminName, setAdminName] = useState('Administrador');
   const [arboles, setArboles] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [modoEdicion, setModoEdicion] = useState(false);
@@ -96,7 +95,6 @@ function MainPagesInicoAdmin() {
   const [userSubTab, setUserSubTab] = useState('activos'); 
   const [totalNotificaciones, setTotalNotificaciones] = useState(0);
 
-  const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
   const [busqueda, setBusqueda] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false); 
   const navigate = useNavigate();
@@ -123,7 +121,6 @@ function MainPagesInicoAdmin() {
       return;
     }
 
-    setAdminName(user.nombre);
     cargarArboles();
 
     // POLLEO EN TIEMPO REAL (Simulación con Intervalo de 30s)
@@ -132,6 +129,7 @@ function MainPagesInicoAdmin() {
     }, 30000); 
 
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const cargarArboles = async () => {
@@ -159,7 +157,7 @@ function MainPagesInicoAdmin() {
       const unreadSolicitudes = (datosSolicitudes || []).filter(r => !r.visto).length;
       const unreadLabores = (datosLabores || []).filter(r => !r.visto).length;
       setTotalNotificaciones(unreadSoporte + unreadRobos + unreadSolicitudes + unreadLabores);
-    } catch (err) {
+    } catch (err) { console.error(err);
       mostrarMensaje('Error al cargar la información.', 'error');
     } finally {
       setCargando(false);
@@ -233,7 +231,7 @@ function MainPagesInicoAdmin() {
         Swal.fire('Éxito', 'Usuario creado', 'success');
       }
       resetFormUsuario();
-    } catch (err) {
+    } catch (err) { console.error(err);
       Swal.fire('Error', err?.message || 'No se pudo guardar el usuario', 'error');
     }
   };
@@ -274,7 +272,7 @@ function MainPagesInicoAdmin() {
 
 
         Swal.fire('Cancelado', 'La cuenta ha sido cancelada', 'success');
-      } catch (err) {
+      } catch (err) { console.error(err);
         Swal.fire('Error', err.message || 'No se pudo cancelar la cuenta', 'error');
       }
     }
@@ -298,7 +296,7 @@ function MainPagesInicoAdmin() {
         setUsuarios(prev => prev.map(u => u.id === id ? { ...u, status: 'activo', motivoBan: null } : u));
 
         Swal.fire('Reactivado', 'Usuario activado', 'success');
-      } catch (err) {
+      } catch (err) { console.error(err);
         Swal.fire('Error', err.message || 'No se pudo reactivar la cuenta', 'error');
       }
     }
@@ -334,7 +332,7 @@ function MainPagesInicoAdmin() {
         Swal.fire('Registrado', 'Voluntario creado. Pwd temporal: Voluntario123', 'success');
       }
       resetFormVoluntariado();
-    } catch (err) {
+    } catch (err) { console.error(err);
       Swal.fire('Error', 'No se pudo gestionar el voluntariado', 'error');
     }
   };
@@ -363,7 +361,7 @@ function MainPagesInicoAdmin() {
         await services.deleteVoluntariados(id);
         setVoluntariados(prev => prev.filter(v => v.id !== id));
         Swal.fire('Eliminado', 'Voluntario eliminado', 'success');
-      } catch (err) {
+      } catch (err) { console.error(err);
         Swal.fire('Error', 'No se pudo eliminar', 'error');
       }
     }
@@ -393,7 +391,7 @@ function MainPagesInicoAdmin() {
 
     if (formValues) {
       try {
-        const resultado = await services.putUsuarios({
+        await services.putUsuarios({
           nombre: user.nombre,
           rol: 'voluntario',
           area: formValues.area,
@@ -404,7 +402,7 @@ function MainPagesInicoAdmin() {
         await cargarArboles();
         Swal.fire('Éxito', `${user.nombre} ahora es voluntario`, 'success');
         setTab('voluntariados');
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', error?.message || 'Conversión fallida', 'error');
       }
     }
@@ -436,7 +434,7 @@ function MainPagesInicoAdmin() {
         await cargarArboles();
         Swal.fire('Éxito', `${vol.nombre} ahora es usuario normal`, 'success');
         setTab('usuarios');
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', error?.message || 'Conversión fallida', 'error');
       }
     }
@@ -453,7 +451,7 @@ function MainPagesInicoAdmin() {
       }
       const nuevosStats = await services.getStatsTipos();
       setStatsTipos(nuevosStats);
-    } catch (e) {
+    } catch (e) { console.error(e);
       mostrarMensaje('Error al actualizar estadísticas.', 'error');
     }
   };
@@ -469,7 +467,7 @@ function MainPagesInicoAdmin() {
       try {
         await services.putArboles({ ...arbol, historialAbono: [] }, arbol.id);
         await cargarArboles();
-      } catch (e) { Swal.fire('Error', 'No se pudo limpiar historial', 'error'); }
+      } catch (e) { console.error(e); Swal.fire('Error', 'No se pudo limpiar historial', 'error'); }
     }
   };
 
@@ -489,7 +487,7 @@ function MainPagesInicoAdmin() {
       }
       resetFormAbono();
       Swal.fire('Éxito', 'Abono gestionado correctamente', 'success');
-    } catch (err) { 
+    } catch (err) { console.error(err); 
       Swal.fire('Error', 'No se pudo guardar abono', 'error'); 
     }
   };
@@ -502,7 +500,7 @@ function MainPagesInicoAdmin() {
         await services.deleteAbonos(id); 
         setAbonos(prev => prev.filter(a => a.id !== id));
         Swal.fire('Eliminado', 'Abono eliminado', 'success');
-      } catch (err) { 
+      } catch (err) { console.error(err); 
         Swal.fire('Error', 'Error al eliminar', 'error'); 
       }
     }
@@ -525,7 +523,7 @@ function MainPagesInicoAdmin() {
         const nuevoHist = { abono: abono.nombre, fecha: new Date().toISOString().split('T')[0], idAbono: abonoIdNum };
         await services.putArboles({ ...arbol, historialAbono: [...(arbol.historialAbono || []), nuevoHist] }, arbol.id);
         await cargarArboles();
-      } catch (e) { Swal.fire('Error', 'Error al abonar', 'error'); }
+      } catch (e) { console.error(e); Swal.fire('Error', 'Error al abonar', 'error'); }
     }
   };
 
@@ -534,7 +532,7 @@ function MainPagesInicoAdmin() {
     try {
       await services.putArboles({ nombre: form.nombre, tipo: form.tipo, imagenUrl: url }, idEditando);
       setArboles(prev => prev.map(a => a.id === idEditando ? { ...a, imagenUrl: url } : a));
-    } catch (e) {
+    } catch (e) { console.error(e);
       console.error('No se pudo guardar la imagen del árbol:', e);
     }
   };
@@ -609,7 +607,7 @@ function MainPagesInicoAdmin() {
       setTab('lista');
       return true; // Éxito → ListaTab cerrará el formulario
 
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al guardar especie:', err);
       // Si el backend devolvió 2xx pero la respuesta falló al parsearse, igual fue éxito
       const status = err?.response?.status ?? err?.status;
@@ -666,7 +664,7 @@ function MainPagesInicoAdmin() {
           a.id === arbol.id ? { ...a, estado: 'muerto', fechaMuerto } : a
         ));
         Swal.fire('Dado de Baja', 'El árbol ha sido movido al historial de bajas.', 'success');
-      } catch (err) {
+      } catch (err) { console.error(err);
         Swal.fire('Error', 'No se pudo dar de baja el árbol.', 'error');
       }
     }
@@ -680,7 +678,7 @@ function MainPagesInicoAdmin() {
         const stat = statsTipos.find(s => s.tipo.toLowerCase() === tipoDelete.toLowerCase());
         if (stat) await services.deleteStatsTipos(stat.id);
         await cargarArboles(); setTab('lista');
-      } catch(e) { Swal.fire('Error', 'Error al eliminar registros', 'error'); }
+      } catch (e) { console.error(e); Swal.fire('Error', 'Error al eliminar registros', 'error'); }
     }
   };
 

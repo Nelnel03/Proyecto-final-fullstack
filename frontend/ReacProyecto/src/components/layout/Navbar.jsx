@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DarkModeToggle from '../common/DarkModeToggle';
-import '../../styles/Navbar.css';
+import '../../styles/layout/Navbar.css';
 import { Trees } from 'lucide-react';
 
 const Navbar = () => {

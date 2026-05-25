@@ -1,7 +1,7 @@
 import React from 'react'
 import { Facebook, Instagram, Phone } from 'lucide-react'
 import logoImg from '../../assets/logo_no_bg.png'
-import '../../styles/Footer.css'
+import '../../styles/layout/Footer.css'
 
 function Footer() {
   return (

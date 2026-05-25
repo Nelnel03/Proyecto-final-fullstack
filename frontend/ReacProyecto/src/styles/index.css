@@ -69,6 +69,17 @@
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(0, 0, 0, 0.1);
     --ui-primary: var(--color-primary);
+    --ui-success: #10b981;
+    --ui-warning: #f59e0b;
+    --ui-error: #ef4444;
+    --ui-info: #3b82f6;
+    --fuente-principal: 'Inter', 'Manrope', sans-serif;
+    --radius-md: 16px;
+    --radius-full: 9999px;
+    --color-mar-turquesa: var(--color-accent);
+    --color-mar-profundo: #1a2e1a;
+    --color-ocre-silvestre: var(--color-secondary);
+    --color-crema-organico: #fefae0;
     --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.05);
     --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.08);
 
@@ -113,6 +124,14 @@
     --glass-bg: rgba(10, 15, 20, 0.7);
     --glass-border: rgba(255, 255, 255, 0.1);
     --ui-primary: var(--color-accent);
+    --ui-success: #34d399;
+    --ui-warning: #fbbf24;
+    --ui-error: #f87171;
+    --ui-info: #60a5fa;
+    --color-mar-turquesa: var(--color-accent);
+    --color-mar-profundo: #0f172a;
+    --color-ocre-silvestre: var(--color-secondary);
+    --color-crema-organico: #121824;
     --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.3);
     --sombra-profunda: 0 10px 30px rgba(0, 0, 0, 0.5);
 

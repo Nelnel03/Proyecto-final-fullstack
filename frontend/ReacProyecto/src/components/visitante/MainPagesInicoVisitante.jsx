@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
 import ArbolesSection from './ArbolesSection';
-import '../../styles/MainPagesInicoVisitante.css';
-import '../../styles/MainPagesInicoUser.css';
+import '../../styles/visitante/MainPagesInicoVisitante.css';
+import '../../styles/user/MainPagesInicoUser.css';
 import logoImg from '../../assets/logo_no_bg.png';
 
 function MainPagesInicoVisitante() {

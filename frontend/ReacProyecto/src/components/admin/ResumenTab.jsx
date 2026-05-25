@@ -364,24 +364,26 @@ const ResumenTab = ({
             <ResponsiveContainer>
               <PieChart>
                 <Pie
-                  data={healthData.length > 0 ? healthData : [{name: 'Sin datos', value: 1, color: '#ccc'}]}
+                  data={healthData.length > 0 ? healthData : [{name: 'Sin datos', value: 1, color: '#e2e8f0'}]}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
                   outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
+                  label={healthData.length > 0 ? ({ name, percentage }) => `${name} ${percentage}%` : false}
+                  labelLine={healthData.length > 0}
                 >
-                  {(healthData.length > 0 ? healthData : [{color: '#ccc'}]).map((entry, index) => (
+                  {(healthData.length > 0 ? healthData : [{color: '#e2e8f0'}]).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value, name) => [value, name]} />
               </PieChart>
             </ResponsiveContainer>
           </div>
           <div className="pie-legend">
-            {healthData.map((item, i) => (
+            {healthData.length > 0 ? healthData.map((item, i) => (
               <div key={i} className="legend-item">
                 <div className="legend-header">
                   <span className="dot" style={{ background: item.color }}></span>
@@ -389,7 +391,11 @@ const ResumenTab = ({
                 </div>
                 <span className="val">{item.value} <small style={{ fontSize: '0.75rem', opacity: 0.6, marginLeft: '4px' }}>({item.percentage}%)</small></span>
               </div>
-            ))}
+            )) : (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, fontSize: '0.85rem', padding: '8px 0' }}>
+                No hay árboles registrados aún
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -402,7 +408,7 @@ const ResumenTab = ({
             <button className="text-link-small" onClick={() => setTab('lista')}>Ver Todo</button>
           </div>
           <div className="saas-activity-list">
-            {recentTrees.map((arbol, idx) => (
+            {recentTrees.length > 0 ? recentTrees.map((arbol, idx) => (
               <div key={idx} className="activity-item-saas">
                 <div className="activity-icon-saas">
                   <Trees size={16} />
@@ -413,7 +419,13 @@ const ResumenTab = ({
                 </div>
                 <div className={`status-dot ${arbol.estado === 'vivo' ? 'bg-success' : 'bg-error'}`}></div>
               </div>
-            ))}
+            )) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', opacity: 0.4, gap: '8px' }}>
+                <Trees size={32} />
+                <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700 }}>Sin actividad reciente</p>
+                <p style={{ margin: 0, fontSize: '0.78rem' }}>Los árboles registrados aparecerán aquí</p>
+              </div>
+            )}
           </div>
         </div>
 

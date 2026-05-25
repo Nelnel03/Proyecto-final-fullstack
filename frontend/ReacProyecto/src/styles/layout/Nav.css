@@ -131,10 +131,19 @@ body {
     font-size: 1.1rem;
     gap: 6px;
   }
-  .visitor-logo-icon {
-    width: 36px;
-    height: 36px;
-  }
+.visitor-logo-icon {
+     width: 40px;
+     height: 40px;
+     border-radius: 10px;
+     background-color: transparent;
+     padding: 0;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     overflow: hidden;
+     border: none;
+     box-shadow: none;
+   }
   .visitor-auth-actions {
     gap: 0.3rem;
   }
@@ -142,18 +151,18 @@ body {
 
 /* --- ESTILOS EXTRAIDOS DE COMPONENTES ONLINE --- */
 .visitor-logo-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: transparent;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(58, 90, 64, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
+   width: 40px;
+   height: 40px;
+   border-radius: 10px;
+   background-color: transparent;
+   padding: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   overflow: hidden;
+   border: none;
+   box-shadow: none;
+ }
 
 .visitor-logo-img {
   width: 100%;

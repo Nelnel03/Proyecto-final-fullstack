@@ -59,22 +59,6 @@ const UserTopbar = ({
       </div>
 
       <div className="top-actions">
-        {!isMobile && (
-          <div className="search-container">
-            <Search size={16} className="search-icon" />
-            <input 
-              type="text" 
-              placeholder="Buscar especies de árboles en el corredor..." 
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                if (currentTab !== 'coleccion' && e.target.value.trim() !== '') {
-                  setCurrentTab('coleccion');
-                }
-              }}
-            />
-          </div>
-        )}
         <div style={{ marginRight: '0.5rem' }}>
           <DarkModeToggle />
         </div>

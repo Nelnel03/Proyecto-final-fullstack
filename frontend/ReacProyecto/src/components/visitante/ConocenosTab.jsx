@@ -1,6 +1,6 @@
 import React from 'react';
 import { HeartHandshake } from 'lucide-react';
-import '../../styles/History.css'; // Reutilizamos los estilos del modal de historia
+import '../../styles/visitante/History.css';
 
 const ConocenosTab = () => {
     return (

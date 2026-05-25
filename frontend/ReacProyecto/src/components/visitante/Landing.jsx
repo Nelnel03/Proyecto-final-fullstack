@@ -6,7 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import logoImg from '../../assets/logo_no_bg.png';
 import mangroveVector from '../../assets/mangrove_ecosystem_vector.png';
 import missionVector from '../../assets/mission_vector.png';
-import '../../styles/History.css';
+import '../../styles/visitante/History.css';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },

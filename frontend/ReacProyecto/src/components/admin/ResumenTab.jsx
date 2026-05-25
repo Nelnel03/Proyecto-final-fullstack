@@ -122,6 +122,59 @@ const ResumenTab = ({
   }, [arboles]);
 
   // --- PREMIUM SKELETON LOADING STATE ---
+  const getGrowth = (dataArray, dateFields) => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    let currentMonthCount = 0;
+    let previousMonthCount = 0;
+
+    dataArray.forEach(item => {
+      let dateVal = null;
+      for (let field of dateFields) {
+        if (item[field]) {
+          dateVal = item[field];
+          break;
+        }
+      }
+      if (!dateVal) dateVal = item.createdAt || item.created_at;
+      if (!dateVal) return;
+      
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) return;
+
+      if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        currentMonthCount++;
+      } else if (
+        (currentMonth === 0 && d.getMonth() === 11 && d.getFullYear() === currentYear - 1) ||
+        (d.getMonth() === currentMonth - 1 && d.getFullYear() === currentYear)
+      ) {
+        previousMonthCount++;
+      }
+    });
+
+    if (previousMonthCount === 0) {
+      return currentMonthCount > 0 ? `+${currentMonthCount * 100}%` : '0%';
+    }
+    const diff = currentMonthCount - previousMonthCount;
+    const percentage = (diff / previousMonthCount) * 100;
+    return `${percentage > 0 ? '+' : ''}${percentage.toFixed(1)}%`;
+  };
+
+  const trendUsuarios = useMemo(() => getGrowth(usuarios, ['fechaIngreso', 'fechaRegistro']), [usuarios]);
+  const trendArboles = useMemo(() => getGrowth(arboles, ['fechaRegistro', 'fechaPlantacion']), [arboles]);
+  
+  const trendInactivas = useMemo(() => {
+    const inactivas = usuarios.filter(u => u.status === 'baneado' || u.status === 'banned');
+    return getGrowth(inactivas, ['fechaIngreso', 'fechaRegistro']); 
+  }, [usuarios]);
+
+  const trendBajas = useMemo(() => {
+    const bajas = arboles.filter(a => a.estado === 'muerto');
+    return getGrowth(bajas, ['fechaRegistro', 'fechaPlantacion']);
+  }, [arboles]);
+
   if (cargando) {
     return (
       <div className="admin-tab-content-wrapper fade-in">
@@ -241,11 +294,13 @@ const ResumenTab = ({
     );
   }
 
+
+
   const stats = [
     {
       label: 'Usuarios Totales',
       value: usuarios.length,
-      trend: '+12%',
+      trend: trendUsuarios,
       icon: Users,
       color: 'var(--ui-success)',
       bgColor: 'rgba(16, 185, 129, 0.1)',
@@ -254,7 +309,7 @@ const ResumenTab = ({
     {
       label: 'Árboles Registrados',
       value: arboles.length,
-      trend: '+5.4%',
+      trend: trendArboles,
       icon: Trees,
       color: 'var(--ui-info)',
       bgColor: 'rgba(59, 130, 246, 0.1)',
@@ -263,7 +318,7 @@ const ResumenTab = ({
     {
       label: 'Cuentas Inactivas',
       value: usuarios.filter(u => u.status === 'baneado' || u.status === 'banned').length,
-      trend: '-2%',
+      trend: trendInactivas,
       icon: UserMinus,
       color: 'var(--ui-warning)',
       bgColor: 'rgba(245, 158, 11, 0.1)',
@@ -272,7 +327,7 @@ const ResumenTab = ({
     {
       label: 'Bajas Críticas',
       value: arboles.filter(a => a.estado === 'muerto').length,
-      trend: '+1',
+      trend: trendBajas,
       icon: AlertCircle,
       color: 'var(--ui-error)',
       bgColor: 'rgba(239, 68, 68, 0.1)',

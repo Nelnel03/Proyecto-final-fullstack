@@ -73,7 +73,7 @@ export async function apiFetch(endpoint, options = {}, { timeout = 15000 } = {})
     }
 
     return buildResponse(data);
-  } catch (err) {
+  } catch (err) { console.error(err);
     clearTimeout(timeoutId);
 
     if (err.name === 'AbortError') {

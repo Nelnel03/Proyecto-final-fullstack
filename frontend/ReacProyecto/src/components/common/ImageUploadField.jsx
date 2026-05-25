@@ -38,7 +38,7 @@ function ImageUploadField({ label, value, onChange, placeholder = "Seleccionar i
           position: 'top-end'
         });
       }
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       Swal.fire(
         'Error',

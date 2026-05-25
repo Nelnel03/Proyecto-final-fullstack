@@ -49,7 +49,7 @@ export const useForm = (initialValues = {}, validate, onSubmit) => {
       setIsSubmitting(true);
       try {
         await onSubmit(values);
-      } catch (err) {
+      } catch (err) { console.error(err);
         console.error('Form submission error:', err);
       } finally {
         setIsSubmitting(false);

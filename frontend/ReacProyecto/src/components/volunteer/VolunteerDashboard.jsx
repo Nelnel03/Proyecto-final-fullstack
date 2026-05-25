@@ -73,7 +73,7 @@ function VolunteerDashboard() {
         .sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
       setLogs(mis);
       if (mis.length > 0) setSelectedLog(mis[0]);
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar logs:', err);
     } finally {
       setLoading(false);
@@ -114,10 +114,16 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
+  const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
-    ? logs.filter(l => l.tipoTarea?.toLowerCase().includes(busqueda.toLowerCase()) || l.fecha?.includes(busqueda))
+    ? logs.filter(l => 
+        l.tipoTarea?.toLowerCase().includes(busqueda.toLowerCase()) || 
+        l.fecha?.includes(busqueda) ||
+        l.tareas?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        l.estado?.toLowerCase().includes(busqueda.toLowerCase())
+      )
     : logs;
 
   const navItems = [
@@ -175,9 +181,6 @@ function VolunteerDashboard() {
         </nav>
 
         <div className="p-4 px-3 border-t border-premium-border">
-          <button onClick={() => currentTab === 'logs' && cargarLogs(user.id)} className="w-full py-3 rounded-xl bg-surface-container-low text-on-surface font-bold text-sm hover:bg-premium-border transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2 border-none">
-            <Download size={16} /> Exportar Reporte
-          </button>
           <div className="flex items-center gap-3 py-3 px-4 text-on-error-container bg-error-container/20 text-sm font-bold cursor-pointer rounded-xl transition-all hover:bg-error-container" onClick={handleLogout}>
             <LogOut size={16} /> <span>Cerrar Sesión</span>
           </div>
@@ -332,7 +335,8 @@ function VolunteerDashboard() {
                 )}
               </div>
 
-              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[1fr_100px_130px_70px_130px] px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b-2 border-premium-border mb-3 font-['Montserrat']">
+              {/* Refactor: Ajuste de layout de grid para evitar colapso/overlap en pantallas desktop y zooms. Uso de fracciones y gap para mantener spacing uniforme */}
+              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b-2 border-premium-border mb-3 font-['Montserrat']">
                 <span>Actividad</span>
                 <span className="hidden lg:block">Fecha</span>
                 <span className="hidden lg:block">Tipo</span>
@@ -371,7 +375,7 @@ function VolunteerDashboard() {
                     <div
                       key={log.id}
                       onClick={() => setSelectedLog(log)}
-                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[1fr_100px_130px_70px_130px] items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-on-primary-container ring-1 ring-on-primary-container shadow-sm' : 'border-premium-border hover:-translate-y-0.5 hover:shadow-md'}`}
+                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-on-primary-container ring-1 ring-on-primary-container shadow-sm' : 'border-premium-border hover:-translate-y-0.5 hover:shadow-md'}`}
                     >
                       <div>
                         <div className="font-bold text-sm text-on-surface mb-1">{log.tipoTarea}</div>
@@ -548,8 +552,8 @@ function VolunteerDashboard() {
                       });
                       Swal.fire('Transmisión Exitosa', 'El coordinador ha recibido su mensaje.', 'success');
                       document.getElementById('soporte-msg').value = '';
-                    } catch {
-                      Swal.fire('Fallo de Red', 'No se pudo transmitir el mensaje.', 'error');
+                    } catch (e) { console.error(e);
+                      Swal.fire('Error', 'No se pudo enviar.', 'error');
                     }
                   }}
                 >

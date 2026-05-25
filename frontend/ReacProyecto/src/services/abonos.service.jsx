@@ -11,7 +11,7 @@ export async function getAbonos() {
     if (!respuesta.ok) return [];
     const datos = await respuesta.json();
     return Array.isArray(datos) ? datos : [];
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener los abonos", error);
     return [];
   }
@@ -26,7 +26,7 @@ export async function postAbonos(abono) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear el abono", error);
   }
 }
@@ -40,7 +40,7 @@ export async function putAbonos(abono, id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar el abono", error);
   }
 }
@@ -53,7 +53,7 @@ export async function deleteAbonos(id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar el abono", error);
   }
 }

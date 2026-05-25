@@ -36,7 +36,7 @@ const History = ({ user }) => {
     ];
 
     // Datos para la Biblioteca de Recursos
-    const resources = [
+    const _resources = [
         { id: 1, type: 'PDF', title: 'Guía de Reforestación Local', icon: <FileText size={20} />, color: '#e63946' },
         { id: 2, type: 'Video', title: 'Documental: Especies Nativas', icon: <Video size={20} />, color: '#1a73e8' },
         { id: 3, type: 'Audio', title: 'Podcast: Voces de la Angostura', icon: <Headphones size={20} />, color: '#f4a261' },

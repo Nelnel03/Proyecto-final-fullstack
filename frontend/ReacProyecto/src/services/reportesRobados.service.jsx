@@ -15,7 +15,7 @@ export async function getReportesRobados() {
     const datos = await respuesta.json();
     const todos = Array.isArray(datos) ? datos : [];
     return todos.filter(r => r.tipo === 'robo');
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener reportes de árboles robados", error);
     return [];
   }
@@ -30,7 +30,7 @@ export async function postReportesRobados(reporte) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear reporte de árbol robado", error);
   }
 }
@@ -43,7 +43,7 @@ export async function putReportesRobados(reporte, id) {
       body: JSON.stringify(reporte),
     });
     return await respuesta.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar reporte de robo", error);
   }
 }
@@ -56,7 +56,7 @@ export async function deleteReportesRobados(id) {
     });
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar el reporte de robo", error);
   }
 }

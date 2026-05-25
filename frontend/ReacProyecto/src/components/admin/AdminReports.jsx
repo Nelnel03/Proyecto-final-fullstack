@@ -26,7 +26,7 @@ function AdminReports() {
     try {
       const datos = await services.getReportes();
       setReportes(datos || []);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error("Error al cargar reportes:", error);
     } finally {
       setCargando(false);

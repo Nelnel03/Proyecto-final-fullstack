@@ -51,6 +51,7 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
     checkSolicitud();
   }, [user?.id]);
 
+
   const handleEnviarSolicitud = async (e) => {
     e.preventDefault();
     if (!mensaje.trim()) {
@@ -77,7 +78,7 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
         icon: 'success',
         confirmButtonColor: '#064e3b'
       });
-    } catch (err) {
+    } catch (err) { console.error(err);
       Swal.fire('Error', 'No se pudo enviar la solicitud. Intenta de nuevo más tarde.', 'error');
     } finally {
       setLoading(false);

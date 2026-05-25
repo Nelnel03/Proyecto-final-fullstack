@@ -27,7 +27,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
     try {
       const data = await services.getTareasDisponibles();
       setTareas(data);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error("Error al cargar tareas:", error);
     } finally {
       setLoadingTareas(false);
@@ -66,7 +66,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
         await services.postReporteVoluntariado(nuevoReporte);
         Swal.fire('¡Enviada!', 'Tu solicitud está pendiente de aprobación por el administrador.', 'success');
         if (onReportSubmitted) onReportSubmitted();
-      } catch {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo enviar la solicitud.', 'error');
       } finally {
         setEnviando(false);
@@ -107,7 +107,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
       }
       Swal.fire('¡Éxito!', 'Tu evidencia ha sido enviada al administrador para su validación final.', 'success');
       if (onReportSubmitted) onReportSubmitted();
-    } catch {
+    } catch (error) { console.error(error);
       Swal.fire('Error', 'No se pudo enviar el reporte.', 'error');
     } finally {
       setEnviando(false);
@@ -130,7 +130,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
       
       {fase === 'inicio' && (
         <div>
-          <h2 className="mt-0 text-[1.4rem] font-black text-premium-text-main mb-[8px]">Tareas Disponibles</h2>
+          <h2 className="mt-0 text-[1.4rem] font-black text-white mb-[8px]">Tareas Disponibles</h2>
           <p className="mb-6 text-[0.85rem] text-premium-text-muted">Selecciona una labor predeterminada. Todas tienen horas y días asignados por el administrador.</p>
           
           {loadingTareas ? (

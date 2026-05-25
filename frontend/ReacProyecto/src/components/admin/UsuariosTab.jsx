@@ -67,7 +67,7 @@ function UsuariosTab({
         toast: true,
         position: 'top-end'
       });
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       Swal.fire('Error', 'No se pudo actualizar la foto de perfil', 'error');
     } finally {

@@ -8,7 +8,7 @@ export const getSolicitudesVoluntariado = async () => {
     if (!response.ok) return [];
     const data = await response.json();
     return Array.isArray(data) ? data : [];
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener solicitudes", error);
     return [];
   }
@@ -22,7 +22,7 @@ export const postSolicitudVoluntariado = async (solicitud) => {
       body: JSON.stringify(solicitud),
     });
     return await response.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al crear solicitud", error);
     throw error;
   }
@@ -48,7 +48,7 @@ export const putSolicitudVoluntariado = async (solicitud, id) => {
       body: JSON.stringify(solicitud),
     });
     return await response.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar solicitud", error);
     throw error;
   }
@@ -61,7 +61,7 @@ export const deleteSolicitudVoluntariado = async (id) => {
       headers: { ...getAuthHeaders() }
     });
     return await response.json();
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al eliminar solicitud", error);
     throw error;
   }

@@ -81,7 +81,7 @@ function UserReportesRobo({ user, onDone }) {
       setTouched({});
 
 
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       setEstadoEnvio({ tipo: "error", texto: "Hubo un error al enviar el reporte." });
     } finally {

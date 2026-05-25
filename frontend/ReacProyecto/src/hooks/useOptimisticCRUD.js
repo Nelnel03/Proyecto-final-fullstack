@@ -24,7 +24,7 @@ export function useOptimisticCRUD(initialState = [], { onSuccess, onError } = {}
       setData(prev => [...prev, response]);
       if (onSuccess) onSuccess('create', response);
       return response;
-    } catch (error) {
+    } catch (error) { console.error(error);
       if (onError) onError('create', error);
       throw error;
     } finally {
@@ -48,7 +48,7 @@ export function useOptimisticCRUD(initialState = [], { onSuccess, onError } = {}
       const response = await serviceFn(updatedFields, id);
       if (onSuccess) onSuccess('update', response);
       return response;
-    } catch (error) {
+    } catch (error) { console.error(error);
       // Rollback en caso de error
       setData(previousState);
       if (onError) onError('update', error);
@@ -68,7 +68,7 @@ export function useOptimisticCRUD(initialState = [], { onSuccess, onError } = {}
     try {
       await serviceFn(id);
       if (onSuccess) onSuccess('delete', id);
-    } catch (error) {
+    } catch (error) { console.error(error);
       // Rollback en caso de error
       setData(previousState);
       if (onError) onError('delete', error);
@@ -83,7 +83,7 @@ export function useOptimisticCRUD(initialState = [], { onSuccess, onError } = {}
     try {
       const freshData = await serviceFn();
       setData(freshData || []);
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error('Error al sincronizar datos:', error);
     }
   }, []);

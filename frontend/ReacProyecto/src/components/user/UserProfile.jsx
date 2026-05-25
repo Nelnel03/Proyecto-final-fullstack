@@ -72,7 +72,7 @@ function UserProfile({ user, onUpdateUser, onTabChange }) {
         toast: true,
         position: 'top-end'
       });
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       Swal.fire('Error', 'No se pudo subir la foto', 'error');
     } finally {
@@ -100,7 +100,7 @@ function UserProfile({ user, onUpdateUser, onTabChange }) {
           const solicitudes = await services.getSolicitudesVoluntariado();
           const miSolicitud = solicitudes.find(s => (s.usuario_id === user.id || s.userId === user.id) && (s.estado || '').toLowerCase() === 'pendiente');
           setSolicitud(miSolicitud);
-        } catch (e) {
+        } catch (e) { console.error(e);
           console.error("Error al buscar solicitud:", e);
         }
       }
@@ -143,7 +143,7 @@ function UserProfile({ user, onUpdateUser, onTabChange }) {
       onUpdateUser(updatedUser);
 
       setMensaje({ tipo: "success", texto: "Perfil actualizado correctamente." });
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error(error);
       setMensaje({ tipo: "error", texto: "Hubo un error al actualizar el perfil." });
     } finally {

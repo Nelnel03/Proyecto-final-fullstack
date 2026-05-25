@@ -48,7 +48,7 @@ const ArbolForm = ({
           toast: true,
           position: 'top-end'
         });
-      } catch (err) {
+      } catch (err) { console.error(err);
         Swal.fire('Error', 'Hubo un problema al guardar los cambios.', 'error');
         throw err;
       }

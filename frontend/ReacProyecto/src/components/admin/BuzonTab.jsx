@@ -94,7 +94,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       setReportesRobo((roboDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
       setReportesSoporte((sopDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
       setSolicitudesVol((solDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error al cargar datos del buzón:', err);
     } finally {
       if (refrescarRef.current) refrescarRef.current();
@@ -136,7 +136,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'aprobada' } : s));
       if (refrescarNotificaciones) refrescarNotificaciones();
       Swal.fire('¡Éxito!', 'Nuevo integrante incorporado correctamente.', 'success');
-    } catch (err) {
+    } catch (err) { console.error(err);
       Swal.fire('Error', 'No se pudo procesar el cambio de rol.', 'error');
     }
   };
@@ -170,7 +170,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       await services.putSolicitudVoluntariado(updated, sol.id);
       setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? updated : s));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error("Error al marcar como visto:", err);
     }
   };
@@ -182,7 +182,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       await services.putReporteVoluntariado(updated, rep.id);
       setReportesVoluntario(prev => prev.map(r => r.id === rep.id ? updated : r));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error("Error al marcar reporte de labor como visto:", err);
     }
   };
@@ -194,7 +194,7 @@ function BuzonTab({ refrescarNotificaciones }) {
       await services.putReportes(updated, rep.id);
       setReportesSoporte(prev => prev.map(r => r.id === rep.id ? updated : r));
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error("Error al marcar soporte como visto:", err);
     }
   };
@@ -219,7 +219,7 @@ function BuzonTab({ refrescarNotificaciones }) {
         setReportesVoluntario(prev => prev.map(r => r.id === log.id ? reporteActualizado : r));
         if (refrescarNotificaciones) refrescarNotificaciones();
         Swal.fire({ icon: 'success', title: 'Tarea Programada', timer: 2000, showConfirmButton: false });
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo actualizar la programación.', 'error');
       }
     }
@@ -242,7 +242,7 @@ function BuzonTab({ refrescarNotificaciones }) {
         setReportesVoluntario(prev => prev.map(r => r.id === log.id ? reporteActualizado : r));
         if (refrescarNotificaciones) refrescarNotificaciones();
         Swal.fire({ icon: 'info', title: 'Solicitud Denegada', timer: 2000, showConfirmButton: false });
-      } catch (error) {
+      } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo procesar el rechazo.', 'error');
       }
     }
@@ -259,7 +259,7 @@ function BuzonTab({ refrescarNotificaciones }) {
     try {
       await services.putReportesRobados(updated, rep.id);
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       // ROLLBACK EN CASO DE ERROR
       setReportesRobo(previousState);
       Swal.fire('Error de Conexión', 'No se pudo actualizar el estado en el servidor. El cambio ha sido revertido.', 'error');
@@ -285,7 +285,7 @@ function BuzonTab({ refrescarNotificaciones }) {
     try {
       await services.deleteReportesRobados(id);
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       // ROLLBACK
       setReportesRobo(previousState);
       Swal.fire('Error', 'No se pudo archivar el registro. Intenta de nuevo.', 'error');
@@ -300,7 +300,7 @@ function BuzonTab({ refrescarNotificaciones }) {
     try {
       await services.deleteReportes(id);
       if (refrescarNotificaciones) refrescarNotificaciones();
-    } catch (err) {
+    } catch (err) { console.error(err);
       // ROLLBACK
       setReportesSoporte(previousState);
       Swal.fire('Error', 'No se pudo borrar el mensaje.', 'error');

@@ -58,7 +58,7 @@ const enviarCorreo = async (nombre, correo, token) => {
     }, PUBLIC_KEY);
 
     return true;
-  } catch (error) {
+  } catch (error) { console.error(error);
     const mensajeReal = error?.text || error?.message || String(error);
     Swal.fire('Error de EmailJS', `Detalle técnico: ${mensajeReal}`, 'error');
     return false;
@@ -75,7 +75,6 @@ function MainPagesLogin() {
   const [telefono, setTelefono] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const { errors, setFieldError, clearAllErrors, getInputProps } = useFormErrors();
 
   const navigate = useNavigate();
@@ -186,7 +185,7 @@ function MainPagesLogin() {
         }
       }, 1500);
 
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error en login:', err);
       Swal.fire('Error', 'Hubo un problema al conectar con el servidor', 'error');
     } finally {
@@ -255,7 +254,7 @@ function MainPagesLogin() {
       setPassword('');
       setConfirmPassword('');
 
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Error en registro:', err);
       Swal.fire('Error', 'No se pudo completar el registro', 'error');
     } finally {
@@ -308,7 +307,7 @@ function MainPagesLogin() {
         setEmail('');
       }
 
-    } catch (error) {
+    } catch (error) { console.error(error);
       console.error("Error general:", error);
       Swal.fire('Error', 'Problema inesperado al conectarse.', 'error');
     } finally {
@@ -494,12 +493,14 @@ function MainPagesLogin() {
                   'Autenticando…'
                 }
               >
-                <span>
-                  {isRecovering ? 'Restablecer Acceso' : isRegistering ? 'Unirse Ahora' : 'Entrar al Sistema'}
+                <span className="flex items-center justify-center gap-2">
+                  <span>
+                    {isRecovering ? 'Restablecer Acceso' : isRegistering ? 'Unirse Ahora' : 'Iniciar Sesión'}
+                  </span>
+                  {!loading && (
+                    isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />
+                  )}
                 </span>
-                {!loading && (
-                  isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />
-                )}
               </LoadingButton>
             </form>
 

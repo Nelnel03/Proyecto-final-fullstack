@@ -44,7 +44,7 @@ export function useRequestState(
         }
 
         return result;
-      } catch (err) {
+      } catch (err) { console.error(err);
         const elapsed = Date.now() - startTime;
         if (elapsed < minDelay) {
           await new Promise((r) => setTimeout(r, minDelay - elapsed));

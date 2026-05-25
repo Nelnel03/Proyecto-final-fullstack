@@ -8,7 +8,7 @@ export async function getArboles() {
   try {
     const { data } = await apiClient.get('/arboles?size=500');
     return Array.isArray(data) ? data : (data.items || []);
-  } catch (error) {
+  } catch (error) { console.error(error);
     // El interceptor ya loguea el error, retornamos vacío para evitar fallos en la UI
     return [];
   }

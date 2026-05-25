@@ -13,7 +13,7 @@ export async function getReportesVoluntariado() {
     if (!respuesta.ok) return [];
     const datos = await respuesta.json();
     return Array.isArray(datos) ? datos : (datos.items || []);
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al obtener los reportes de voluntariado", error);
     return [];
   }
@@ -33,7 +33,7 @@ export async function postReporteVoluntariado(reporte) {
     }
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al enviar el reporte de voluntariado", error);
     throw error;
   }
@@ -49,7 +49,7 @@ export async function putReporteVoluntariado(reporte, id) {
     if (!respuesta.ok) throw new Error("No se pudo actualizar el reporte.");
     const datos = await respuesta.json();
     return datos;
-  } catch (error) {
+  } catch (error) { console.error(error);
     console.error("Error al actualizar el reporte de voluntariado", error);
   }
 }

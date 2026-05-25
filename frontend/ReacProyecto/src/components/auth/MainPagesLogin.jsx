@@ -493,12 +493,14 @@ function MainPagesLogin() {
                   'Autenticando…'
                 }
               >
-                <span>
-                  {isRecovering ? 'Restablecer Acceso' : isRegistering ? 'Unirse Ahora' : 'Entrar al Sistema'}
+                <span className="flex items-center justify-center gap-2">
+                  <span>
+                    {isRecovering ? 'Restablecer Acceso' : isRegistering ? 'Unirse Ahora' : 'Iniciar Sesión'}
+                  </span>
+                  {!loading && (
+                    isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />
+                  )}
                 </span>
-                {!loading && (
-                  isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />
-                )}
               </LoadingButton>
             </form>
 

@@ -118,7 +118,12 @@ function VolunteerDashboard() {
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
-    ? logs.filter(l => l.tipoTarea?.toLowerCase().includes(busqueda.toLowerCase()) || l.fecha?.includes(busqueda))
+    ? logs.filter(l => 
+        l.tipoTarea?.toLowerCase().includes(busqueda.toLowerCase()) || 
+        l.fecha?.includes(busqueda) ||
+        l.tareas?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        l.estado?.toLowerCase().includes(busqueda.toLowerCase())
+      )
     : logs;
 
   const navItems = [
@@ -330,7 +335,8 @@ function VolunteerDashboard() {
                 )}
               </div>
 
-              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[1fr_100px_130px_70px_130px] px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b-2 border-premium-border mb-3 font-['Montserrat']">
+              {/* Refactor: Ajuste de layout de grid para evitar colapso/overlap en pantallas desktop y zooms. Uso de fracciones y gap para mantener spacing uniforme */}
+              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b-2 border-premium-border mb-3 font-['Montserrat']">
                 <span>Actividad</span>
                 <span className="hidden lg:block">Fecha</span>
                 <span className="hidden lg:block">Tipo</span>
@@ -369,7 +375,7 @@ function VolunteerDashboard() {
                     <div
                       key={log.id}
                       onClick={() => setSelectedLog(log)}
-                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[1fr_100px_130px_70px_130px] items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-on-primary-container ring-1 ring-on-primary-container shadow-sm' : 'border-premium-border hover:-translate-y-0.5 hover:shadow-md'}`}
+                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-on-primary-container ring-1 ring-on-primary-container shadow-sm' : 'border-premium-border hover:-translate-y-0.5 hover:shadow-md'}`}
                     >
                       <div>
                         <div className="font-bold text-sm text-on-surface mb-1">{log.tipoTarea}</div>

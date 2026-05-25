@@ -74,6 +74,7 @@
     --ui-error: #ef4444;
     --ui-info: #3b82f6;
     --fuente-principal: 'Inter', 'Manrope', sans-serif;
+    --fuente-acento: 'Outfit', 'Montserrat', sans-serif;
     --radius-md: 16px;
     --radius-full: 9999px;
     --color-mar-turquesa: var(--color-accent);

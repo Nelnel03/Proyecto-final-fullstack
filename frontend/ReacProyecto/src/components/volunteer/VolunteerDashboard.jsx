@@ -114,10 +114,6 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
-<<<<<<< HEAD
-  const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
-=======
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
@@ -552,13 +548,8 @@ function VolunteerDashboard() {
                       });
                       Swal.fire('Transmisión Exitosa', 'El coordinador ha recibido su mensaje.', 'success');
                       document.getElementById('soporte-msg').value = '';
-<<<<<<< HEAD
                     } catch (e) { console.error(e);
                       Swal.fire('Error', 'No se pudo enviar.', 'error');
-=======
-                    } catch {
-                      Swal.fire('Fallo de Red', 'No se pudo transmitir el mensaje.', 'error');
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
                     }
                   }}
                 >

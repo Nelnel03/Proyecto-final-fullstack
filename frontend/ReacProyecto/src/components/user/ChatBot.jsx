@@ -26,7 +26,7 @@ function renderBubbleText(text) {
   });
 }
 
-const ChatBot = ({ user }) => {
+const ChatBot = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([WELCOME_MSG]);
   const [input, setInput] = useState('');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import services, { uploadImage } from '../../services/services.jsx';
+import services from '../../services/services.jsx';
 import Swal from 'sweetalert2';
 import { UserCheck, Heart, ShieldCheck, Camera, Loader2 } from 'lucide-react';
 import '../../styles/user/UserProfile.css';

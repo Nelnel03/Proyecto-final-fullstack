@@ -6,10 +6,6 @@ import '../../styles/user/UserReports.css';
 
 function SolicitudVoluntariadoTab({ user, onDone }) {
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
-=======
-
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const [solicitudEnviada, setSolicitudEnviada] = useState(null);
   const [mensaje, setMensaje] = useState('');
   const [diasRestantes, setDiasRestantes] = useState(0);
@@ -54,45 +50,6 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
     checkSolicitud();
   }, [user?.id]);
 
-<<<<<<< HEAD
-  const checkSolicitud = async () => {
-    if (!user?.id) return;
-    try {
-      const solicitudes = await services.getSolicitudesVoluntariado();
-      // Obtener la más reciente
-      const misSolicitudes = (solicitudes || [])
-        .filter(s => s.usuario_id === user.id || s.userId === user.id)
-        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-      
-      const miSolicitud = misSolicitudes[0];
-      
-      if (miSolicitud) {
-        const estadoNorm = (miSolicitud.estado || '').toLowerCase();
-        if (estadoNorm === 'rechazada') {
-          const fechaRechazo = new Date(miSolicitud.fecha);
-          const ahora = new Date();
-          const diffMs = ahora - fechaRechazo;
-          const diffDias = diffMs / (1000 * 60 * 60 * 24);
-
-          if (diffDias < 15) {
-            setDiasRestantes(Math.ceil(15 - diffDias));
-            setSolicitudEnviada({ ...miSolicitud, estado: 'Rechazada' });
-          } else {
-            setSolicitudEnviada(null);
-          }
-        } else {
-          // Normalize to capitalized for display
-          const estadoDisplay = estadoNorm.charAt(0).toUpperCase() + estadoNorm.slice(1);
-          setSolicitudEnviada({ ...miSolicitud, estado: estadoDisplay });
-        }
-      }
-    } catch (err) { console.error(err);
-      console.error("Error al verificar solicitudes:", err);
-    }
-  };
-
-=======
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
   const handleEnviarSolicitud = async (e) => {
     e.preventDefault();
     if (!mensaje.trim()) {

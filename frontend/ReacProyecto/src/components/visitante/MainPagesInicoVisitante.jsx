@@ -14,7 +14,7 @@ function MainPagesInicoVisitante() {
     password: '',
     rol: 'user',
   });
-  const [mensaje, setMensaje] = useState('');
+  const [mensaje, _setMensaje] = useState('');
   const [arboles, setArboles] = useState([]);
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();

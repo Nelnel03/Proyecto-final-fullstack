@@ -30,6 +30,7 @@ import UserProfile from '../user/UserProfile';
 import ReporteForm from './ReporteForm';
 import { DarkModeToggle } from '../common';
 import { Pagination } from '../ui';
+import { Footer } from '../layout';
 
 function VolunteerDashboard() {
   const [user, setUser] = useState(null);
@@ -594,6 +595,7 @@ function VolunteerDashboard() {
             </div>
           </div>
         )}
+        <Footer />
       </main>
 
     </div>

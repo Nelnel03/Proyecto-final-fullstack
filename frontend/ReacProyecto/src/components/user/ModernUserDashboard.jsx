@@ -44,7 +44,7 @@ import SolicitudVoluntariadoTab from './SolicitudVoluntariadoTab';
 import UserSidebar from './UserSidebar';
 import UserTopbar from './UserTopbar';
 import UserDashboardTab from './UserDashboardTab';
-import ChatBot from './ChatBot';
+import { Footer } from '../layout';
 
 import '../../styles/user/ModernUserDashboard.css';
 
@@ -272,6 +272,7 @@ function ModernUserDashboard() {
         <div className="dynamic-content">
           {renderContent()}
         </div>
+        <Footer />
       </main>
     </div>
   );

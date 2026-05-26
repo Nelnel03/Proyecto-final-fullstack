@@ -63,7 +63,7 @@
 .navbar-logo-subtitle {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #D3968C; /* Rosy Brown for Light Mode */
+  color: #042C8F; /* Rosy Brown for Light Mode */
   letter-spacing: 2px;
   font-family: 'Inter', sans-serif;
 }
@@ -93,7 +93,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #D3968C; 
+  background: #042C8F; 
   transition: width 0.3s ease;
 }
 
@@ -122,11 +122,11 @@
 .navbar-btn-acceder:hover {
   transform: scale(1.05) translateY(-2px);
   box-shadow: 0 8px 25px rgba(10, 51, 35, 0.3);
-  background: #D3968C;
+  background: #042C8F;
 }
 
 .navbar-btn-logout {
-  background: #D3968C !important;
+  background: #042C8F !important;
   color: white !important;
   border: none !important;
   padding: 0.6rem 1.4rem;

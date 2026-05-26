@@ -258,20 +258,22 @@ function ModernUserDashboard() {
 
       {/* Main Content */}
       <main className="modern-main-content">
-        <UserTopbar 
-          currentTab={currentTab} 
-          setCurrentTab={setCurrentTab} 
-          searchTerm={searchTerm} 
-          setSearchTerm={setSearchTerm} 
-          user={user} 
-          handleLogout={handleLogout} 
-          onOpenSidebar={() => setSidebarOpen(true)}
-          isMobile={isMobile}
-        />
+        <div className="modern-main-content-inner">
+          <UserTopbar 
+            currentTab={currentTab} 
+            setCurrentTab={setCurrentTab} 
+            searchTerm={searchTerm} 
+            setSearchTerm={setSearchTerm} 
+            user={user} 
+            handleLogout={handleLogout} 
+            onOpenSidebar={() => setSidebarOpen(true)}
+            isMobile={isMobile}
+          />
 
-        {/* Content Area */}
-        <div className="dynamic-content">
-          {renderContent()}
+          {/* Content Area */}
+          <div className="dynamic-content">
+            {renderContent()}
+          </div>
         </div>
         <Footer />
       </main>

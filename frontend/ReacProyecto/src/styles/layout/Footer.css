@@ -1,8 +1,8 @@
 .main-footer {
   /* Forzamos los colores originales para que no cambien en Modo Oscuro */
-  --color-bosque-musgo: #F7F4D5;
+  --color-bosque-musgo: #86D0FD;
   --color-crema-organico: #0A3323;
-  --color-ocre-silvestre: #D3968C;
+  --color-ocre-silvestre: #042C8F;
 
   background: var(--color-bosque-musgo);
   color: var(--color-crema-organico);

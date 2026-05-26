@@ -5,8 +5,8 @@ import { ArrowRight, Activity, Eye, Shield, Moon, Sun, Trees, Droplets, MapPin, 
 import { useTheme } from '../../context/ThemeContext';
 import logoImg from '../../assets/logo_no_bg.png';
 import mangroveVector from '../../assets/mangrove_ecosystem_vector.png';
-import missionVector from '../../assets/mission_vector.png';
-import '../../styles/History.css';
+import '../../styles/visitante/History.css';
+import '../../styles/layout/Footer.css';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
@@ -164,8 +164,8 @@ const Landing = () => {
                         <div className={`absolute inset-0 rounded-[2rem] -rotate-3 scale-105 transition-transform duration-700 group-hover:-rotate-1 ${isDark ? 'bg-accent/20 blur-xl' : 'bg-secondary/20'}`}></div>
                         {isDark && <div className="absolute inset-0 border border-white/10 rounded-[2rem] z-20 pointer-events-none"></div>}
                         <img 
-                            src={missionVector} 
-                            alt="Estación de Monitoreo" 
+                            src="https://www.ucr.ac.cr/medios/fotos/2018/rs185041_ask_06775b18712c7f6a8.jpg" 
+                            alt="Biodiversidad de Costa Rica" 
                             className={`relative z-10 w-full h-[700px] object-cover rounded-[2rem] ${isDark ? 'shadow-[0_20px_50px_rgba(0,0,0,0.8)] filter contrast-125 brightness-75 group-hover:brightness-90 transition-all duration-700' : 'shadow-2xl'}`}
                         />
                     </motion.div>
@@ -214,56 +214,7 @@ const Landing = () => {
                 </div>
             </section>
 
-            {/* STATS SECTION */}
-            <section className={`py-24 relative overflow-hidden ${isDark ? '' : 'bg-surface border-y border-primary/5'}`}>
-                {isDark && (
-                    <>
-                        <div className="absolute inset-0 bg-[#0a0f14] border-y border-white/5"></div>
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/30 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
-                    </>
-                )}
-                
-                <div className="container mx-auto px-6 lg:px-12 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { value: "14,200+", label: "Árboles Monitoreados", icon: <Trees size={24} />, color: "from-secondary to-blue-500" },
-                            { value: "1,240+", label: "Guardianes Activos", icon: <Shield size={24} />, color: "from-accent to-secondary" },
-                            { value: "850K+", label: "Litros Filtrados", icon: <Droplets size={24} />, color: "from-olive to-accent" }
-                        ].map((stat, idx) => (
-                            <motion.div 
-                                key={idx}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                className={`flex flex-col items-center text-center p-8 rounded-3xl transition-all relative overflow-hidden group ${isDark ? 'bg-[#05080a]/50 backdrop-blur-xl border border-white/5 hover:border-white/10 hover:bg-[#111827]/50 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'hover:bg-sand/50 border border-transparent hover:border-primary/5'}`}
-                            >
-                                {isDark && <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-gradient-to-b ${stat.color} rounded-full blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity`}></div>}
-                                
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 relative z-10 ${isDark ? `bg-gradient-to-br ${stat.color} bg-opacity-10 text-white shadow-lg` : 'bg-secondary/10 text-secondary'}`}>
-                                    {isDark && <div className="absolute inset-[1px] bg-[#0a0f14] rounded-[15px]"></div>}
-                                    <div className={`relative z-10 ${isDark ? `text-transparent bg-clip-text bg-gradient-to-br ${stat.color}` : ''}`}>
-                                        {React.cloneElement(stat.icon, { color: 'currentColor' })}
-                                    </div>
-                                </div>
-                                <h3 className={`text-5xl md:text-6xl font-black mb-4 tracking-tighter relative z-10 ${isDark ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]' : 'text-primary'}`}>{stat.value}</h3>
-                                <p className={`text-sm font-semibold uppercase tracking-[0.2em] relative z-10 ${isDark ? 'text-gray-400' : 'text-primary/60'}`}>{stat.label}</p>
-                                
-                                <div className={`w-full h-1.5 mt-8 rounded-full overflow-hidden relative z-10 ${isDark ? 'bg-black/50 border border-white/5' : 'bg-primary/10'}`}>
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        whileInView={{ width: "75%" }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
-                                        className={`h-full rounded-full ${isDark ? `bg-gradient-to-r ${stat.color} shadow-[0_0_10px_currentColor]` : 'bg-secondary'}`}
-                                    ></motion.div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
 
             {/* HISTORIA / EDUCAR SECTION */}
             <section id="ecosystems" className={`py-32 relative ${isDark ? '' : 'bg-sand'}`}>
@@ -306,8 +257,22 @@ const Landing = () => {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
-                            className={`p-12 md:p-16 flex flex-col justify-center relative overflow-hidden ${isDark ? 'bg-[#0d1b2a]' : 'bg-primary'}`}
+                            className={`p-12 md:p-16 flex flex-col justify-center relative overflow-hidden ${isDark ? 'bg-[#0d1b2a]' : 'bg-[#86D0FD]'}`}
                         >
+                            {/* Hojas verdes cayendo */}
+                            <div className="falling-leaves-container">
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                                <div className="leaf-green"></div>
+                            </div>
+                            
                             {isDark ? (
                                 <>
                                     <div className="absolute inset-0 bg-[linear-gradient(rgba(0,240,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px] z-0"></div>
@@ -322,7 +287,7 @@ const Landing = () => {
                                     <div className="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
                                     La Iniciativa
                                 </span>
-                                <h2 className={`text-4xl md:text-5xl font-black mb-8 leading-tight tracking-tighter ${isDark ? 'text-white' : 'text-[#D3968C]'}`}>
+                                <h2 className={`text-4xl md:text-5xl font-black mb-8 leading-tight tracking-tighter ${isDark ? 'text-white' : 'text-[#042C8F]'}`}>
                                     Conviértete en Guardián de la Costa
                                 </h2>
                                 
@@ -332,7 +297,7 @@ const Landing = () => {
                                         'Coordinación en campo',
                                         'Participación ecológica directa'
                                     ].map((benefit, idx) => (
-                                        <li key={idx} className={`flex items-center gap-4 ${isDark ? 'text-gray-300' : 'text-[#D3968C]'}`}>
+                                        <li key={idx} className={`flex items-center gap-4 ${isDark ? 'text-gray-300' : 'text-[#042C8F]'}`}>
                                             <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-secondary/10 border border-secondary/30' : 'bg-secondary/20'}`}>
                                                 <span className={`w-1.5 h-1.5 rounded-full bg-secondary ${isDark ? 'shadow-[0_0_5px_rgba(0,240,255,0.8)]' : ''}`}></span>
                                             </div>
@@ -356,8 +321,8 @@ const Landing = () => {
                             className={`relative h-[400px] lg:h-auto overflow-hidden ${isDark ? 'bg-[#0a0f14]' : ''}`}
                         >
                             <img 
-                                src={missionVector} 
-                                alt="Científicos trabajando" 
+                                src="https://wpapi.larepublica.net/wp-content/uploads/2023/02/20230209122545.04.jpg" 
+                                alt="Biodiversidad de Costa Rica" 
                                 className={`absolute inset-0 w-full h-full object-cover ${isDark ? 'filter brightness-[0.5] contrast-125 saturate-50 scale-105' : ''}`}
                             />
                             {isDark ? (

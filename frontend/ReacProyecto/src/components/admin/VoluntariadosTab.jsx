@@ -42,6 +42,9 @@ function VoluntariadosTab({
 }) {
   const [subTab, setSubTab] = useState('lista');
   const [logs, setLogs] = useState([]);
+
+  const [selectedLogs, setSelectedLogs] = useState([]);
+
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [actualizandoAvatarId, setActualizandoAvatarId] = useState(null);
   const [showForm, setShowForm] = useState(false);

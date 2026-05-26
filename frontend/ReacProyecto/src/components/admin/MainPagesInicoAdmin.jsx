@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
 
-import '../../styles/Arboles.css';
+import '../../styles/visitante/Arboles.css';
 import '../../styles/admin/MainPagesInicoAdmin.css';
 import '../../styles/user/PremiumDashboard.css';
 import '../../styles/admin/AdminControlCenter.css';

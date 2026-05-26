@@ -41,11 +41,17 @@ function ListaTab({
   }, [modoEdicion]);
 
   const arbolesFiltrados = (arboles || []).filter(Boolean)
-    .filter(a => a.estado !== 'muerto')
     .filter(a => {
-      const matchesSearch = (a.nombre || '').toLowerCase().includes(busqueda.toLowerCase()) || 
-                          (a.tipo || '').toLowerCase().includes(busqueda.toLowerCase());
+      const searchLower = busqueda.toLowerCase();
+      const matchesSearch = (a.nombre || '').toLowerCase().includes(searchLower) || 
+                          (a.tipo || '').toLowerCase().includes(searchLower) ||
+                          (a.estado || '').toLowerCase().includes(searchLower) ||
+                          (a.descripcion || '').toLowerCase().includes(searchLower) ||
+                          (a.cuidados || '').toLowerCase().includes(searchLower);
       const matchesType = !tipoFiltro || (a.tipo || '').toLowerCase() === tipoFiltro.toLowerCase();
+      
+      if (a.estado === 'muerto' && !searchLower) return false;
+
       return matchesSearch && matchesType;
     });
 
@@ -88,7 +94,7 @@ function ListaTab({
               <Search size={18} className="search-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
               <input 
                 type="text" 
-                placeholder="Buscar por nombre o tipo..." 
+                placeholder="Buscar por nombre, tipo, estado o detalles..." 
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 className="ui-input"

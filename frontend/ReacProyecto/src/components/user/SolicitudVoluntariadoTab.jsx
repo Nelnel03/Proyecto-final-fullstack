@@ -6,6 +6,8 @@ import '../../styles/user/UserReports.css';
 
 function SolicitudVoluntariadoTab({ user, onDone }) {
   const [loading, setLoading] = useState(false);
+
+
   const [solicitudEnviada, setSolicitudEnviada] = useState(null);
   const [mensaje, setMensaje] = useState('');
   const [diasRestantes, setDiasRestantes] = useState(0);
@@ -49,6 +51,9 @@ function SolicitudVoluntariadoTab({ user, onDone }) {
 
     checkSolicitud();
   }, [user?.id]);
+
+
+
 
   const handleEnviarSolicitud = async (e) => {
     e.preventDefault();

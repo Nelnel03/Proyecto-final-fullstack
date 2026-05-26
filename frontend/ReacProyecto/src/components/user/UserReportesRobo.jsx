@@ -34,6 +34,9 @@ function UserReportesRobo({ user, onDone }) {
 
   const [estadoEnvio, setEstadoEnvio] = useState({ tipo: "", texto: "" });
   const [loading, setLoading] = useState(false);
+
+
+
   const handleChange = (e) => {
     const updated = { ...reporte, [e.target.name]: e.target.value };
     setReporte(updated);

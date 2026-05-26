@@ -91,14 +91,19 @@ describe('🔑 API de Autenticación - Integration Tests', () => {
     describe('📧 POST /api/auth/forgot-password & /reset-password', () => {
         let resetToken = '';
 
-        it('debe procesar la solicitud de recuperación y devolver un token temporal', async () => {
+        it('debe procesar la solicitud de recuperación sin devolver token en res.body', async () => {
             const res = await request(app)
                 .post('/api/auth/forgot-password')
                 .send({ email: mockUser.email });
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body).toHaveProperty('token');
-            resetToken = res.body.token;
+            expect(res.body).not.toHaveProperty('token');
+            expect(res.body).toHaveProperty('message', 'Si el correo existe, recibirás instrucciones.');
+
+            // Obtener el token directamente de la DB para el siguiente test
+            const user = await Usuario.findOne({ where: { email: mockUser.email } });
+            const tokenRecord = await ResetToken.findOne({ where: { usuario_id: user.id }, order: [['id', 'DESC']] });
+            resetToken = tokenRecord.token;
         });
 
         it('debe permitir restablecer la contraseña usando el token temporal', async () => {

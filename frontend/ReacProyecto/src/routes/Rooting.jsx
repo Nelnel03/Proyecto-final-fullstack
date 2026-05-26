@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../services/config.jsx';
 import InicioVisitantes from '../pages/InicioVisitantes';
-import InicioUser from '../pages/InicioUser';
 import InicioAdmin from '../pages/InicioAdmin';
 import Login from '../pages/Login';
 import ResetPassword from '../pages/ResetPassword';
@@ -15,7 +14,6 @@ import Unauthorized from '../pages/Unauthorized';
 
 import { Nav, Navbar, Footer } from '../components/layout';
 import PrivateRoutes from './PrivateRoutes';
-import UserDashboard from '../components/user/UserDashboardV2';
 import ModernUserDashboard from '../components/user/ModernUserDashboard';
 
 import VolunteerDashboard from '../components/volunteer/VolunteerDashboard';
@@ -69,6 +67,9 @@ function MainLayout() {
     };
 
     if (isAuth) syncRole();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [location.pathname, isAuth, navigate]);
 
   const isAdminRoute = location.pathname.startsWith('/admin');

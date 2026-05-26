@@ -9,11 +9,10 @@ import {
   Trophy, 
   UserCheck, 
   Settings, 
-  HelpCircle,
-  X
+  HelpCircle
 } from 'lucide-react';
 
-const UserSidebar = ({ currentTab, setCurrentTab, user, isOpen, onClose }) => {
+const UserSidebar = ({ currentTab, setCurrentTab, user, isOpen }) => {
   return (
     <aside className={`modern-sidebar ${isOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-logo">
@@ -26,9 +25,6 @@ const UserSidebar = ({ currentTab, setCurrentTab, user, isOpen, onClose }) => {
             <span>Portal de Conservación</span>
           </div>
         </div>
-        <button className="mobile-close-btn" onClick={onClose}>
-          <X size={20} />
-        </button>
       </div>
 
       <nav className="sidebar-nav">

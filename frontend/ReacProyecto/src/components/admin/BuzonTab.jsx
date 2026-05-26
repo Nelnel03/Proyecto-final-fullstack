@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import '../../styles/admin/BuzonTab.css';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
 import { 

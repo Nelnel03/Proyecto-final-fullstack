@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../../styles/volunteer/ReporteForm.css';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
 import { CalendarDays, Clock, CheckCircle2, Link } from 'lucide-react';
@@ -65,11 +66,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
         await services.postReporteVoluntariado(nuevoReporte);
         Swal.fire('¡Enviada!', 'Tu solicitud está pendiente de aprobación por el administrador.', 'success');
         if (onReportSubmitted) onReportSubmitted();
-<<<<<<< HEAD
       } catch (error) { console.error(error);
-=======
-      } catch {
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
         Swal.fire('Error', 'No se pudo enviar la solicitud.', 'error');
       } finally {
         setEnviando(false);
@@ -110,11 +107,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
       }
       Swal.fire('¡Éxito!', 'Tu evidencia ha sido enviada al administrador para su validación final.', 'success');
       if (onReportSubmitted) onReportSubmitted();
-<<<<<<< HEAD
     } catch (error) { console.error(error);
-=======
-    } catch {
->>>>>>> 5b861daa75d3cefc80e8a9f272c668bc7b6969ce
       Swal.fire('Error', 'No se pudo enviar el reporte.', 'error');
     } finally {
       setEnviando(false);
@@ -137,7 +130,7 @@ function ReporteForm({ user, onReportSubmitted, tareaAsignada, onCancel, busqued
       
       {fase === 'inicio' && (
         <div>
-          <h2 className="mt-0 text-[1.4rem] font-black text-premium-text-main mb-[8px]">Tareas Disponibles</h2>
+          <h2 className="mt-0 text-[1.4rem] font-black text-white mb-[8px]">Tareas Disponibles</h2>
           <p className="mb-6 text-[0.85rem] text-premium-text-muted">Selecciona una labor predeterminada. Todas tienen horas y días asignados por el administrador.</p>
           
           {loadingTareas ? (

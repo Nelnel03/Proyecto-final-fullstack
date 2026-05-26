@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import DarkModeToggle from '../common/DarkModeToggle';
-import '../../styles/Nav.css';
+import '../../styles/layout/Nav.css';
 import logoImg from '../../assets/logo_no_bg.png';
 
 function Nav() {

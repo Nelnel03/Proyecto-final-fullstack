@@ -148,7 +148,10 @@ function ModernUserDashboard() {
     arbol.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     arbol.nombreCientifico?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     arbol.familia?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    arbol.tipo?.toLowerCase().includes(searchTerm.toLowerCase())
+    arbol.tipo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    arbol.estado?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    arbol.descripcion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    arbol.cuidados?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Calculos para el Dashboard
@@ -245,7 +248,6 @@ function ModernUserDashboard() {
         }} 
         user={user} 
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
       />
 
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}

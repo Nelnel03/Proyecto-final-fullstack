@@ -3,11 +3,11 @@
 .dashboard-loading {
   text-align: center;
   padding: 5rem;
-  color: #1a4d2e;
+  color: var(--color-texto, #1a4d2e);
 }
 
 .dashboard-header {
-  background-color: #3A5A40 !important;
+  background-color: var(--color-bosque-helecho, #3A5A40) !important;
   background-image: none !important;
   padding: 5rem 1rem 8rem;
   text-align: center;
@@ -35,10 +35,10 @@
 }
 
 .dashboard-header-title {
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Montserrat', var(--fuente-principal), sans-serif !important;
   font-size: 3rem;
   font-weight: 800;
-  color: #DAD7CD !important;
+  color: var(--color-caracola, #DAD7CD) !important;
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
@@ -47,8 +47,8 @@
 }
 
 .dashboard-header-greeting {
-  font-family: 'Montserrat', sans-serif !important;
-  color: #DAD7CD !important;
+  font-family: 'Montserrat', var(--fuente-principal), sans-serif !important;
+  color: var(--color-caracola, #DAD7CD) !important;
   opacity: 0.85;
   font-size: 1.2rem;
   font-weight: 500;
@@ -58,54 +58,55 @@
 }
 
 .dashboard-main-content {
- max-width: 900px;
+  max-width: 900px;
   margin: 50px auto;
-  
 }
 
+.visitante-nav-pills.dashboard-tabs,
 .dashboard-tabs {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--glass-border, #eee);
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .tab-btn {
- padding: 10px 20px;
+  padding: 10px 20px;
   border-radius: 25px;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  background-color: #3fc46b;
-  color: #164424;
+  background-color: rgba(58, 90, 64, 0.15);
+  color: var(--color-texto, #164424);
   transition: all 0.2s ease;
 }
 
 .tab-btn.active {
-  background-color: #1a4d2e;
+  background-color: var(--ui-primary, #1a4d2e);
   color: white;
 }
 
 .tab-btn-danger {
   background-color: #fef2f2;
-  color: #ef4444;
+  color: var(--ui-error, #ef4444);
 }
 
 .tab-btn-danger.active {
-  background-color: #ef4444;
+  background-color: var(--ui-error, #ef4444);
   color: white;
 }
 
 .dashboard-section-title {
-  color: #1a4d2e;
+  color: var(--color-texto, #1a4d2e);
   margin-bottom: 1rem;
 }
 
-/* ===========================
-   RESPONSIVE MOBILE ≤768px
-=========================== */
+.dashboard-view-container {
+  width: 100%;
+}
+
 @media screen and (max-width: 768px) {
   .dashboard-header {
     padding: 3rem 1rem 5rem;
@@ -129,3 +130,20 @@
   }
 }
 
+[data-theme='dark'] .dashboard-loading {
+  color: var(--color-texto);
+}
+
+[data-theme='dark'] .dashboard-section-title {
+  color: var(--color-texto);
+}
+
+[data-theme='dark'] .tab-btn {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-texto);
+}
+
+[data-theme='dark'] .tab-btn.active {
+  background-color: var(--ui-primary);
+  color: #05080a;
+}

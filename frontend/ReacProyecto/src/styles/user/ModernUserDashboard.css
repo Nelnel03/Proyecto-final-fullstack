@@ -78,28 +78,6 @@
   justify-content: space-between;
 }
 
-.mobile-close-btn {
-  display: none;
-  background: transparent;
-  color: var(--text-muted);
-  border: none;
-  border-radius: 50%;
-  padding: 8px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.mobile-close-btn:hover {
-  background: var(--search-bg);
-  color: var(--primary-green);
-}
-
-.modern-dashboard-container.is-mobile .mobile-close-btn {
-  display: flex;
-}
-
 .sidebar-logo-icon {
   width: 45px; 
   height: 45px; 
@@ -947,19 +925,6 @@ html, body {
   border-radius: 10px;
   border: none;
   cursor: pointer;
-}
-
-.mobile-close-btn {
-  display: block !important;
-  position: absolute;
-  top: 1.5rem;
-  right: 1rem;
-  background: #f1f5f9;
-  color: var(--primary-green);
-  border: none;
-  padding: 0.5rem;
-  border-radius: 50%;
-  z-index: 10000;
 }
 
 /* Map Embedded in Dashboard */

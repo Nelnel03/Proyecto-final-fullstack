@@ -4,7 +4,7 @@ import {
     Video, FileText, Headphones, Trophy, Star, ChevronRight,
     MessageSquare, Target, Award, Brain, Users, Activity, CheckCircle
 } from 'lucide-react';
-import '../../styles/History.css';
+import '../../styles/visitante/History.css';
 
 const History = ({ user }) => {
 

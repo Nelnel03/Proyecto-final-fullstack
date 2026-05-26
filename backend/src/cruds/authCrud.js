@@ -2,6 +2,7 @@ const { Usuario, Rol, ResetToken, Sesion } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { sendResetPasswordEmail } = require('../services/mailService');
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
@@ -158,11 +159,11 @@ const authCrud = {
 
             await ResetToken.create({ usuario_id: user.id, token, expiry });
 
+            // Enviar correo asíncronamente (sin bloquear la respuesta de la db mucho tiempo, aunque aquí esperamos)
+            await sendResetPasswordEmail(user.email, user.nombre, token);
+
             return res.status(200).json({
-                message: 'Si el correo existe, recibirás instrucciones.',
-                token,
-                nombre: user.nombre,
-                email: user.email
+                message: 'Si el correo existe, recibirás instrucciones.'
             });
         } catch (error) {
             console.error('Error en forgotPassword:', error);

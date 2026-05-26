@@ -245,7 +245,7 @@ const UserDashboardTab = ({
         .species-info .name { font-size: 0.85rem; font-weight: 800; margin: 0; }
         .species-info .meta { font-size: 0.7rem; opacity: 0.5; font-weight: 700; }
 
-        .bg-gradient-premium { background: linear-gradient(135deg, var(--ui-primary), var(--color-bosque-pino)); }
+        .bg-gradient-premium { background: linear-gradient(135deg, var(--ui-primary, #064e3b), #10b981); }
         .badges-row-mini { display: flex; gap: 10px; margin-top: 1rem; }
         .badge-icon-pill {
           width: 40px;

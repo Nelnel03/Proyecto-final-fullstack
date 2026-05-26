@@ -13,7 +13,7 @@ import ListaTab from './ListaTab';
 import BajasTab from './BajasTab';
 import UsuariosTab from './UsuariosTab';
 import VoluntariadosTab from './VoluntariadosTab';
-import { AdminSidebar, AdminTopbar, Footer } from '../layout';
+import { AdminSidebar, AdminTopbar } from '../layout';
 import { DarkModeToggle } from '../common';
 import ArbolFormTab from './ArbolFormTab';
 import BuzonTab from './BuzonTab';
@@ -750,7 +750,6 @@ function MainPagesInicoAdmin() {
           </div>
         </section>
 
-        <Footer />
       </div>
     </div>
   );

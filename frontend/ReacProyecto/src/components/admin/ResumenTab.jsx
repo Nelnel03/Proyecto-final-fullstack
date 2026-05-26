@@ -485,10 +485,10 @@ const ResumenTab = ({
         </div>
 
         <div className="quick-actions-saas">
-          <div className="premium-card p-6 mb-4 bg-primary text-white border-none">
+          <div className="premium-card p-6 mb-4 meta-mensual-card">
             <Award size={32} className="mb-4 opacity-80" />
-            <h4 className="font-black text-xl mb-2">Meta Mensual</h4>
-            <p className="text-sm opacity-90 mb-4">Estamos a 12 registros de alcanzar el objetivo de reforestación.</p>
+            <h4 className="font-black text-xl mb-2 meta-mensual-title">Meta Mensual</h4>
+            <p className="text-sm mb-4 meta-mensual-text">Estamos a 12 registros de alcanzar el objetivo de reforestación.</p>
             <div className="saas-progress-bar">
               <div className="progress-fill" style={{ width: '85%' }}></div>
             </div>
@@ -702,6 +702,29 @@ const ResumenTab = ({
         .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; }
         .bg-success { background: var(--ui-success); }
         .bg-error { background: var(--ui-error); }
+
+        .meta-mensual-card {
+          background: linear-gradient(135deg, var(--ui-primary, #0A3323), #10b981) !important;
+          border: none !important;
+          color: #ffffff;
+        }
+
+        .meta-mensual-card:hover {
+          transform: none;
+        }
+
+        .meta-mensual-title,
+        .meta-mensual-text {
+          color: #ffffff;
+        }
+
+        .meta-mensual-text {
+          opacity: 0.92;
+        }
+
+        .meta-mensual-card svg {
+          color: #ffffff;
+        }
 
         .saas-progress-bar {
           width: 100%;

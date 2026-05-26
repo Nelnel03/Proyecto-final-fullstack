@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import emailjs from '@emailjs/browser';
 import { BASE_URL } from '../../services/config.jsx';
 import { DarkModeToggle } from '../common';
 import { LoadingButton, ErrorMessage } from '../ui';
@@ -28,42 +27,6 @@ import {
 
 import '../../styles/visitante/MainPagesInicoVisitante.css';
 import '../../styles/auth/Login.css';
-
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-if (PUBLIC_KEY && !PUBLIC_KEY.includes("tu_public_key_aqui")) {
-  emailjs.init(PUBLIC_KEY);
-}
-
-const enviarCorreo = async (nombre, correo, token) => {
-  try {
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY ||
-        SERVICE_ID.includes("tu_") || TEMPLATE_ID.includes("tu_") || PUBLIC_KEY.includes("tu_")) {
-      Swal.fire('Configuración Incompleta', 'Las llaves de EmailJS no están configuradas en el archivo .env.', 'warning');
-      return false;
-    }
-
-    const resetLink = `${window.location.origin}/reset-password?token=${token}`;
-
-    await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-      site_name: "BioMon ADI",
-      site_logo_url: "",
-      user_name: nombre,
-      user_email: correo,
-      to_email: correo,
-      email: correo,
-      reset_link: resetLink
-    }, PUBLIC_KEY);
-
-    return true;
-  } catch (error) { console.error(error);
-    const mensajeReal = error?.text || error?.message || String(error);
-    Swal.fire('Error de EmailJS', `Detalle técnico: ${mensajeReal}`, 'error');
-    return false;
-  }
-};
 
 function MainPagesLogin() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -283,29 +246,14 @@ function MainPagesLogin() {
 
       const data = await response.json();
 
-      if (data.token) {
-        const envioExitoso = await enviarCorreo(data.nombre || 'Usuario', trimmedEmail, data.token);
-
-        if (envioExitoso) {
-          Swal.fire({
-            title: '¡Correo enviado!',
-            text: 'Se han enviado las instrucciones de recuperación a tu correo.',
-            icon: 'success',
-            confirmButtonText: 'Entendido'
-          });
-          setIsRecovering(false);
-          setEmail('');
-        }
-      } else {
-        Swal.fire({
-          title: 'Solicitud Enviada',
-          text: 'Si existe una cuenta con ese correo, recibirás las instrucciones.',
-          icon: 'info',
-          confirmButtonText: 'Entendido'
-        });
-        setIsRecovering(false);
-        setEmail('');
-      }
+      Swal.fire({
+        title: 'Solicitud Enviada',
+        text: data.message || 'Si existe una cuenta con ese correo, recibirás las instrucciones.',
+        icon: 'info',
+        confirmButtonText: 'Entendido'
+      });
+      setIsRecovering(false);
+      setEmail('');
 
     } catch (error) { console.error(error);
       console.error("Error general:", error);

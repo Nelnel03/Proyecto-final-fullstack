@@ -115,7 +115,9 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
+
   const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
+
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda

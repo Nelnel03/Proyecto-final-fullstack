@@ -99,7 +99,7 @@ function MainPagesInicoAdmin() {
   const [isSubmitting, setIsSubmitting] = useState(false); 
   const navigate = useNavigate();
 
-  const [viewMode, setViewMode] = useState('Satellite'); // For the map toggle
+  const [_viewMode, _setViewMode] = useState('Satellite'); // For the map toggle
 
   const tiposDisponibles = Array.from(new Set([
     ...arboles.map(a => a.tipo).filter(Boolean).map(t => t.toLowerCase()),

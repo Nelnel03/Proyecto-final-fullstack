@@ -6,13 +6,13 @@ import {
 } from 'lucide-react';
 import '../../styles/visitante/History.css';
 
-const History = ({ user }) => {
+const History = () => {
 
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeNode, setActiveNode] = useState(1);
 
 
-    const [activeFilter, setActiveFilter] = useState('Todos');
+    const [_activeFilter, _setActiveFilter] = useState('Todos');
     const [selectedTopic, setSelectedTopic] = useState(null);
 
     // 1. Barra de progreso de navegación
@@ -44,7 +44,7 @@ const History = ({ user }) => {
         { id: 5, type: 'Video', title: 'Avistamiento de Aves (Tutorial)', icon: <Video size={20} />, color: '#1a73e8' },
     ];
 
-    const filteredResources = activeFilter === 'Todos' ? resources : resources.filter(r => r.type.includes(activeFilter));
+    const _filteredResources = _activeFilter === 'Todos' ? _resources : _resources.filter(r => r.type.includes(_activeFilter));
 
     // Datos para explorar (Hover Cards)
     const exploreTopics = [

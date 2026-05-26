@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import DarkModeToggle from '../common/DarkModeToggle';
 import '../../styles/layout/Nav.css';
 import logoImg from '../../assets/logo_no_bg.png';
@@ -10,11 +10,9 @@ function Nav() {
 
   // Sincronizar el estado de autenticación cuando cambie la ruta
   useEffect(() => {
-    const isAuth = sessionStorage.getItem('isAuthenticated') === 'true';
-    if (auth !== isAuth) {
-      setAuth(isAuth);
-    }
-  }, [location, auth]);
+    const syncAuth = () => setAuth(sessionStorage.getItem('isAuthenticated') === 'true');
+    syncAuth();
+  }, [location.pathname]);
 
    // No renderizar Nav en la landing page, ya que Landing.jsx tiene su propia cabecera
    if (location.pathname === '/') {

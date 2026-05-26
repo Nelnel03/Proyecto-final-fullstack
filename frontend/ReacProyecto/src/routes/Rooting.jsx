@@ -61,13 +61,15 @@ function MainLayout() {
           // Aunque no cambió el rol, mantener el objeto fresco (foto, nombre, etc.)
           sessionStorage.setItem('user', JSON.stringify({ ...stored, ...freshUser }));
         }
-      } catch (error) {
+      } catch {
         // Error de red — no interrumpir la navegación
       }
     };
 
     if (isAuth) syncRole();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [location.pathname, isAuth, navigate]);
 
   const isAdminRoute = location.pathname.startsWith('/admin');

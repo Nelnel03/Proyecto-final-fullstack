@@ -25,7 +25,7 @@ function SolicitudesTab({ onUpdate }) {
 
   const handleAprobar = async (solicitud) => {
     const nombreUsuario = solicitud.Usuario?.nombre || solicitud.userName || 'Usuario';
-    const userId = solicitud.usuario_id || solicitud.userId;
+    const _userId = solicitud.usuario_id || solicitud.userId;
 
     const confirm = await Swal.fire({
       title: 'Aprobar Solicitud',

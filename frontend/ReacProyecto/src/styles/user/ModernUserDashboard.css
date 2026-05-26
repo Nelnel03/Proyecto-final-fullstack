@@ -18,15 +18,15 @@
 }
 
 [data-theme='dark'] {
-  --bg-light: #0f172a;
-  --sidebar-bg: #1e293b;
-  --card-bg: #1e293b;
+  --bg-light: #05080a;
+  --sidebar-bg: #0a0f14;
+  --card-bg: #0a0f14;
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: #334155;
-  --search-bg: #334155;
-  --sidebar-active-bg: rgba(255, 255, 255, 0.1);
-  --glass-bg: rgba(15, 23, 42, 0.8);
+  --text-muted: #9ca3af;
+  --border-color: rgba(255, 255, 255, 0.05);
+  --search-bg: #121824;
+  --sidebar-active-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(10, 15, 20, 0.8);
   --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -205,10 +205,19 @@
 /* Main Content */
 .modern-main-content {
   flex-grow: 1;
-  padding: 2rem;
-  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
   margin-left: 260px; 
   width: calc(100% - 260px);
+  min-height: 100vh;
+}
+
+.modern-main-content-inner {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex-grow: 1;
 }
 
 .top-bar {
@@ -531,6 +540,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 .map-status-floating {

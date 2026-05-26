@@ -4,7 +4,7 @@
   --color-crema-organico: #0A3323;
   --color-ocre-silvestre: #042C8F;
 
-  background: var(--color-bosque-musgo);
+  background: linear-gradient(180deg, #ffffff 0%, #86D0FD 35%, #86D0FD 100%);
   color: var(--color-crema-organico);
   padding: 4rem 2rem;
   text-align: center;
@@ -131,6 +131,7 @@
   --color-bosque-musgo: #05080a;
   --color-crema-organico: #9ca3af;
   --color-ocre-silvestre: #00f0ff;
+  background: #05080a;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 

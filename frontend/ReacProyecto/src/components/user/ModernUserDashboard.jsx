@@ -248,10 +248,12 @@ function ModernUserDashboard() {
         }} 
         user={user} 
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
       />
 
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
+
+      {/* Floating ChatBot */}
+      <ChatBot user={user} />
 
       {/* Main Content */}
       <main className="modern-main-content">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../../services/config.jsx';
@@ -41,6 +41,11 @@ function MainPagesLogin() {
   const { errors, setFieldError, clearAllErrors, getInputProps } = useFormErrors();
 
   const navigate = useNavigate();
+
+  // Scroll al tope al entrar a la página de login
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const validateEmail = (emailValue) => {
     return String(emailValue).toLowerCase().match(

@@ -18,7 +18,7 @@ const AdminTopbar = ({ totalNotificaciones, setTab, isMobile, onOpenSidebar, han
       </div>
       
       <div className="admin-topbar-right">
-        <div className="admin-topbar-icons">
+        <div className="admin-topbar-actions">
            <DarkModeToggle />
            <div className="action-divider"></div>
            <button 

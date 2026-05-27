@@ -32,6 +32,7 @@ import { DarkModeToggle } from '../common';
 import { Pagination } from '../ui';
 import { Footer } from '../layout';
 
+
 function VolunteerDashboard() {
   const [user, setUser] = useState(null);
   const [currentTab, setCurrentTab] = useState('dashboard');
@@ -115,7 +116,9 @@ function VolunteerDashboard() {
   };
 
   const aprobados = logs.filter(l => l.estado === 'aprobado');
+
   const _rechazados = logs.filter(l => l.estado.startsWith('rechazado'));
+
   const pendientes = logs.filter(l => ['enviado', 'solicitado', 'asignado', 'en_curso'].includes(l.estado));
   const horasAprobadas = aprobados.reduce((acc, l) => acc + (Number(l.horas) || 0), 0);
   const logsFiltrados = busqueda
@@ -147,10 +150,10 @@ function VolunteerDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-background text-on-background font-['Manrope'] w-full transition-colors duration-300">
+    <div className="flex h-screen overflow-hidden bg-background text-on-background font-['Manrope'] w-full transition-colors duration-300">
       
       {/* ── SIDEBAR ── */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-[280px] lg:w-[260px] bg-surface-container text-on-surface flex flex-col transition-transform duration-300 z-[9999] border-r border-premium-border ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed lg:static top-0 left-0 h-screen w-[280px] lg:w-[260px] flex-shrink-0 bg-surface-container text-on-surface flex flex-col transition-transform duration-300 z-[9999] border-r border-premium-border ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         
         <div className="p-6 pb-5 border-b border-premium-border flex items-center justify-between">
           <div>
@@ -193,7 +196,7 @@ function VolunteerDashboard() {
       )}
 
       {/* ── MAIN CONTENT ── */}
-      <main className="flex-1 overflow-y-auto flex flex-col w-full h-screen">
+      <main className="flex-1 overflow-y-auto flex flex-col w-full h-screen relative">
         
         {/* HEADER */}
         <header className="flex items-center justify-between p-4 lg:py-5 lg:px-8 border-b border-premium-border bg-surface-container sticky top-0 z-10">
@@ -228,7 +231,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: DASHBOARD ── */}
         {currentTab === 'dashboard' && (
-          <div className="p-6 lg:p-10 flex-1 overflow-y-auto w-full animate-in fade-in duration-500">
+          <div className="p-6 lg:p-10 w-full animate-in fade-in duration-500 flex-1">
             <div className="mb-8">
                 <h1 className="text-3xl font-black mb-2 text-on-background font-['Montserrat']">Resumen de Actividades</h1>
                 <p className="text-on-background opacity-70 text-sm">Monitor de esfuerzo y rendimiento en el Eco-Corredor La Angostura.</p>
@@ -321,7 +324,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: LOGS ── */}
         {currentTab === 'logs' && (
-          <div className={`grid h-full overflow-hidden ${selectedLog && !isMobile ? 'grid-cols-[1fr_350px]' : 'grid-cols-1'} animate-in fade-in duration-500`}>
+          <div className={`grid min-h-[calc(100vh-80px)] ${selectedLog && !isMobile ? 'grid-cols-[1fr_350px]' : 'grid-cols-1'} animate-in fade-in duration-500`}>
             {/* Lista de Registros */}
             <div className="overflow-y-auto p-6 lg:p-10">
               <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
@@ -485,7 +488,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: NUEVA TAREA ── */}
         {currentTab === 'nueva_tarea' && (
-          <div className="p-6 lg:p-10 flex-1 overflow-y-auto animate-in fade-in duration-500">
+          <div className="p-6 lg:p-10 animate-in fade-in duration-500 flex-1">
             <h1 className="text-3xl font-black mb-2 text-on-background font-['Montserrat']">Registrar Labor</h1>
             <p className="text-on-background opacity-70 text-sm mb-8">Catálogo de necesidades operativas del ecosistema.</p>
             <div className="bg-surface-container rounded-2xl border border-premium-border p-6 shadow-sm">
@@ -503,7 +506,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: AYUDA ── */}
         {currentTab === 'ayuda' && (
-          <div className="p-6 lg:p-10 flex-1 overflow-y-auto animate-in fade-in duration-500">
+          <div className="p-6 lg:p-10 animate-in fade-in duration-500 flex-1">
             <h1 className="text-3xl font-black mb-2 text-on-background font-['Montserrat']">Centro de Soporte Operativo</h1>
             <p className="text-on-background opacity-70 text-sm mb-8">Documentación y asistencia para voluntarios de campo.</p>
             
@@ -567,7 +570,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: SUBIR EVIDENCIA ── */}
         {currentTab === 'subir_evidencia' && selectedLog && (
-          <div className="p-6 lg:p-10 flex-1 overflow-y-auto animate-in fade-in duration-500">
+          <div className="p-6 lg:p-10 animate-in fade-in duration-500 flex-1">
             <h1 className="text-3xl font-black mb-2 text-on-background font-['Montserrat']">Auditoría de Tarea</h1>
             <p className="text-on-background opacity-70 text-sm mb-8">Anexe el comprobante visual del esfuerzo realizado.</p>
             <div className="bg-surface-container rounded-2xl border border-premium-border p-6 shadow-sm">
@@ -587,7 +590,7 @@ function VolunteerDashboard() {
 
         {/* ── TAB: PERFIL ── */}
         {currentTab === 'perfil' && (
-          <div className="p-6 lg:p-10 flex-1 overflow-y-auto animate-in fade-in duration-500">
+          <div className="p-6 lg:p-10 animate-in fade-in duration-500 flex-1">
             <h1 className="text-3xl font-black mb-2 text-on-background font-['Montserrat']">Credenciales de Acceso</h1>
             <p className="text-on-background opacity-70 text-sm mb-8">Gestión de identidad operativa.</p>
             <div className="bg-surface-container rounded-2xl border border-premium-border p-6 shadow-sm">
@@ -595,7 +598,9 @@ function VolunteerDashboard() {
             </div>
           </div>
         )}
-        <Footer />
+        <div className="flex-shrink-0">
+          <Footer />
+        </div>
       </main>
 
     </div>

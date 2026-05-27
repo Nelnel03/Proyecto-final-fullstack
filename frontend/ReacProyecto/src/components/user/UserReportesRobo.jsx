@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import services from '../../services/services.jsx';
 import '../../styles/user/UserReports.css';
 
@@ -34,6 +34,8 @@ function UserReportesRobo({ user, onDone }) {
 
   const [estadoEnvio, setEstadoEnvio] = useState({ tipo: "", texto: "" });
   const [loading, setLoading] = useState(false);
+
+
 
   const handleChange = (e) => {
     const updated = { ...reporte, [e.target.name]: e.target.value };

@@ -13,7 +13,7 @@ import ListaTab from './ListaTab';
 import BajasTab from './BajasTab';
 import UsuariosTab from './UsuariosTab';
 import VoluntariadosTab from './VoluntariadosTab';
-import { AdminSidebar, AdminTopbar, Footer } from '../layout';
+import { AdminSidebar, AdminTopbar } from '../layout';
 import { DarkModeToggle } from '../common';
 import ArbolFormTab from './ArbolFormTab';
 import BuzonTab from './BuzonTab';
@@ -99,7 +99,7 @@ function MainPagesInicoAdmin() {
   const [isSubmitting, setIsSubmitting] = useState(false); 
   const navigate = useNavigate();
 
-  const [viewMode, setViewMode] = useState('Satellite'); // For the map toggle
+  const [_viewMode, _setViewMode] = useState('Satellite'); // For the map toggle
 
   const tiposDisponibles = Array.from(new Set([
     ...arboles.map(a => a.tipo).filter(Boolean).map(t => t.toLowerCase()),
@@ -750,7 +750,6 @@ function MainPagesInicoAdmin() {
           </div>
         </section>
 
-        <Footer />
       </div>
     </div>
   );

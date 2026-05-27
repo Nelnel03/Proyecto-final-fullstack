@@ -155,3 +155,236 @@
 .btn-delete-inline:hover {
   background-color: #fecaca;
 }
+
+/* ==========================================
+   NUEVO DISEÑO PREMIUM PARA REPORTES DE ROBO
+   ========================================== */
+
+.robo-report-card {
+  background: #ffffff;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease !important;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(228, 231, 235, 0.7) !important;
+}
+
+.robo-report-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 2px 8px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+.robo-alert-icon-container {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  box-shadow: inset 0 2px 4px rgba(239, 68, 68, 0.05);
+}
+
+.robo-label-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ef4444;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.robo-report-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1f2937;
+  letter-spacing: -0.02em;
+}
+
+.robo-status-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.status-pill-badge {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.robo-sections-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .robo-sections-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .description-card {
+    grid-column: span 2;
+  }
+  .additional-card {
+    grid-column: span 2;
+  }
+}
+
+.robo-section-card {
+  background: #fdfdfd;
+  border: 1px solid rgba(243, 244, 246, 0.9);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.location-card {
+  background: #fffcf6;
+  border-left: 4px solid #f59e0b;
+}
+
+.description-card {
+  background: #fbfbfb;
+  border-left: 4px solid #9ca3af;
+}
+
+.date-card {
+  background: #f6fafd;
+  border-left: 4px solid #3b82f6;
+}
+
+.additional-card {
+  background: #f6fcf8;
+  border-left: 4px solid #10b981;
+}
+
+.robo-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.robo-section-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4b5563;
+}
+
+.robo-section-content {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+.description-text {
+  font-style: italic;
+  color: #374151;
+  font-weight: 500;
+  font-size: 1.05rem;
+  padding: 0.25rem 0;
+}
+
+.robo-icon-orange {
+  color: #d97706;
+}
+
+.robo-icon-blue {
+  color: #2563eb;
+}
+
+.robo-icon-green {
+  color: #059669;
+}
+
+.robo-additional-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .robo-additional-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.additional-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.additional-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.additional-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.robo-footer-actions {
+  border-top: 1px solid rgba(243, 244, 246, 0.9);
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.change-status-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.select-status-custom {
+  background-color: #f9fafb !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+  font-weight: 600 !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer;
+}
+
+.select-status-custom:focus {
+  border-color: var(--ui-primary) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+}
+
+.btn-resolve-custom, .btn-archive-custom {
+  font-weight: 800 !important;
+  font-size: 0.85rem !important;
+  padding: 8px 16px !important;
+  border-radius: 12px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-resolve-custom:hover {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  transform: scale(1.02);
+}
+
+.btn-archive-custom:hover {
+  background-color: rgba(239, 68, 68, 0.08) !important;
+  transform: scale(1.02);
+}
+

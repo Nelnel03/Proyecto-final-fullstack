@@ -62,6 +62,7 @@ const ABONO_FORM_INICIAL = {
 
 function MainPagesInicoAdmin() {
   const [arboles, setArboles] = useState([]);
+  const [reportesRobos, setReportesRobos] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [idEditando, setIdEditando] = useState(null);
@@ -151,6 +152,7 @@ function MainPagesInicoAdmin() {
       setUsuarios(datosUsuarios || []);
       setVoluntariados(datosVol || []);
       setAbonos(datosAbonos || []);
+      setReportesRobos(datosRobos || []);
       
       const unreadSoporte = (datosSoporte || []).filter(r => !r.visto).length;
       const unreadRobos = (datosRobos || []).filter(r => !r.visto).length;
@@ -734,6 +736,7 @@ function MainPagesInicoAdmin() {
               <ResumenTab 
                 usuarios={usuarios} 
                 arboles={arboles} 
+                reportesRobos={reportesRobos}
                 setTab={setTab} 
                 setUserSubTab={setUserSubTab} 
                 cargando={cargando}

@@ -11,6 +11,7 @@ import {
   Settings, 
   HelpCircle
 } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 
 const UserSidebar = ({ currentTab, setCurrentTab, user, isOpen }) => {
   return (
@@ -18,10 +19,10 @@ const UserSidebar = ({ currentTab, setCurrentTab, user, isOpen }) => {
       <div className="sidebar-logo">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div className="sidebar-logo-icon">
-            <img src="/src/assets/logo.png" alt="Logo de BioMon" className="sidebar-logo-img" />
+            <img src={logoImg} alt="Logo BioMon ADI" className="sidebar-logo-img" />
           </div>
           <div className="logo-text">
-            <h2>Biomon ADI</h2>
+            <h2>BioMon ADI</h2>
             <span>Portal de Conservación</span>
           </div>
         </div>

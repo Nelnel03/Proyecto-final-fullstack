@@ -79,20 +79,16 @@
 }
 
 .sidebar-logo-icon {
-  width: 45px; 
-  height: 45px; 
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background-color: transparent;
+  background: radial-gradient(circle at 28% 28%, rgba(224, 255, 233, 0.95), rgba(172, 242, 191, 0.55) 40%, rgba(40, 94, 71, 0.14) 68%, rgba(0, 0, 0, 0.03) 100%);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-logo-img {
+  box-shadow: 0 0 0 1px rgba(117, 184, 143, 0.14), 0 16px 40px rgba(29, 79, 57, 0.28);
   width: 100%;
   height: 100%;
   object-fit: contain;

@@ -177,3 +177,105 @@
   border-color: #4bfc5a;
   box-shadow: 0 0 0 2px rgba(75, 252, 90, 0.2);
 }
+
+/* ==========================================
+   ESTILOS PREMIUM PARA EL FORMULARIO DE ROBO
+   ========================================== */
+
+.user-reports-container {
+  max-width: 680px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(228, 231, 235, 0.7) !important;
+}
+
+[data-theme='dark'] .user-reports-container {
+  border-color: #30363d !important;
+}
+
+.form-card-section {
+  background: #fdfdfd;
+  border: 1px solid rgba(243, 244, 246, 0.9);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.25s ease;
+}
+
+.form-species-card {
+  background: #f6fcf8;
+  border-left: 4px solid #10b981;
+}
+
+.form-location-card {
+  background: #fffcf6;
+  border-left: 4px solid #f59e0b;
+}
+
+.form-description-card {
+  background: #fbfbfb;
+  border-left: 4px solid #9ca3af;
+}
+
+[data-theme='dark'] .form-species-card {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+[data-theme='dark'] .form-location-card {
+  background: rgba(245, 158, 11, 0.03);
+}
+
+[data-theme='dark'] .form-description-card {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.form-section-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4b5563;
+}
+
+[data-theme='dark'] .form-section-title {
+  color: #c9d1d9;
+}
+
+.form-species-card .form-section-title {
+  color: #059669;
+}
+
+.form-location-card .form-section-title {
+  color: #d97706;
+}
+
+.form-description-card .form-section-title {
+  color: #6b7280;
+}
+
+.btn-danger-report {
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  padding: 0.85rem 1.5rem !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.btn-danger-report:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3) !important;
+  background-color: #dc2626 !important;
+}
+
+.btn-danger-report:active:not(:disabled) {
+  transform: translateY(0);
+}
+

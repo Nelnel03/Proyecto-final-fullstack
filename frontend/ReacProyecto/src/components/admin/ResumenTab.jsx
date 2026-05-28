@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   Users, 
   Trees, 
@@ -31,10 +31,12 @@ import {
 const ResumenTab = ({ 
   usuarios, 
   arboles, 
+  reportesRobos = [],
   setTab, 
   setUserSubTab,
   cargando = false
 }) => {
+  const [filtroIncidentes, setFiltroIncidentes] = useState('mes');
   // --- DATA PROCESSING FOR CHARTS ---
   
   // 1. Growth Data: Dynamic month calculation based on real tree/user registration records
@@ -120,6 +122,83 @@ const ResumenTab = ({
       },
     ].filter(d => d.value > 0);
   }, [arboles]);
+
+  // 3. Incidentes Data (Robos y Daños): Last 6 months, 4 weeks, or 7 days
+  const incidentesData = useMemo(() => {
+    const dataPoints = [];
+    const today = new Date();
+
+    const normalizeDate = (d) => {
+      if (!d) return null;
+      let dateObj = new Date(d);
+      if (isNaN(dateObj.getTime())) return null;
+      return dateObj;
+    };
+
+    if (filtroIncidentes === 'mes') {
+      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        dataPoints.push({
+          year: d.getFullYear(),
+          month: d.getMonth(),
+          name: `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
+          Reportes: 0
+        });
+      }
+      reportesRobos.forEach(reporte => {
+        const d = normalizeDate(reporte.fecha || reporte.created_at || reporte.createdAt);
+        if (d) {
+          const match = dataPoints.find(m => m.year === d.getFullYear() && m.month === d.getMonth());
+          if (match) match.Reportes += 1;
+        }
+      });
+    } else if (filtroIncidentes === 'semana') {
+      for (let i = 3; i >= 0; i--) {
+        const start = new Date(today);
+        start.setDate(today.getDate() - (i * 7 + today.getDay()));
+        start.setHours(0,0,0,0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        end.setHours(23,59,59,999);
+        dataPoints.push({
+          start,
+          end,
+          name: `Sem. ${4 - i}`,
+          Reportes: 0
+        });
+      }
+      reportesRobos.forEach(reporte => {
+        const d = normalizeDate(reporte.fecha || reporte.created_at || reporte.createdAt);
+        if (d) {
+          const match = dataPoints.find(w => d >= w.start && d <= w.end);
+          if (match) match.Reportes += 1;
+        }
+      });
+    } else if (filtroIncidentes === 'dia') {
+      const daysNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        d.setHours(0,0,0,0);
+        dataPoints.push({
+          date: d.toDateString(),
+          name: `${daysNames[d.getDay()]} ${d.getDate()}`,
+          Reportes: 0
+        });
+      }
+      reportesRobos.forEach(reporte => {
+        const d = normalizeDate(reporte.fecha || reporte.created_at || reporte.createdAt);
+        if (d) {
+          d.setHours(0,0,0,0);
+          const match = dataPoints.find(day => day.date === d.toDateString());
+          if (match) match.Reportes += 1;
+        }
+      });
+    }
+
+    return dataPoints;
+  }, [reportesRobos, filtroIncidentes]);
 
   // --- PREMIUM SKELETON LOADING STATE ---
   const getGrowth = (dataArray, dateFields) => {
@@ -452,6 +531,49 @@ const ResumenTab = ({
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Incidentes Chart (Robos / Daños) */}
+      <div className="premium-card chart-container p-6 mb-8">
+        <div className="flex-between mb-6">
+          <div>
+             <h3 className="card-title-saas" style={{ color: 'var(--ui-error)' }}>Árboles Reportados (Dañados / Robados)</h3>
+             <p className="text-muted text-sm mt-1">Histórico de incidentes ({filtroIncidentes === 'mes' ? 'últimos 6 meses' : filtroIncidentes === 'semana' ? 'últimas 4 semanas' : 'últimos 7 días'})</p>
+          </div>
+          <select 
+             value={filtroIncidentes} 
+             onChange={(e) => setFiltroIncidentes(e.target.value)}
+             style={{
+               padding: '6px 12px',
+               borderRadius: '8px',
+               border: '1px solid var(--glass-border)',
+               background: 'transparent',
+               color: 'var(--color-texto)',
+               fontSize: '0.85rem',
+               outline: 'none',
+               cursor: 'pointer',
+               fontWeight: '600'
+             }}
+          >
+             <option value="mes">Por Meses</option>
+             <option value="semana">Por Semanas</option>
+             <option value="dia">Por Días</option>
+          </select>
+        </div>
+        <div style={{ width: '100%', height: 250 }}>
+          <ResponsiveContainer>
+             <BarChart data={incidentesData}>
+                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, opacity: 0.5}} />
+                 <YAxis hide />
+                 <Tooltip 
+                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--sombra-profunda)' }} 
+                   cursor={{ fill: 'rgba(239,68,68,0.05)' }} 
+                 />
+                 <Bar dataKey="Reportes" fill="var(--ui-error)" radius={[4,4,0,0]} barSize={40} />
+             </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

@@ -50,6 +50,13 @@ async function startServer() {
 
         await runMigrations();
 
+        // Verificar que la API key de Groq está cargada
+        if (!process.env.GROQ_API_KEY) {
+            console.warn('⚠️  GROQ_API_KEY no definida en .env — el chatbot no funcionará.');
+        } else {
+            console.log('✅ GROQ_API_KEY cargada correctamente.');
+        }
+
         app.listen(PORT, () => {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
         });

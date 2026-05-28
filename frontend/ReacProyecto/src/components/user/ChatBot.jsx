@@ -1,22 +1,34 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, X, Send, Leaf, Trash2, Bot } from 'lucide-react';
 import { sendMessageToGroq } from '../../services/groq.service';
 import '../../styles/user/ChatBot.css';
 
-const WELCOME_MSG = {
-  role: 'assistant',
-  content: '¡Hola! 🌿 Soy **BioBot**, tu asistente del Corredor Biológico La Angostura.\n\nPuedo ayudarte con:\n• **Biología y ecología** — flora, fauna, ecosistemas\n• **Corredores biológicos** de Costa Rica\n• **Navegar la plataforma** — dónde está cada sección\n\n¿En qué te ayudo hoy?',
-};
+function getStoredUser() {
+  try {
+    return JSON.parse(sessionStorage.getItem('user') || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function buildWelcome() {
+  const user = getStoredUser();
+  const name = user?.nombre ? `, ${user.nombre.split(' ')[0]}` : '';
+  return {
+    role: 'assistant',
+    content: `¡Hola${name}! 🌿 Soy **BioBot**, tu asistente del Corredor Biológico La Angostura.\n\nPuedo ayudarte con:\n• **Datos reales del corredor** — árboles recientes, estadísticas\n• **Tu perfil y reportes** — consulta tu historial\n• **Enviar alertas** — soporte o reportes de robo al admin\n• **Navegar la plataforma** — te llevo a donde necesites\n• **Biología y ecología** — flora, fauna, ecosistemas\n\n¿En qué te ayudo hoy?`,
+  };
+}
 
 const SUGGESTIONS = [
-  '¿Dónde veo los árboles del corredor?',
-  '¿Cómo me hago voluntario?',
-  '¿Qué son los corredores biológicos?',
-  '¿Cómo reporto una tala ilegal?',
+  '¿Cuáles son los árboles más recientes?',
+  'Muéstrame las estadísticas del corredor',
+  'Quiero contactar al administrador',
+  'Llévame a la sección de árboles',
 ];
 
 function renderBubbleText(text) {
-  // Bold **text** → <strong>
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
@@ -26,15 +38,31 @@ function renderBubbleText(text) {
   });
 }
 
+const STORAGE_KEY = 'biobotMessages';
+
 const ChatBot = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([WELCOME_MSG]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return [buildWelcome()];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasNew, setHasNew] = useState(true);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+
+  // Persiste el historial en sessionStorage ante cualquier cambio
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch (_) {}
+  }, [messages]);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -60,21 +88,27 @@ const ChatBot = () => {
     setInput('');
     setLoading(true);
 
-    // Build only the last N turns to avoid token bloat
     const contextWindow = history.slice(-12).map(({ role, content }) => ({
       role: role === 'assistant' ? 'assistant' : 'user',
       content,
     }));
 
     try {
-      const reply = await sendMessageToGroq(contextWindow);
+      const { reply, action } = await sendMessageToGroq(contextWindow);
+
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
+
+      if (action?.type === 'navigate' && action.path) {
+        // Navega sin cerrar el chat para que el historial quede visible
+        setTimeout(() => navigate(action.path), 1200);
+      }
     } catch (err) {
-      setError(err.message || 'No se pudo conectar con el asistente.');
+      const msg = err?.customMessage || err?.message || 'No se pudo conectar con el asistente.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  }, [messages, loading]);
+  }, [messages, loading, navigate]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -84,12 +118,9 @@ const ChatBot = () => {
   };
 
   const handleClear = () => {
-    setMessages([WELCOME_MSG]);
+    sessionStorage.removeItem(STORAGE_KEY);
+    setMessages([buildWelcome()]);
     setError(null);
-  };
-
-  const handleSuggestion = (text) => {
-    sendMessage(text);
   };
 
   const showSuggestions = messages.length <= 1 && !loading;
@@ -181,7 +212,7 @@ const ChatBot = () => {
                 <button
                   key={i}
                   className="chatbot-suggestion-chip"
-                  onClick={() => handleSuggestion(s)}
+                  onClick={() => sendMessage(s)}
                 >
                   {s}
                 </button>

@@ -57,6 +57,7 @@ app.use('/api/solicitudes', require('./routes/solicitudRoutes'));
 app.use('/api/roles', require('./routes/rolRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
 
 // --- Swagger Docs ---
 const swaggerDocs = require('./utils/swagger');

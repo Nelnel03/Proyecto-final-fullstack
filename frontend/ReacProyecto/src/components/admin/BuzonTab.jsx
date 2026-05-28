@@ -329,7 +329,7 @@ function BuzonTab({ refrescarNotificaciones }) {
           <div style={{ display: 'flex', gap: '12px' }}>
             <button 
               className="ui-btn ui-btn--ghost" 
-              onClick={cargarDatos}
+              onClick={() => cargarDatos(false)}
               disabled={cargando}
             >
               <RefreshCw size={18} className={cargando ? 'animate-spin' : ''} style={{ marginRight: '8px' }} />

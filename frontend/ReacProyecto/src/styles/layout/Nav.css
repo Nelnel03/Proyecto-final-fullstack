@@ -131,38 +131,45 @@ body {
     font-size: 1.1rem;
     gap: 6px;
   }
-.visitor-logo-icon {
+  .visitor-logo-icon {
      width: 40px;
      height: 40px;
-     border-radius: 10px;
-     background-color: transparent;
+     border-radius: 50%;
+     background: radial-gradient(circle at 28% 28%, rgba(230, 255, 238, 0.95), rgba(186, 247, 204, 0.5) 40%, rgba(35, 90, 68, 0.14) 68%, rgba(0, 0, 0, 0.04) 100%);
      padding: 0;
      display: flex;
      align-items: center;
      justify-content: center;
      overflow: hidden;
      border: none;
+     box-shadow: 0 0 0 1px rgba(115, 176, 140, 0.14), 0 14px 28px rgba(26, 72, 52, 0.24);
+     transition: background 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+   }
+
+.visitor-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.05) saturate(1.05);
+  transition: filter 0.25s ease;
+}
+
+[data-theme='dark'] .visitor-logo-icon {
+     background-color: rgba(255, 255, 255, 0.08);
+     border: none;
      box-shadow: none;
    }
+
+[data-theme='dark'] .visitor-logo-img {
+  filter: brightness(0.9) saturate(0.95) contrast(1.1);
+}
+
   .visitor-auth-actions {
     gap: 0.3rem;
   }
 }
 
 /* --- ESTILOS EXTRAIDOS DE COMPONENTES ONLINE --- */
-.visitor-logo-icon {
-   width: 40px;
-   height: 40px;
-   border-radius: 10px;
-   background-color: transparent;
-   padding: 0;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   overflow: hidden;
-   border: none;
-   box-shadow: none;
- }
 
 .visitor-logo-img {
   width: 100%;

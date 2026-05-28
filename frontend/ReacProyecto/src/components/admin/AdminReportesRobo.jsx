@@ -17,6 +17,95 @@ import {
 } from 'lucide-react';
 import '../../styles/admin/AdminReports.css';
 
+// Utility to parse content that might serialize Location and Description together
+const parseContenido = (contenido) => {
+  if (!contenido) {
+    return { ubicacion: 'No especificada', descripcion: 'No especificada' };
+  }
+  
+  // Standard format with double newlines: Ubicación: [ubi]\n\n[desc]
+  const matchDouble = contenido.match(/^Ubicación:\s*([\s\S]*?)(?:\n\n|\r\n\r\n)([\s\S]*)$/i);
+  if (matchDouble) {
+    return {
+      ubicacion: matchDouble[1].trim(),
+      descripcion: matchDouble[2].trim()
+    };
+  }
+
+  // Single newline: Ubicación: [ubi]\n[desc]
+  const matchSingle = contenido.match(/^Ubicación:\s*([^\n]+)\n+([\s\S]*)$/i);
+  if (matchSingle) {
+    return {
+      ubicacion: matchSingle[1].trim(),
+      descripcion: matchSingle[2].trim()
+    };
+  }
+
+  // Starts with Ubicación: but has no newlines
+  if (contenido.toLowerCase().startsWith('ubicación:')) {
+    const ubi = contenido.substring(10).trim();
+    return {
+      ubicacion: ubi || 'No especificada',
+      descripcion: 'No especificada'
+    };
+  }
+
+  // Default fallback
+  return {
+    ubicacion: 'No especificada',
+    descripcion: contenido.trim()
+  };
+};
+
+// Format date as DD/MM/YYYY
+const formatReportDate = (dateStr) => {
+  if (!dateStr) return 'No especificada';
+  try {
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return dateStr;
+  }
+};
+
+// Dynamic style based on status
+const getStatusBadgeStyle = (estado) => {
+  const est = (estado || 'Pendiente').toLowerCase();
+  if (est === 'pendiente') {
+    return {
+      background: 'rgba(245, 158, 11, 0.1)',
+      color: '#d97706',
+      border: '1px solid rgba(245, 158, 11, 0.25)',
+      borderLeft: '5px solid #f59e0b'
+    };
+  }
+  if (est === 'en proceso' || est === 'en investigación' || est === 'en revision' || est === 'en revisión') {
+    return {
+      background: 'rgba(59, 130, 246, 0.1)',
+      color: '#2563eb',
+      border: '1px solid rgba(59, 130, 246, 0.25)',
+      borderLeft: '5px solid #3b82f6'
+    };
+  }
+  if (est === 'resuelto' || est === 'solucionado' || est === 'verificado' || est === 'atendido') {
+    return {
+      background: 'rgba(16, 185, 129, 0.1)',
+      color: '#059669',
+      border: '1px solid rgba(16, 185, 129, 0.25)',
+      borderLeft: '5px solid #10b981'
+    };
+  }
+  return {
+    background: 'rgba(107, 114, 128, 0.1)',
+    color: '#4b5563',
+    border: '1px solid rgba(107, 114, 128, 0.25)',
+    borderLeft: '5px solid var(--ui-error)'
+  };
+};
+
 function AdminReportesRobo() {
   const [reportes, setReportes] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -122,86 +211,158 @@ function AdminReportesRobo() {
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {reportes.slice().reverse().map((reporte, idx) => (
-            <div key={reporte.id} className="premium-card fade-in" style={{ animationDelay: `${idx * 0.05}s`, padding: '0', border: '1px solid rgba(220, 38, 38, 0.1)' }}>
-              <div style={{ padding: '2rem' }}>
-                <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div className="flex-center" style={{ 
-                      width: '48px', 
-                      height: '48px', 
-                      borderRadius: '12px', 
-                      background: 'rgba(220, 38, 38, 0.1)', 
-                      color: 'var(--ui-error)' 
-                    }}>
-                      <AlertTriangle size={24} />
-                    </div>
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>{reporte.asunto || reporte.tipo_arbol}</h3>
-                      <div className="text-muted" style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Clock size={12} /> {new Date(reporte.fecha).toLocaleString()}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {reportes.slice().reverse().map((reporte, idx) => {
+            const parsed = parseContenido(reporte.contenido || reporte.descripcion);
+            const ubicacionVal = reporte.ubicacion || parsed.ubicacion;
+            const descripcionVal = reporte.descripcion || parsed.descripcion;
+            const fechaVal = formatReportDate(reporte.fecha);
+            const statusColor = getStatusBadgeStyle(reporte.estado);
+
+            return (
+              <div 
+                key={reporte.id} 
+                className="premium-card fade-in robo-report-card" 
+                style={{ 
+                  animationDelay: `${idx * 0.05}s`, 
+                  padding: '0', 
+                  borderLeft: statusColor.borderLeft 
+                }}
+              >
+                <div style={{ padding: '2rem' }}>
+                  {/* HEADER SECTION */}
+                  <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                      <div className="flex-center robo-alert-icon-container">
+                        <AlertTriangle size={24} />
+                      </div>
+                      <div>
+                        <span className="robo-label-tag">Reporte de Sustracción</span>
+                        <h3 className="robo-report-title">
+                          Reporte: {reporte.asunto || reporte.tipo_arbol || 'Alerta de Robo'}
+                        </h3>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                     <span style={{ 
-                       padding: '6px 14px', 
-                       borderRadius: '30px', 
-                       fontSize: '0.75rem', 
-                       fontWeight: 900,
-                       background: 'var(--ui-error)',
-                       color: '#fff'
-                     }}>
-                       ALERTA CRÍTICA
-                     </span>
-                  </div>
-                </div>
-
-                <div style={{ 
-                  background: 'rgba(0,0,0,0.02)', 
-                  padding: '1.5rem', 
-                  borderRadius: '16px',
-                  marginBottom: '1.5rem',
-                  borderLeft: '4px solid var(--ui-error)'
-                }}>
-                  <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.7 }}>
-                    {reporte.contenido || reporte.descripcion}
-                  </p>
-                </div>
-
-                <div className="flex-between" style={{ paddingTop: '1.5rem', borderTop: '1px solid rgba(0,0,0,0.03)' }}>
-                  <div style={{ display: 'flex', gap: '2rem' }}>
+                    
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                       <User size={16} className="text-muted" />
-                       <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{reporte.Usuario?.nombre || reporte.userName}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                       <Mail size={16} className="text-muted" />
-                       <span className="text-muted" style={{ fontSize: '0.9rem' }}>{reporte.Usuario?.email || reporte.userEmail}</span>
+                      <span className="robo-status-label">Estado:</span>
+                      <span 
+                        className="status-pill-badge" 
+                        style={{ 
+                          background: statusColor.background,
+                          color: statusColor.color,
+                          border: statusColor.border,
+                        }}
+                      >
+                        {reporte.estado || 'Pendiente'}
+                      </span>
                     </div>
                   </div>
-                  
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                     <button 
-                       className="ui-btn ui-btn--ghost" 
-                       style={{ color: 'var(--ui-success)', gap: '6px' }}
-                       onClick={() => handleCambiarEstado(reporte, 'Verificado')}
-                     >
-                       <CheckCircle2 size={16} /> Marcar como Atendido
-                     </button>
-                     <button 
-                       className="ui-btn ui-btn--ghost" 
-                       style={{ color: 'var(--ui-error)', gap: '6px' }}
-                       onClick={() => handleEliminar(reporte.id)}
-                     >
-                       <Trash2 size={16} /> Archivar
-                     </button>
+
+                  {/* SECTIONS GRID */}
+                  <div className="robo-sections-grid">
+                    {/* UBICACION */}
+                    <div className="robo-section-card location-card">
+                      <div className="robo-section-header">
+                        <MapPin size={18} className="robo-icon-orange" />
+                        <span className="robo-section-title">📍 Ubicación</span>
+                      </div>
+                      <div className="robo-section-content">
+                        {ubicacionVal}
+                      </div>
+                    </div>
+
+                    {/* DESCRIPCION */}
+                    <div className="robo-section-card description-card">
+                      <div className="robo-section-header">
+                        <span className="robo-section-title">📝 Descripción</span>
+                      </div>
+                      <div className="robo-section-content description-text">
+                        “{descripcionVal}”
+                      </div>
+                    </div>
+
+                    {/* FECHA DE ENVIO */}
+                    <div className="robo-section-card date-card">
+                      <div className="robo-section-header">
+                        <Calendar size={18} className="robo-icon-blue" />
+                        <span className="robo-section-title">📅 Fecha de envío</span>
+                      </div>
+                      <div className="robo-section-content">
+                        {fechaVal}
+                      </div>
+                    </div>
+
+                    {/* DATOS ADICIONALES (SI EXISTEN) */}
+                    {(reporte.Usuario?.nombre || reporte.userName || reporte.Usuario?.email || reporte.userEmail || reporte.tipo_arbol) && (
+                      <div className="robo-section-card additional-card">
+                        <div className="robo-section-header">
+                          <User size={18} className="robo-icon-green" />
+                          <span className="robo-section-title">👤 Datos Adicionales</span>
+                        </div>
+                        <div className="robo-additional-grid">
+                          {(reporte.Usuario?.nombre || reporte.userName) && (
+                            <div className="additional-field">
+                              <span className="additional-label">Reportado por</span>
+                              <span className="additional-value">{reporte.Usuario?.nombre || reporte.userName}</span>
+                            </div>
+                          )}
+                          {(reporte.Usuario?.email || reporte.userEmail) && (
+                            <div className="additional-field">
+                              <span className="additional-label">Email</span>
+                              <span className="additional-value">{reporte.Usuario?.email || reporte.userEmail}</span>
+                            </div>
+                          )}
+                          {reporte.tipo_arbol && (
+                            <div className="additional-field">
+                              <span className="additional-label">Especie</span>
+                              <span className="additional-value">{reporte.tipo_arbol}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* FOOTER ACTIONS */}
+                  <div className="flex-between robo-footer-actions">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span className="change-status-text">Cambiar estado:</span>
+                      <select 
+                        className="ui-input select-status-custom"
+                        style={{ padding: '6px 12px', fontSize: '0.85rem', height: '36px', width: '170px', borderRadius: '10px' }}
+                        value={reporte.estado || 'Pendiente'}
+                        onChange={(e) => handleCambiarEstado(reporte, e.target.value)}
+                      >
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Proceso">En Investigación</option>
+                        <option value="Resuelto">Resuelto</option>
+                      </select>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      {reporte.estado !== 'Resuelto' && (
+                        <button 
+                          className="ui-btn ui-btn--ghost btn-resolve-custom" 
+                          style={{ color: 'var(--ui-success)', gap: '8px' }}
+                          onClick={() => handleCambiarEstado(reporte, 'Resuelto')}
+                        >
+                          <CheckCircle2 size={16} /> Marcar como Atendido
+                        </button>
+                      )}
+                      <button 
+                        className="ui-btn ui-btn--ghost btn-archive-custom" 
+                        style={{ color: 'var(--ui-error)', gap: '8px' }}
+                        onClick={() => handleEliminar(reporte.id)}
+                      >
+                        <Trash2 size={16} /> Archivar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

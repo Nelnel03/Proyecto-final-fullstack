@@ -4,6 +4,7 @@ import ArbolFormTab from './ArbolFormTab';
 import { SkeletonCardGrid, Pagination } from '../ui';
 import { usePagination } from '../../hooks/usePagination';
 import { Search, Plus, Filter, Edit3, Droplets, Trash2, XCircle, Skull } from 'lucide-react';
+import { PAGINATION_ITEMS_PER_PAGE } from '../../config/appConstants';
 
 function ListaTab({
   busqueda,
@@ -63,7 +64,7 @@ function ListaTab({
     totalItems,
     itemsPerPage,
     changeItemsPerPage
-  } = usePagination(arbolesFiltrados, 6);
+  } = usePagination(arbolesFiltrados, PAGINATION_ITEMS_PER_PAGE);
 
   return (
     <div className="admin-tab-content-wrapper fade-in">

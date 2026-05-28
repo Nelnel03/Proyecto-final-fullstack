@@ -26,6 +26,7 @@ import { ImageUploadField } from '../common';
 import '../../styles/admin/MainPagesInicoAdmin.css';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui';
+import { PAGINATION_ITEMS_PER_PAGE } from '../../config/appConstants';
 
 function VoluntariadosTab({
   refrescarNotificaciones,
@@ -262,7 +263,7 @@ function VoluntariadosTab({
     paginate: paginateVol,
     totalItems: totalVol,
     itemsPerPage: itemsPerPageVol
-  } = usePagination(voluntariadosFiltrados, 6);
+  } = usePagination(voluntariadosFiltrados, PAGINATION_ITEMS_PER_PAGE);
 
   return (
     <div className="admin-tab-content-wrapper fade-in">

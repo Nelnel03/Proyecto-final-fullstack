@@ -5,6 +5,7 @@ import services, { uploadImage } from '../../services/services';
 import Swal from 'sweetalert2';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui';
+import { PAGINATION_ITEMS_PER_PAGE } from '../../config/appConstants';
 import '../../styles/admin/MainPagesInicoAdmin.css';
 
 function UsuariosTab({
@@ -88,7 +89,7 @@ function UsuariosTab({
              email.toLowerCase().includes(busqueda.toLowerCase());
     });
 
-  const paginationObj = usePagination(usuariosFiltrados, 8);
+  const paginationObj = usePagination(usuariosFiltrados, PAGINATION_ITEMS_PER_PAGE);
 
   const {
     currentPage,

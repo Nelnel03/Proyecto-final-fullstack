@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services/services';
@@ -94,7 +94,6 @@ function MainPagesInicoAdmin() {
   const [modoEdicionAbono, setModoEdicionAbono] = useState(false);
   const [idEditandoAbono, setIdEditandoAbono] = useState(null);
   const [userSubTab, setUserSubTab] = useState('activos'); 
-  const [totalNotificaciones, setTotalNotificaciones] = useState(0);
 
   const [busqueda, setBusqueda] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false); 
@@ -123,20 +122,13 @@ function MainPagesInicoAdmin() {
     }
 
     cargarArboles();
-
-    // POLLEO EN TIEMPO REAL (Simulación con Intervalo de 30s)
-    const intervalId = setInterval(() => {
-      cargarArboles();
-    }, 30000); 
-
-    return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
-  const cargarArboles = async () => {
+  const cargarArboles = useCallback(async () => {
     setCargando(true);
     try {
-      const [datosArboles, datosStats, datosUsuarios, datosVol, datosAbonos, datosSoporte, datosRobos, datosSolicitudes, datosLabores] = await Promise.all([
+      const results = await Promise.allSettled([
         services.getArboles(),
         services.getStatsTipos(),
         services.getUsuarios(),
@@ -147,24 +139,42 @@ function MainPagesInicoAdmin() {
         services.getSolicitudesVoluntariado(),
         services.getReportesVoluntariado()
       ]);
+
+      // Control y logging de errores individuales
+      if (results[0].status === 'rejected') console.error('Error al cargar árboles:', results[0].reason);
+      if (results[1].status === 'rejected') console.error('Error al cargar estadísticas de tipos:', results[1].reason);
+      if (results[2].status === 'rejected') console.error('Error al cargar usuarios:', results[2].reason);
+      if (results[3].status === 'rejected') console.error('Error al cargar voluntariados:', results[3].reason);
+      if (results[4].status === 'rejected') console.error('Error al cargar abonos:', results[4].reason);
+      if (results[5].status === 'rejected') console.error('Error al cargar reportes de soporte:', results[5].reason);
+      if (results[6].status === 'rejected') console.error('Error al cargar reportes robados:', results[6].reason);
+      if (results[7].status === 'rejected') console.error('Error al cargar solicitudes de voluntariado:', results[7].reason);
+      if (results[8].status === 'rejected') console.error('Error al cargar labores de voluntariado:', results[8].reason);
+
+      const datosArboles = results[0].status === 'fulfilled' ? results[0].value : [];
+      const datosStats = results[1].status === 'fulfilled' ? results[1].value : [];
+      const datosUsuarios = results[2].status === 'fulfilled' ? results[2].value : [];
+      const datosVol = results[3].status === 'fulfilled' ? results[3].value : [];
+      const datosAbonos = results[4].status === 'fulfilled' ? results[4].value : [];
+      const datosSoporte = results[5].status === 'fulfilled' ? results[5].value : [];
+      const datosRobos = results[6].status === 'fulfilled' ? results[6].value : [];
+      const datosSolicitudes = results[7].status === 'fulfilled' ? results[7].value : [];
+      const datosLabores = results[8].status === 'fulfilled' ? results[8].value : [];
+
       setArboles(datosArboles || []);
       setStatsTipos(datosStats || []);
       setUsuarios(datosUsuarios || []);
       setVoluntariados(datosVol || []);
       setAbonos(datosAbonos || []);
       setReportesRobos(datosRobos || []);
-      
-      const unreadSoporte = (datosSoporte || []).filter(r => !r.visto).length;
-      const unreadRobos = (datosRobos || []).filter(r => !r.visto).length;
-      const unreadSolicitudes = (datosSolicitudes || []).filter(r => !r.visto).length;
-      const unreadLabores = (datosLabores || []).filter(r => !r.visto).length;
-      setTotalNotificaciones(unreadSoporte + unreadRobos + unreadSolicitudes + unreadLabores);
-    } catch (err) { console.error(err);
-      mostrarMensaje('Error al cargar la información.', 'error');
+    } catch (err) {
+      console.error('Error inesperado en cargarArboles:', err);
+      Swal.fire('Error', 'Error al cargar la información.', 'error');
     } finally {
       setCargando(false);
     }
-  };
+  }, [navigate]);
+
 
   const handleLogout = () => {
     Swal.fire({
@@ -458,9 +468,9 @@ function MainPagesInicoAdmin() {
     }
   };
 
-  const mostrarMensaje = (texto, tipo = 'success') => {
+  const mostrarMensaje = useCallback((texto, tipo = 'success') => {
     Swal.fire({ title: texto, icon: tipo, timer: 3000, showConfirmButton: false, toast: true, position: 'top-end' });
-  };
+  }, []);
 
   const resetFormAbono = () => { setFormAbono(ABONO_FORM_INICIAL); setModoEdicionAbono(false); setIdEditandoAbono(null); };
 
@@ -723,7 +733,6 @@ function MainPagesInicoAdmin() {
 
       <div className="admin-main-wrapper flex-1 overflow-y-auto relative h-screen">
         <AdminTopbar 
-          totalNotificaciones={totalNotificaciones} 
           setTab={setTab}
           isMobile={isMobile}
           onOpenSidebar={() => setSidebarOpen(true)}
@@ -747,7 +756,7 @@ function MainPagesInicoAdmin() {
             {tab === 'usuarios' && <UsuariosTab refrescarUsuarios={cargarArboles} modoEdicionUsuario={modoEdicionUsuario} handleUserSubmit={handleUserSubmit} formUsuario={formUsuario} setFormUsuario={setFormUsuario} resetFormUsuario={resetFormUsuario} usuarios={usuarios} handleEditarUsuario={handleEditarUsuario} handleBanUsuario={handleBanUsuario} handleActivarUsuario={handleActivarUsuario} handleConvertirUsuarioAVoluntariado={handleConvertirUsuarioAVoluntariado} subTab={userSubTab} setSubTab={setUserSubTab} />}
             {tab === 'voluntariados' && <VoluntariadosTab refrescarVoluntarios={cargarArboles} refrescarNotificaciones={cargarArboles} modoEdicionVoluntariado={modoEdicionVoluntariado} handleVoluntariadoSubmit={handleVoluntariadoSubmit} formVoluntariado={formVoluntariado} setFormVoluntariado={setFormVoluntariado} resetFormVoluntariado={resetFormVoluntariado} voluntariados={voluntariados} handleEditarVoluntariado={handleEditarVoluntariado} handleEliminarVoluntariado={handleEliminarVoluntariado} handleConvertirVoluntariadoAUsuario={handleConvertirVoluntariadoAUsuario} />}
             {tab === 'abonos' && <AbonosTab modoEdicionAbono={modoEdicionAbono} handleAbonoSubmit={handleAbonoSubmit} formAbono={formAbono} setFormAbono={setFormAbono} resetFormAbono={resetFormAbono} abonos={abonos} handleEditarAbono={handleEditarAbono} handleEliminarAbono={handleEliminarAbono} />}
-            {tab === 'buzon' && <BuzonTab refrescarNotificaciones={cargarArboles} /> }
+            {tab === 'buzon' && <BuzonTab refrescarNotificaciones={actualizarNotificaciones} /> }
 
             {tab === 'ayuda' && <AyudaTab /> }
           </div>

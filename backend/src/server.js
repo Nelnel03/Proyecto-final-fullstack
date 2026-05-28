@@ -1,7 +1,9 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
+const http = require('http');
 const app = require('./app');
 const { sequelize } = require('./models');
+const socketService = require('./services/socketService');
 
 const PORT = process.env.PORT || 3000;
 
@@ -57,7 +59,10 @@ async function startServer() {
             console.log('✅ GROQ_API_KEY cargada correctamente.');
         }
 
-        app.listen(PORT, () => {
+        const server = http.createServer(app);
+        socketService.init(server);
+
+        server.listen(PORT, () => {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
         });
     } catch (error) {

@@ -27,6 +27,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import { MONTH_NAMES, DAY_NAMES, TREE_STATE_LABELS } from '../../config/appConstants';
 
 const ResumenTab = ({ 
   usuarios, 
@@ -42,7 +43,6 @@ const ResumenTab = ({
   // 1. Growth Data: Dynamic month calculation based on real tree/user registration records
   const growthData = useMemo(() => {
     const months = [];
-    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
     // Get the last 6 months (inclusive of current month)
     const today = new Date();
@@ -51,7 +51,7 @@ const ResumenTab = ({
       months.push({
         year: d.getFullYear(),
         month: d.getMonth(),
-        name: `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
+        name: `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
         arboles: 0,
         usuarios: 0
       });
@@ -103,22 +103,22 @@ const ResumenTab = ({
 
     return [
       { 
-        name: 'Vivos', 
+        name: TREE_STATE_LABELS.vivo.label, 
         value: vivos, 
         percentage: total > 0 ? ((vivos / total) * 100).toFixed(1) : '0.0', 
-        color: '#10b981' 
+        color: TREE_STATE_LABELS.vivo.color 
       },
       { 
-        name: 'En Riesgo', 
+        name: TREE_STATE_LABELS.enfermo.label, 
         value: enTratamiento, 
         percentage: total > 0 ? ((enTratamiento / total) * 100).toFixed(1) : '0.0', 
-        color: '#f59e0b' 
+        color: TREE_STATE_LABELS.enfermo.color 
       },
       { 
-        name: 'Inactivos', 
+        name: TREE_STATE_LABELS.muerto.label, 
         value: muertos, 
         percentage: total > 0 ? ((muertos / total) * 100).toFixed(1) : '0.0', 
-        color: '#ef4444' 
+        color: TREE_STATE_LABELS.muerto.color 
       },
     ].filter(d => d.value > 0);
   }, [arboles]);
@@ -136,13 +136,12 @@ const ResumenTab = ({
     };
 
     if (filtroIncidentes === 'mes') {
-      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       for (let i = 5; i >= 0; i--) {
         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
         dataPoints.push({
           year: d.getFullYear(),
           month: d.getMonth(),
-          name: `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
+          name: `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
           Reportes: 0
         });
       }
@@ -176,14 +175,13 @@ const ResumenTab = ({
         }
       });
     } else if (filtroIncidentes === 'dia') {
-      const daysNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
       for (let i = 6; i >= 0; i--) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
         d.setHours(0,0,0,0);
         dataPoints.push({
           date: d.toDateString(),
-          name: `${daysNames[d.getDay()]} ${d.getDate()}`,
+          name: `${DAY_NAMES[d.getDay()]} ${d.getDate()}`,
           Reportes: 0
         });
       }
@@ -516,21 +514,6 @@ const ResumenTab = ({
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="pie-legend">
-            {healthData.length > 0 ? healthData.map((item, i) => (
-              <div key={i} className="legend-item">
-                <div className="legend-header">
-                  <span className="dot" style={{ background: item.color }}></span>
-                  <span className="name">{item.name}</span>
-                </div>
-                <span className="val">{item.value} <small style={{ fontSize: '0.75rem', opacity: 0.6, marginLeft: '4px' }}>({item.percentage}%)</small></span>
-              </div>
-            )) : (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, fontSize: '0.85rem', padding: '8px 0' }}>
-                No hay árboles registrados aún
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
@@ -760,8 +743,8 @@ const ResumenTab = ({
 
         .pie-legend {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 16px;
           margin-top: 20px;
           border-top: 1px dashed var(--glass-border);
           padding-top: 16px;
@@ -773,16 +756,21 @@ const ResumenTab = ({
           align-items: center;
           gap: 6px;
           font-size: 0.8rem;
+          text-align: center;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         .legend-item .legend-header {
           display: flex;
           align-items: center;
           gap: 6px;
+          justify-content: center;
+          flex-wrap: wrap;
         }
 
-        .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .legend-item .name { font-weight: 600; opacity: 0.7; color: var(--color-texto); }
+        .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .legend-item .name { font-weight: 600; opacity: 1; color: var(--color-texto); }
         .legend-item .val { font-weight: 800; font-size: 1.1rem; color: var(--color-texto); }
 
         .dashboard-footer-grid {

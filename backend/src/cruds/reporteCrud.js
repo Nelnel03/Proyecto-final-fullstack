@@ -1,4 +1,5 @@
 const { Reporte, Usuario, Rol } = require('../models');
+const socketService = require('../services/socketService');
 
 const reporteController = {
     getAll: async (req, res) => {
@@ -81,6 +82,8 @@ const reporteController = {
                 visto: 0
             });
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(201).json({
                 message: 'Reporte enviado exitosamente',
                 reporte: nuevoReporte
@@ -109,6 +112,8 @@ const reporteController = {
                 estado: estado !== undefined ? estado : reporte.estado
             });
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({
                 message: 'Reporte actualizado correctamente',
                 reporte
@@ -129,6 +134,9 @@ const reporteController = {
             }
 
             await reporte.destroy();
+            
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({ message: 'Reporte eliminado correctamente' });
         } catch (error) {
             console.error('Error en deleteReporte:', error);

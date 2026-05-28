@@ -43,8 +43,12 @@ const authCrud = {
                 fechaIngreso: new Date()
             });
 
+            const userWithRol = await Usuario.findByPk(user.id, {
+                include: [{ model: Rol, as: 'rol', attributes: ['nombre'] }]
+            });
+
             const token = jwt.sign(
-                { id: user.id, email: user.email, rol_id: user.rol_id },
+                { id: user.id, email: user.email, rol: userWithRol.rol.nombre, rol_id: user.rol_id },
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
@@ -54,7 +58,13 @@ const authCrud = {
             return res.status(201).json({
                 message: 'Registro exitoso',
                 token,
-                user: { id: user.id, nombre: user.nombre, email: user.email, rol_id: user.rol_id }
+                user: {
+                    id: user.id,
+                    nombre: user.nombre,
+                    email: user.email,
+                    rol_id: user.rol_id,
+                    rol: userWithRol.rol.nombre
+                }
             });
         } catch (error) {
             console.error('Error en register:', error);

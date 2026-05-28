@@ -211,9 +211,9 @@ function MainPagesLogin() {
 
       const { token, user } = data;
 
-      // El backend devuelve rol_id, le asignamos el nombre del rol para el frontend
+      // El backend ahora devuelve rol.nombre; este fallback cubre versiones antiguas del token
       if (!user.rol) {
-        user.rol = user.rol_id === 1 ? 'admin' : user.rol_id === 2 ? 'voluntario' : 'visitante';
+        user.rol = user.rol_id === 1 ? 'admin' : user.rol_id === 2 ? 'voluntario' : 'usuario';
       }
 
       sessionStorage.setItem('token', token);

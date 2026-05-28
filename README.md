@@ -1,61 +1,81 @@
 # BioMon ADI - Gestión de Biodiversidad Forestal
 
+## 1. Introducción y Arquitectura General
 Sistema integral para el monitoreo de reforestación, gestión de voluntarios y reportes comunitarios en la zona de La Angostura.
 
-##  Stack Tecnológico
-- **Frontend:** React 19 + Vite
-- **Estilos:** Vanilla CSS (Diseño Premium / Glassmorphism)
-- **Estado Global:** React Hooks (useState, useEffect, Context)
-- **Enrutamiento:** React Router Dom 7
-- **Mapa:** Leaflet + React Leaflet
-- **Backend Simulado:** JSON Server (REST API)
-- **Notificaciones:** SweetAlert2
-- **Iconografía:** Lucide React
+El proyecto es un sistema **Full Stack** estructurado en un solo repositorio que separa claramente la interfaz de usuario (Frontend) y los servicios de datos (Backend).
+- **Panel Administrativo:** Gestión de inventario de abonos, censo de árboles (altas/bajas), y control total de usuarios/voluntarios.
+- **Sistema de Roles:** Acceso y flujos diferenciados para Administradores, Voluntarios y Usuarios Visitantes.
+- **Seguimiento de Plantación:** Registro detallado de progreso, clima, cuidados por especie y reportes históricos.
+- **Buzón Interno:** Gestión de reportes de robo, labores de voluntariado y peticiones comunitarias.
+- **Modo Oscuro:** Implementación nativa para la reducción de fatiga visual.
 
-##  Arquitectura y Funcionalidades
-- **Panel Administrativo:** Gestión de inventario de abonos, censo de árboles (altas/bajas), y control de usuarios/voluntarios.
-- **Sistema de Roles:** Acceso diferenciado para Administradores, Voluntarios y Usuarios registrados.
-- **Seguimiento de Plantación:** Registro detallado de progreso, clima y cuidados por especie.
-- **Buzón Interno:** Gestión de reportes de robo, labores de voluntariado y soporte técnico.
-- **Modo Oscuro:** Implementación nativa mediante variables CSS y persistencia en LocalStorage.
+---
 
-## 🔧 Instalación y Despliegue
+## 2. Backend (API)
+El backend está construido con **Node.js, Express, MySQL y Sequelize**. Proporciona una API RESTful segura y documentada.
 
-### 1. Clonar y dependencias
+### Instrucciones de Instalación
 ```bash
+cd backend
 npm install
 ```
 
-### 2. Levantar Servidor de Datos (Backend)
-En una terminal independiente, ejecutar el servidor JSON (Puerto 3005):
+### Variables de Entorno
+Copia el archivo de ejemplo para configurar tus credenciales locales:
 ```bash
-npx json-server --watch db.json --port 3005
+cp .env.example .env
 ```
+Asegúrate de configurar en tu archivo `.env` las credenciales requeridas para:
+- Conexión a Base de Datos MySQL (`DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`, `DB_HOST`).
+- Seguridad JWT (`JWT_SECRET`, `JWT_EXPIRES_IN`).
+- Almacenamiento Cloudinary (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`).
+- Envío de Correos SMTP (`SMTP_USER`, `SMTP_PASS`).
 
-### 3. Ejecutar Aplicación (Frontend)
+### Inicialización de Base de Datos y Servidor
 ```bash
+# Crea la base de datos automáticamente, corre migraciones y aplica seeders
+npm run setup
+
+# Levanta el servidor backend en modo desarrollo
 npm run dev
 ```
 
-##  Estructura Principal
-- `/src/components`: Componentes reutilizables y secciones del dashboard.
-- `/src/pages`: Vistas principales de la aplicación.
-- `/src/services`: Capa de abstracción para peticiones API (Axios/Fetch).
-- `/src/styles`: Sistema de diseño modular y temas (Dark/Light).
-- `db.json`: Base de datos local para persistencia de información.
+### Documentación Swagger
+La API está completamente documentada de forma interactiva. Una vez que el servidor backend esté corriendo, accede a Swagger en:
+- 👉 **http://localhost:3005/api-docs** *(o el puerto que hayas definido)*
 
-##  Endpoints de la API (JSON Server)
-La API está disponible en `http://localhost:3005` con los siguientes recursos:
+### Comandos de Pruebas
+Las pruebas unitarias y de integración están construidas con **Jest** y **Supertest**.
+```bash
+cd backend
+npm test
+```
 
-- **Árboles:** `/arboles` - Censo y seguimiento de especies.
-- **Usuarios:** `/usuarios` - Gestión de cuentas y roles.
-- **Estadísticas:** `/stats_tipos` - Métricas de planificación por tipo.
-- **Abonos:** `/abonos` - Inventario de fertilizantes.
-- **Reportes:** `/reportes` - Buzón de soporte técnico.
-- **Robos:** `/reportes_robados` - Denuncias de sustracción.
-- **Voluntariado:** `/reportes_voluntariado` - Registro de labores de campo.
+---
 
-##  Rutas de la Aplicación
-- **Admin:** `/admin` - Dashboard de control total (Privado).
-- **Usuario:** `/dashboard-user` - Vista de usuario final.
-- **Voluntario:** `/dashboard-voluntario` - Panel de reportes de labores.
+## 3. Frontend (App)
+La aplicación cliente está desarrollada con **React 19**, construida con **Vite** y estilizada mediante **Tailwind CSS 4**.
+
+### Comandos de Instalación (Vite)
+```bash
+cd frontend/ReacProyecto
+npm install
+```
+
+### Configuración de Tailwind CSS
+El proyecto utiliza **Tailwind CSS 4** junto con variables nativas de CSS para manejar temas oscuros y diseños premium (glassmorphism). Toda la integración se maneja a través de Vite y `postcss.config.js`. No se requieren pasos extra de compilación, Tailwind está listo para usarse.
+
+### Ejecución del Servidor de Desarrollo
+```bash
+cd frontend/ReacProyecto
+npm run dev
+```
+La aplicación estará disponible de forma predeterminada en **http://localhost:5173**.
+
+### Ejecución de Pruebas
+Las pruebas de componentes y simulaciones de flujos de usuario (como el login) están configuradas con **Vitest** y **Testing Library**.
+```bash
+cd frontend/ReacProyecto
+npm test
+```

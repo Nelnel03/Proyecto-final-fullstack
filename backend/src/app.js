@@ -58,6 +58,7 @@ app.use('/api/roles', require('./routes/rolRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
+app.use('/api/notificaciones', require('./routes/notificacionRoutes'));
 
 app.get('/', (req, res) => {
     res.json({

@@ -1,4 +1,5 @@
 const { SolicitudVoluntariado, Usuario, sequelize } = require('../models');
+const socketService = require('../services/socketService');
 
 /**
  * Controller para la gestión de Solicitudes de Voluntariado
@@ -69,6 +70,8 @@ const solicitudController = {
                 estado: 'pendiente'
             });
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(201).json({
                 message: 'Solicitud enviada correctamente',
                 solicitud: nuevaSolicitud
@@ -97,6 +100,8 @@ const solicitudController = {
             if (visto !== undefined) updateData.visto = visto ? 1 : 0;
 
             await solicitud.update(updateData);
+
+            socketService.notifyNotificationUpdate();
 
             return res.status(200).json({
                 message: `Solicitud actualizada`,
@@ -151,6 +156,8 @@ const solicitudController = {
             await t.commit();
             console.log(`[aprobar] COMMIT OK — usuario ${usuarioId} ahora es voluntario (rol_id=${voluntarioRol.id})`);
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({
                 message: 'Solicitud aprobada y rol actualizado a voluntario',
                 solicitud_id: Number(id),
@@ -175,6 +182,9 @@ const solicitudController = {
             }
 
             await solicitud.destroy();
+
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({ message: 'Solicitud eliminada' });
         } catch (error) {
             console.error('Error en deleteSolicitud:', error);

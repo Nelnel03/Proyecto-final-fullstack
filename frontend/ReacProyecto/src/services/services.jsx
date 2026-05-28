@@ -16,6 +16,7 @@ import * as reportesRobadosService from "./reportesRobados.service.jsx";
 import * as solicitudesVoluntariadoService from "./solicitudesVoluntariado.service.jsx";
 import * as tareasDisponiblesService from "./tareasDisponibles.service.jsx";
 import * as cloudinaryService from "./cloudinary.service.jsx";
+import * as notificacionesService from "./notificaciones.service.jsx";
 
 
 /**

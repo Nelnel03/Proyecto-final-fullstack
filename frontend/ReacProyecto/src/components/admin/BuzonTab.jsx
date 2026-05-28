@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import '../../styles/admin/BuzonTab.css';
 import services from '../../services/services';
 import Swal from 'sweetalert2';
+import { useNotificaciones } from '../../context/NotificacionesContext.jsx';
+import { REPORT_STATES_SUPPORT, REPORT_STATES_THEFT, getStateColor } from '../../config/appConstants';
 import { 
   MessageSquare, 
   ShieldAlert, 
@@ -23,31 +25,12 @@ import {
   Filter,
   Eye,
   MoreHorizontal,
-  Loader2
+  Loader2,
+  CheckCheck
 } from 'lucide-react';
 
-const ESTADOS_SOPORTE = ['Pendiente', 'En Proceso', 'Leído', 'Solucionado'];
-const ESTADOS_ROBO    = ['Pendiente', 'En Investigación', 'Resuelto'];
-
 function StatusBadge({ estado }) {
-  const est = (estado || 'Pendiente').toLowerCase().replace(' ', '');
-  const getColors = () => {
-    switch(est) {
-      case 'solucionado':
-      case 'resuelto':
-      case 'aprobada':
-        return { bg: 'rgba(16, 185, 129, 0.1)', text: 'var(--ui-success)' };
-      case 'enproceso':
-      case 'eninvestigación':
-        return { bg: 'rgba(59, 130, 246, 0.1)', text: 'var(--ui-info)' };
-      case 'rechazada':
-        return { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--ui-error)' };
-      default:
-        return { bg: 'rgba(245, 158, 11, 0.1)', text: 'var(--ui-warning)' };
-    }
-  };
-  
-  const colors = getColors();
+  const colors = getStateColor(estado || 'Pendiente');
   
   return (
     <span style={{ 
@@ -65,7 +48,8 @@ function StatusBadge({ estado }) {
   );
 }
 
-function BuzonTab({ refrescarNotificaciones }) {
+function BuzonTab() {
+  const { markRead, markAllRead } = useNotificaciones();
   const [reportesVoluntario, setReportesVoluntario] = useState([]);
   const [reportesRobo, setReportesRobo] = useState([]);
   const [reportesSoporte, setReportesSoporte] = useState([]);
@@ -76,37 +60,43 @@ function BuzonTab({ refrescarNotificaciones }) {
   const [subLabor, setSubLabor] = useState('nuevas');
   const [subSoporte, setSubSoporte] = useState('usuarios');
 
-  // Ref estable para evitar que refrescarNotificaciones recree cargarDatos en cada render del padre
-  const refrescarRef = React.useRef(refrescarNotificaciones);
-  useEffect(() => { refrescarRef.current = refrescarNotificaciones; }, [refrescarNotificaciones]);
-
   // background=true: refresco silencioso (sin spinner), background=false: carga inicial o manual
   const cargarDatos = useCallback(async (background = false) => {
     if (!background) setCargando(true);
     try {
-      const [volDatos, roboDatos, sopDatos, solDatos] = await Promise.all([
+      const results = await Promise.allSettled([
         services.getReportesVoluntariado(),
         services.getReportesRobados(),
         services.getReportes(),
         services.getSolicitudesVoluntariado()
       ]);
+
+      // Control y logging de errores individuales
+      if (results[0].status === 'rejected') console.error('Error al cargar reportes de voluntariado:', results[0].reason);
+      if (results[1].status === 'rejected') console.error('Error al cargar reportes robados:', results[1].reason);
+      if (results[2].status === 'rejected') console.error('Error al cargar reportes de soporte:', results[2].reason);
+      if (results[3].status === 'rejected') console.error('Error al cargar solicitudes de voluntariado:', results[3].reason);
+
+      const volDatos = results[0].status === 'fulfilled' ? results[0].value : [];
+      const roboDatos = results[1].status === 'fulfilled' ? results[1].value : [];
+      const sopDatos = results[2].status === 'fulfilled' ? results[2].value : [];
+      const solDatos = results[3].status === 'fulfilled' ? results[3].value : [];
+
       setReportesVoluntario((volDatos || []).sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha)));
       setReportesRobo((roboDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
       setReportesSoporte((sopDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
       setSolicitudesVol((solDatos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
-    } catch (err) { console.error(err);
-      console.error('Error al cargar datos del buzón:', err);
+    } catch (err) {
+      console.error('Error inesperado al cargar datos del buzón:', err);
     } finally {
-      if (refrescarRef.current) refrescarRef.current();
       if (!background) setCargando(false);
     }
   }, []);
 
   useEffect(() => {
     cargarDatos(false);
-    const interval = setInterval(() => cargarDatos(true), 60000);
-    return () => clearInterval(interval);
   }, [cargarDatos]);
+
 
   const getSolUserId = (sol) => sol.usuario_id || sol.userId;
   const getSolUserName = (sol) => sol.Usuario?.nombre || sol.userName || 'Usuario';
@@ -134,7 +124,6 @@ function BuzonTab({ refrescarNotificaciones }) {
       }
       await services.putSolicitudVoluntariado({ estado: 'aprobada' }, sol.id);
       setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'aprobada' } : s));
-      if (refrescarNotificaciones) refrescarNotificaciones();
       Swal.fire('¡Éxito!', 'Nuevo integrante incorporado correctamente.', 'success');
     } catch (err) { console.error(err);
       Swal.fire('Error', 'No se pudo procesar el cambio de rol.', 'error');
@@ -156,7 +145,6 @@ function BuzonTab({ refrescarNotificaciones }) {
     try {
       await services.putSolicitudVoluntariado({ estado: 'rechazada' }, sol.id);
       setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? { ...s, estado: 'rechazada' } : s));
-      if (refrescarNotificaciones) refrescarNotificaciones();
       Swal.fire('Información', 'La postulación ha sido rechazada.', 'info');
     } catch {
       Swal.fire('Error', 'No se pudo completar la acción.', 'error');
@@ -169,7 +157,8 @@ function BuzonTab({ refrescarNotificaciones }) {
       const updated = { ...sol, visto: true };
       await services.putSolicitudVoluntariado(updated, sol.id);
       setSolicitudesVol(prev => prev.map(s => s.id === sol.id ? updated : s));
-      if (refrescarNotificaciones) refrescarNotificaciones();
+      // Sincronizar badge en el Context
+      await markRead({ solicitudes: [sol.id] });
     } catch (err) { console.error(err);
       console.error("Error al marcar como visto:", err);
     }
@@ -181,7 +170,8 @@ function BuzonTab({ refrescarNotificaciones }) {
       const updated = { ...rep, visto: true };
       await services.putReporteVoluntariado(updated, rep.id);
       setReportesVoluntario(prev => prev.map(r => r.id === rep.id ? updated : r));
-      if (refrescarNotificaciones) refrescarNotificaciones();
+      // Sincronizar badge en el Context
+      await markRead({ labores: [rep.id] });
     } catch (err) { console.error(err);
       console.error("Error al marcar reporte de labor como visto:", err);
     }
@@ -193,7 +183,9 @@ function BuzonTab({ refrescarNotificaciones }) {
       const updated = { ...rep, visto: true };
       await services.putReportes(updated, rep.id);
       setReportesSoporte(prev => prev.map(r => r.id === rep.id ? updated : r));
-      if (refrescarNotificaciones) refrescarNotificaciones();
+      // Sincronizar badge: robos usan tipo='robo', soporte usa resto
+      const esRobo = rep.tipo === 'robo';
+      await markRead(esRobo ? { robos: [rep.id] } : { reportes: [rep.id] });
     } catch (err) { console.error(err);
       console.error("Error al marcar soporte como visto:", err);
     }
@@ -217,7 +209,6 @@ function BuzonTab({ refrescarNotificaciones }) {
         const reporteActualizado = { ...log, estado: 'asignado', fecha: date, visto: true };
         await services.putReporteVoluntariado(reporteActualizado, log.id);
         setReportesVoluntario(prev => prev.map(r => r.id === log.id ? reporteActualizado : r));
-        if (refrescarNotificaciones) refrescarNotificaciones();
         Swal.fire({ icon: 'success', title: 'Tarea Programada', timer: 2000, showConfirmButton: false });
       } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo actualizar la programación.', 'error');
@@ -240,7 +231,6 @@ function BuzonTab({ refrescarNotificaciones }) {
         const reporteActualizado = { ...log, estado: 'rechazado_pre', motivoRechazo: motivo, visto: true };
         await services.putReporteVoluntariado(reporteActualizado, log.id);
         setReportesVoluntario(prev => prev.map(r => r.id === log.id ? reporteActualizado : r));
-        if (refrescarNotificaciones) refrescarNotificaciones();
         Swal.fire({ icon: 'info', title: 'Solicitud Denegada', timer: 2000, showConfirmButton: false });
       } catch (error) { console.error(error);
         Swal.fire('Error', 'No se pudo procesar el rechazo.', 'error');
@@ -258,7 +248,6 @@ function BuzonTab({ refrescarNotificaciones }) {
 
     try {
       await services.putReportesRobados(updated, rep.id);
-      if (refrescarNotificaciones) refrescarNotificaciones();
     } catch (err) { console.error(err);
       // ROLLBACK EN CASO DE ERROR
       setReportesRobo(previousState);
@@ -284,7 +273,6 @@ function BuzonTab({ refrescarNotificaciones }) {
 
     try {
       await services.deleteReportesRobados(id);
-      if (refrescarNotificaciones) refrescarNotificaciones();
     } catch (err) { console.error(err);
       // ROLLBACK
       setReportesRobo(previousState);
@@ -299,7 +287,6 @@ function BuzonTab({ refrescarNotificaciones }) {
     
     try {
       await services.deleteReportes(id);
-      if (refrescarNotificaciones) refrescarNotificaciones();
     } catch (err) { console.error(err);
       // ROLLBACK
       setReportesSoporte(previousState);
@@ -327,6 +314,20 @@ function BuzonTab({ refrescarNotificaciones }) {
             <p className="text-muted">Monitoreo y respuesta a la actividad global de BioMon</p>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
+            <button
+              id="buzon-mark-all-btn"
+              className="ui-btn ui-btn--ghost"
+              onClick={async () => {
+                // Marcar todo en BD + actualizar estado local
+                await markAllRead();
+                // Refrescar lista local para que desaparezcan los badges de las tabs
+                cargarDatos(true);
+              }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <CheckCheck size={16} />
+              Marcar todo leído
+            </button>
             <button 
               className="ui-btn ui-btn--ghost" 
               onClick={() => cargarDatos(false)}
@@ -419,7 +420,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                                });
                              }}
                            >
-                             {ESTADOS_SOPORTE.map(est => <option key={est} value={est}>{est}</option>)}
+                             {REPORT_STATES_SUPPORT.map(est => <option key={est} value={est}>{est}</option>)}
                            </select>
                          </div>
                          <button 
@@ -465,7 +466,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                      onClick={(e) => e.stopPropagation()}
                      onChange={(e) => handleEstadoRobo(rep, e.target.value)}
                    >
-                     {ESTADOS_ROBO.map(est => <option key={est} value={est}>{est}</option>)}
+                     {REPORT_STATES_THEFT.map(est => <option key={est} value={est}>{est}</option>)}
                    </select>
                    <button className="ui-btn ui-btn--ghost" style={{ color: 'var(--ui-error)' }} onClick={(e) => { e.stopPropagation(); handleEliminarRobo(rep.id); }}>
                      <Trash2 size={18} />
@@ -633,4 +634,4 @@ function BuzonTab({ refrescarNotificaciones }) {
   );
 }
 
-export default BuzonTab;
+export default React.memo(BuzonTab);

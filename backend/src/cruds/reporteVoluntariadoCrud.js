@@ -1,5 +1,6 @@
 const { ReporteVoluntariado, Usuario, TareaDisponible } = require('../models');
 const { Op } = require('sequelize');
+const socketService = require('../services/socketService');
 
 const reporteVoluntariadoCrud = {
     getAll: async (req, res) => {
@@ -87,6 +88,8 @@ const reporteVoluntariadoCrud = {
                 visto: 0
             });
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(201).json({
                 message: 'Reporte de actividad enviado correctamente',
                 reporte: nuevoReporte
@@ -118,6 +121,8 @@ const reporteVoluntariadoCrud = {
                 fecha: fecha !== undefined ? fecha : reporte.fecha
             });
 
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({
                 message: 'Reporte actualizado correctamente',
                 reporte
@@ -138,6 +143,9 @@ const reporteVoluntariadoCrud = {
             }
 
             await reporte.destroy();
+
+            socketService.notifyNotificationUpdate();
+
             return res.status(200).json({ message: 'Reporte de voluntariado eliminado' });
         } catch (error) {
             console.error('Error en deleteReporteVoluntariado:', error);

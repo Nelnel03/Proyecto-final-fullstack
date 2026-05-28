@@ -18,9 +18,40 @@ const genericStorage = new CloudinaryStorage({
 const uploadGeneric = multer({ storage: genericStorage });
 
 /**
- * POST /api/upload
- * Sube una imagen a Cloudinary y devuelve la URL segura.
- * Requiere autenticación JWT.
+ * @swagger
+ * tags:
+ *   name: Upload
+ *   description: Subida genérica de imágenes a Cloudinary.
+ */
+
+/**
+ * @swagger
+ * /api/upload:
+ *   post:
+ *     summary: Sube una imagen a Cloudinary
+ *     description: Sube una imagen genérica y devuelve la URL segura. Requiere autenticación JWT.
+ *     tags: [Upload]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Imagen subida exitosamente.
+ *       400:
+ *         description: No se recibió ningún archivo.
+ *       401:
+ *         description: No autorizado.
+ *       500:
+ *         description: Error al subir la imagen.
  */
 router.post('/', verifyToken, uploadGeneric.single('image'), async (req, res) => {
   try {

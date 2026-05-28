@@ -340,7 +340,7 @@ function VolunteerDashboard() {
               </div>
 
               {/* Refactor: Ajuste de layout de grid para evitar colapso/overlap en pantallas desktop y zooms. Uso de fracciones y gap para mantener spacing uniforme */}
-              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b-2 border-premium-border mb-3 font-['Montserrat']">
+              <div className="grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-3 text-xs font-bold text-on-surface opacity-60 uppercase tracking-widest border-b border-premium-border mb-3 font-['Montserrat']">
                 <span>Actividad</span>
                 <span className="hidden lg:block">Fecha</span>
                 <span className="hidden lg:block">Tipo</span>
@@ -372,14 +372,14 @@ function VolunteerDashboard() {
                   if(log.estado === 'aprobado') { statusColor = 'text-on-primary-container'; statusBg = 'bg-primary-container'; }
                   else if(log.estado === 'rechazado' || log.estado === 'rechazado_pre') { statusColor = 'text-on-error-container'; statusBg = 'bg-error-container'; }
                   else if(log.estado === 'en_curso') { statusColor = 'text-[#6b21a8]'; statusBg = 'bg-[#f3e8ff]'; } // Purple M3 equivalent approx
-                  else if(log.estado === 'asignado') { statusColor = 'text-[#1e3a8a]'; statusBg = 'bg-[#dbeafe]'; } // Blue approx
+                  else if(log.estado === 'asignado') { statusColor = 'text-[#00f0ff]'; statusBg = 'bg-[#00f0ff]/10'; } // Cyan to match footer
                   else if(log.estado === 'enviado' || log.estado === 'solicitado') { statusColor = 'text-on-error-container'; statusBg = 'bg-error-container'; } // Using error/amber container
 
                   return (
                     <div
                       key={log.id}
                       onClick={() => setSelectedLog(log)}
-                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-4 items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-on-primary-container ring-1 ring-on-primary-container shadow-sm' : 'border-premium-border hover:-translate-y-0.5 hover:shadow-md'}`}
+                      className={`grid grid-cols-[1fr_70px_110px] lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] items-center px-4 py-4 rounded-2xl cursor-pointer transition-all bg-surface-container border ${isSelected ? 'border-[#00f0ff] ring-1 ring-[#00f0ff] shadow-sm' : 'border-transparent border-b-premium-border rounded-none hover:bg-surface-container-low'}`}
                     >
                       <div>
                         <div className="font-bold text-sm text-on-surface mb-1">{log.tipoTarea}</div>
@@ -447,11 +447,11 @@ function VolunteerDashboard() {
 
                     <div className="mt-2">
                       {selectedLog.estado === 'asignado' ? (
-                        <div className="p-4 rounded-xl flex flex-col gap-3 text-sm font-bold bg-[#dbeafe] border border-[#93c5fd] text-[#1e3a8a]">
+                        <div className="p-4 rounded-xl flex flex-col gap-3 text-sm font-bold bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff]">
                           <div className="flex items-center gap-2">
                               <PlayCircle size={18} /> Labor Asignada (Pendiente Ejecución)
                           </div>
-                          <button onClick={() => setCurrentTab('subir_evidencia')} className="px-4 py-2.5 bg-[#1d4ed8] text-white border-none rounded-lg font-bold cursor-pointer text-sm hover:opacity-90 transition-opacity">
+                          <button onClick={() => setCurrentTab('subir_evidencia')} className="px-4 py-2.5 bg-[#00f0ff] text-[#05080a] border-none rounded-lg font-bold cursor-pointer text-sm hover:opacity-90 transition-opacity shadow-[0_0_15px_rgba(0,240,255,0.3)]">
                             Subir Evidencia Científica
                           </button>
                         </div>

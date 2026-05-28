@@ -369,7 +369,7 @@ function BuzonTab({ refrescarNotificaciones }) {
             {seccion === 'soporte' && (
               <>
                 <div className="sub-tabs-container" style={{ gridColumn: '1/-1' }}>
-                  <div className="sub-tabs-pills">
+                  <div className="sub-tabs-pills" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                     <button className={`sub-pill ${subSoporte === 'usuarios' ? 'active' : ''}`} onClick={() => setSubSoporte('usuarios')}>
                       Comunidad ({reportesSoporte.filter(r => r.Rol?.nombre !== 'voluntario').length})
                     </button>
@@ -384,7 +384,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                     <div 
                       key={rep.id} 
                       className={`premium-card report-card fade-in ${!rep.visto ? 'unread' : ''}`}
-                      style={{ animationDelay: `${idx * 0.05}s`, cursor: 'pointer' }}
+                      style={{ animationDelay: `${idx * 0.05}s`, cursor: 'pointer', display: 'flex', flexDirection: 'column', height: '100%' }}
                       onClick={() => handleVistoSoporte(rep)}
                     >
                       <div className="flex-between" style={{ marginBottom: '1.2rem' }}>
@@ -399,7 +399,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                         <Mail size={12} style={{ marginRight: '6px' }} />
                         {rep.Usuario?.nombre || rep.userName || 'Anónimo'}
                       </p>
-                      <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                      <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
                         {rep.contenido || rep.mensaje}
                       </div>
                       <div className="flex-between" style={{ borderTop: '1px solid rgba(0,0,0,0.03)', paddingTop: '1.2rem' }}>
@@ -440,7 +440,7 @@ function BuzonTab({ refrescarNotificaciones }) {
               <div 
                 key={rep.id} 
                 className={`premium-card report-card type-robo fade-in ${!rep.visto ? 'unread' : ''}`}
-                style={{ animationDelay: `${idx * 0.05}s`, borderLeft: '4px solid var(--ui-error)' }}
+                style={{ animationDelay: `${idx * 0.05}s`, borderLeft: '4px solid var(--ui-error)', display: 'flex', flexDirection: 'column', height: '100%' }}
                 onClick={() => !rep.visto && handleEstadoRobo(rep, rep.estado || 'En Investigación')}
               >
                 <div className="flex-between" style={{ marginBottom: '1.2rem' }}>
@@ -454,7 +454,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
                   Informado por: <strong>{rep.Usuario?.nombre || 'Visitante'}</strong>
                 </p>
-                <div className="report-content-box" style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '1rem', borderRadius: '12px', color: 'var(--color-tierra-sombra)' }}>
+                <div className="report-content-box" style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '1rem', borderRadius: '12px', color: 'var(--color-tierra-sombra)', flex: 1 }}>
                   {rep.contenido || rep.descripcion}
                 </div>
                 <div className="flex-between" style={{ marginTop: '1.5rem' }}>
@@ -478,7 +478,7 @@ function BuzonTab({ refrescarNotificaciones }) {
             {seccion === 'postulaciones' && (
               <>
                 <div className="sub-tabs-container" style={{ gridColumn: '1/-1' }}>
-                  <div className="sub-tabs-pills">
+                  <div className="sub-tabs-pills" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                     {[
                       { value: 'pendiente', label: 'Pendientes' },
                       { value: 'aprobada',  label: 'Aprobadas'  },
@@ -496,7 +496,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                     <div 
                       key={sol.id} 
                       className={`premium-card report-card fade-in ${!sol.visto ? 'unread' : ''}`}
-                      style={{ animationDelay: `${idx * 0.05}s` }}
+                      style={{ animationDelay: `${idx * 0.05}s`, display: 'flex', flexDirection: 'column', height: '100%' }}
                       onClick={() => handleVistoSolicitud(sol)}
                     >
                       <div className="flex-between" style={{ marginBottom: '1.2rem' }}>
@@ -514,7 +514,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                             <span className="text-muted" style={{ fontSize: '0.75rem' }}>{getSolUserEmail(sol)}</span>
                          </div>
                       </div>
-                      <div className="report-content-box" style={{ fontStyle: 'italic', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem' }}>
+                      <div className="report-content-box" style={{ fontStyle: 'italic', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', flex: 1 }}>
                         "{sol.mensaje}"
                       </div>
                       {subPostulacion === 'pendiente' && (
@@ -533,7 +533,7 @@ function BuzonTab({ refrescarNotificaciones }) {
               <div 
                 key={rep.id} 
                 className={`premium-card report-card fade-in ${!rep.visto ? 'unread' : ''}`}
-                style={{ animationDelay: `${idx * 0.05}s` }}
+                style={{ animationDelay: `${idx * 0.05}s`, display: 'flex', flexDirection: 'column', height: '100%' }}
                 onClick={() => handleVistoReporteVoluntario(rep)}
               >
                 <div className="flex-between" style={{ marginBottom: '1.2rem' }}>
@@ -550,7 +550,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                    <ClipboardCheck size={14} className="text-primary" />
                    <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>{rep.tipoTarea}</span>
                 </div>
-                <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem' }}>
+                <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', flex: 1 }}>
                    {rep.tareas || 'Propuesta de labor sin descripción detallada'}
                 </div>
                 <div className="flex-center" style={{ gap: '10px' }}>
@@ -564,7 +564,7 @@ function BuzonTab({ refrescarNotificaciones }) {
             {seccion === 'actividades' && (
               <>
                 <div className="sub-tabs-container" style={{ gridColumn: '1/-1' }}>
-                  <div className="sub-tabs-pills">
+                  <div className="sub-tabs-pills" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                     <button className={`sub-pill ${subLabor === 'nuevas' ? 'active' : ''}`} onClick={() => setSubLabor('nuevas')}>
                       Pendientes ({reportesVoluntario.filter(r => r.estado === 'enviado' && !r.visto).length})
                     </button>
@@ -579,7 +579,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                     <div 
                       key={rep.id} 
                       className={`premium-card report-card fade-in ${!rep.visto ? 'unread' : ''}`}
-                      style={{ animationDelay: `${idx * 0.05}s` }}
+                      style={{ animationDelay: `${idx * 0.05}s`, display: 'flex', flexDirection: 'column', height: '100%' }}
                       onClick={() => handleVistoReporteVoluntario(rep)}
                     >
                       <div className="flex-between" style={{ marginBottom: '1.2rem' }}>
@@ -593,7 +593,7 @@ function BuzonTab({ refrescarNotificaciones }) {
                       </div>
                       <h3 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 900 }}>{rep.voluntarioNombre}</h3>
                       <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1.2rem', fontWeight: 700 }}>{rep.tipoTarea}</p>
-                      <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem' }}>
+                      <div className="report-content-box" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem', flex: 1 }}>
                         {rep.tareas}
                       </div>
                       {rep.pruebas && (

@@ -58,6 +58,10 @@ app.use('/api/roles', require('./routes/rolRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 
+// --- Swagger Docs ---
+const swaggerDocs = require('./utils/swagger');
+swaggerDocs(app);
+
 app.get('/', (req, res) => {
     res.json({
         status: 'success',

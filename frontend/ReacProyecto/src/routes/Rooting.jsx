@@ -98,7 +98,7 @@ function MainLayout() {
        !location.pathname.startsWith('/dashboard-voluntario') && 
        (isPremiumRoute ? <Navbar /> : <Nav />)}
 
-      <div className={`main-content-layout ${isPremiumRoute ? '' : isAuthRoute ? '' : 'visitor-layout'}`}>
+      <div className={`main-content-layout ${isPremiumRoute || isAuthRoute || location.pathname === '/' ? '' : 'visitor-layout'}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/historia" element={<HistoryForm />} />

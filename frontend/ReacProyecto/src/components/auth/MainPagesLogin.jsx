@@ -305,7 +305,7 @@ function MainPagesLogin() {
             </div>
           </div>
           <div className="visual-footer">
-            <p>&copy; 2026 BioMon System. Todos los derechos reservados.</p>
+            
           </div>
         </div>
 

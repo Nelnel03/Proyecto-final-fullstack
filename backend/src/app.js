@@ -60,6 +60,10 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/notificaciones', require('./routes/notificacionRoutes'));
 
+// --- Swagger Docs ---
+const swaggerDocs = require('./utils/swagger');
+swaggerDocs(app);
+
 app.get('/', (req, res) => {
     res.json({
         status: 'success',

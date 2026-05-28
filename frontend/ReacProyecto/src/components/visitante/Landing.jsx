@@ -130,7 +130,7 @@ const Landing = () => {
                     
                     <motion.h1 variants={fadeIn} className={`text-6xl md:text-8xl font-black leading-tight mb-8 tracking-tighter ${isDark ? 'text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'text-[#002359] drop-shadow-md'}`}>
                         Restaurando Ecosistemas <br/> 
-                        <span className={`italic font-light ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-secondary via-accent to-olive filter drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]' : 'text-[#002359]'}`}>Costeros</span>
+                        <span className={`italic font-light pr-2 ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-secondary via-accent to-olive filter drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]' : 'text-[#002359]'}`}>Costeros</span>
                     </motion.h1>
                     
                     <motion.p variants={fadeIn} className={`text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed break-normal ${isDark ? 'text-gray-400' : 'text-[#002359]/80'}`}>

@@ -13,7 +13,7 @@ import ListaTab from './ListaTab';
 import BajasTab from './BajasTab';
 import UsuariosTab from './UsuariosTab';
 import VoluntariadosTab from './VoluntariadosTab';
-import { AdminSidebar, AdminTopbar } from '../layout';
+import { AdminSidebar, AdminTopbar, Footer } from '../layout';
 import { DarkModeToggle } from '../common';
 import ArbolFormTab from './ArbolFormTab';
 import BuzonTab from './BuzonTab';
@@ -715,7 +715,7 @@ function MainPagesInicoAdmin() {
   };
 
   return (
-    <div className={`admin-layout ${isMobile ? 'is-mobile' : ''}`}>
+    <div className={`admin-layout h-screen overflow-hidden ${isMobile ? 'is-mobile' : ''}`}>
       <AdminSidebar 
         tab={tab} 
         setTab={handleTabChange} 
@@ -731,7 +731,7 @@ function MainPagesInicoAdmin() {
         <div className="admin-sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <div className="admin-main-wrapper">
+      <div className="admin-main-wrapper flex-1 overflow-y-auto relative h-screen">
         <AdminTopbar 
           setTab={setTab}
           isMobile={isMobile}
@@ -762,6 +762,9 @@ function MainPagesInicoAdmin() {
           </div>
         </section>
 
+        <div className="flex-shrink-0">
+          <Footer />
+        </div>
       </div>
     </div>
   );

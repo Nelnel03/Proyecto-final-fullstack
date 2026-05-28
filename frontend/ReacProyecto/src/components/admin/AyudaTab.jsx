@@ -157,7 +157,7 @@ function AyudaTab() {
 
       <div className="premium-card" style={{ 
         padding: '2.5rem', 
-        background: 'linear-gradient(135deg, var(--color-bosque-oscuro) 0%, #1a2f23 100%)',
+        background: 'linear-gradient(135deg, #1f3b2b 0%, #1a2f23 100%)',
         color: '#fff',
         border: 'none',
         display: 'flex',

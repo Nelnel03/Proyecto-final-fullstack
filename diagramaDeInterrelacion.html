@@ -1,0 +1,212 @@
+
+<style>
+#erd svg { width: 100%; height: auto; }
+#erd svg .divider path { stroke-opacity: 0.5; }
+#erd svg .row-rect-odd path,
+#erd svg .row-rect-odd rect,
+#erd svg .row-rect-even path,
+#erd svg .row-rect-even rect { stroke: none !important; }
+</style>
+<div id="erd" style="padding: 8px 0"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#2e2e2b' : '#f1efe8',
+    primaryBorderColor: dark ? '#5f5e5a' : '#b4b2a9',
+    primaryTextColor: dark ? '#c2c0b6' : '#3d3d3a',
+    edgeLabelBackground: dark ? '#1a1a18' : '#ffffff',
+  },
+});
+
+const diagram = `erDiagram
+
+  roles {
+    TINYINT id PK
+    VARCHAR nombre
+    VARCHAR descripcion
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  usuarios {
+    INT id PK
+    TINYINT rol_id FK
+    VARCHAR nombre
+    VARCHAR email
+    VARCHAR password
+    VARCHAR area
+    VARCHAR telefono
+    DATE fechaIngreso
+    VARCHAR fotoPerfil
+    ENUM status
+    VARCHAR motivoBan
+    TINYINT debeCambiarPassword
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  reset_tokens {
+    INT id PK
+    INT usuario_id FK
+    VARCHAR token
+    DATETIME expiry
+    TINYINT usado
+    DATETIME created_at
+  }
+
+  sesiones {
+    INT id PK
+    INT usuario_id FK
+    VARCHAR token_hash
+    VARCHAR ip
+    VARCHAR user_agent
+    TINYINT activa
+    DATETIME expiry
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  arboles {
+    INT id PK
+    VARCHAR nombre
+    VARCHAR nombreCientifico
+    VARCHAR tipo
+    TINYINT progreso
+    VARCHAR familia
+    DECIMAL altura_min_m
+    DECIMAL altura_max_m
+    VARCHAR clima
+    TEXT descripcion
+    VARCHAR imagenUrl
+    ENUM estado
+    DATE fechaRegistro
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  tareas_disponibles {
+    INT id PK
+    VARCHAR titulo
+    TEXT descripcion
+    DECIMAL horas
+    VARCHAR dias
+    TINYINT activa
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  reportes_voluntariado {
+    INT id PK
+    INT voluntario_id FK
+    INT tarea_id FK
+    TIME horaInicio
+    TIME horaFin
+    DECIMAL horas
+    TEXT tareas
+    VARCHAR pruebas
+    DATE fecha
+    ENUM estado
+    VARCHAR motivoRechazo
+    TINYINT visto
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  reportes {
+    INT id PK
+    INT usuario_id FK
+    INT rol_id FK
+    VARCHAR tipo
+    VARCHAR asunto
+    TEXT contenido
+    DATE fecha
+    TINYINT visto
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  solicitudes_voluntariado {
+    INT id PK
+    INT usuario_id FK
+    TEXT mensaje
+    DATETIME fecha
+    ENUM estado
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  abonos {
+    INT id PK
+    INT arbol_id FK
+    INT voluntario_id FK
+    VARCHAR tipo_abono
+    DECIMAL cantidad_kg
+    DATE fecha
+    TEXT notas
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  stats_tipos {
+    INT id PK
+    INT tarea_id FK
+    DATE periodo
+    INT total_reportes
+    DECIMAL total_horas
+    INT total_aprobados
+    INT total_rechazados
+    DATETIME created_at
+    DATETIME updated_at
+  }
+
+  roles ||--o{ usuarios                  : "asigna"
+  roles ||--o{ reportes                  : "clasifica"
+  usuarios ||--o{ reset_tokens           : "solicita"
+  usuarios ||--o{ sesiones               : "inicia"
+  usuarios ||--o{ reportes_voluntariado  : "registra"
+  usuarios ||--o{ reportes               : "genera"
+  usuarios ||--o{ solicitudes_voluntariado : "envía"
+  usuarios ||--o{ abonos                 : "aplica"
+  tareas_disponibles ||--o{ reportes_voluntariado : "tipifica"
+  tareas_disponibles ||--o{ stats_tipos  : "agrega"
+  arboles ||--o{ abonos                  : "recibe"
+`;
+
+const { svg } = await mermaid.render('erd-svg', diagram);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill','stroke','stroke-width','class','style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg .row-rect-odd path, #erd svg .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>

@@ -209,18 +209,34 @@ function MainPagesLogin() {
         return;
       }
 
+      const { token, user } = data;
+
+      // El backend devuelve rol_id, le asignamos el nombre del rol para el frontend
+      if (!user.rol) {
+        user.rol = user.rol_id === 1 ? 'admin' : user.rol_id === 2 ? 'voluntario' : 'visitante';
+      }
+
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('isAuthenticated', 'true');
+      sessionStorage.setItem('user', JSON.stringify(user));
+
       Swal.fire({
         title: '¡Registro Exitoso!',
-        text: 'Ahora puedes iniciar sesión con tus credenciales',
+        text: `Bienvenido a BioMon, ${user.nombre}`,
         icon: 'success',
-        confirmButtonText: 'Genial'
+        timer: 1500,
+        showConfirmButton: false
       });
 
-      setIsRegistering(false);
-      setNombre('');
-      setTelefono('');
-      setPassword('');
-      setConfirmPassword('');
+      setTimeout(() => {
+        if (user.rol === 'admin') {
+          navigate('/admin');
+        } else if (user.rol === 'voluntario') {
+          navigate('/dashboard-voluntario');
+        } else {
+          navigate('/dashboard-user');
+        }
+      }, 1500);
 
     } catch (err) { console.error(err);
       console.error('Error en registro:', err);
@@ -305,7 +321,7 @@ function MainPagesLogin() {
             </div>
           </div>
           <div className="visual-footer">
-            <p>&copy; 2026 BioMon System. Todos los derechos reservados.</p>
+            
           </div>
         </div>
 
